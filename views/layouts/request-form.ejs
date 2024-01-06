@@ -1,0 +1,335 @@
+<main>
+    <form action="/uploadRequest" method="post" name="request" enctype="multipart/form-data">
+        <div class="request-info">
+            <div class="topic">
+                <h2>ข้อมูลนักศึกษา</h2>
+            </div>
+            <div class="contents">
+                <div class="images-content">
+                    <div class="images-area">
+                        <div class="images-add">
+                            <input type="file" name="file" accept="image/*" title="เพิ่มรูปภาพ">
+                        </div>
+                    </div>
+                </div>
+                <div class="infomation">
+                    <div class="datas">
+                        <a>ชื่อ-นามสกุล</a>
+                        <input type="text" placeholder="ชื่อ-นามสกุล" name="fullname">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>รหัสประจำตัว</a>
+                        <input type="text" placeholder="รหัสประจำตัว" name="std_id">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>ระดับการศึกษา</a>
+                        <input type="text" placeholder="ระดับการศึกษา" name="lv">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>คณะ</a>
+                        <input type="text" placeholder="คณะ" name="factory">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>สาขาวิชา</a>
+                        <input type="text" placeholder="สาขาวิชา" name="department">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>เกรดเฉลี่ยสะสม</a>
+                        <input type="text" placeholder="เกรดเฉลี่ยสะสม" name="gpa">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>อีเมล</a>
+                        <input type="text" placeholder="อีเมล" name="email">
+                        <p>*</p>
+                    </div>
+                    <div class="datas">
+                        <a>หมายเลขโทรศัพท์</a>
+                        <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel">
+                        <p>*</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="request-doc">
+            <div class="topic">
+                <h2>ยื่นคำร้องขอฝึกงาน</h2>
+            </div>
+            <div class="info-details">
+                <h3>เมื่อนักศึกษาส่งเอกสารยื่นคำร้องขอฝึกงานสำเร็จ ระบบทำการส่งเอกสารให้ทางวิทยาลัยอนุมัติ</h3>
+            </div>
+            <div class="info-warning">
+                <h3>การยื่นของฝึกงาน สามารถยื่นได้ครั้งละ 1 สถานประกอบการ </h3>
+                <h3>เมื่อถูกปฎิเสธจึงสามามรถยื่นสถานประกอบการใหม่ได้ ห้ามยื่นเอกสารขอฝึกงานพร้อมกันมากกว่า 1
+                    สถานประกอบการ</h3>
+            </div>
+
+            <div class="topic">
+                <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+            </div>
+
+            <div class="info-intern">
+                <div class="uploads-content">
+                    <a href="">ชื่อสถาที่ฝึกงาน</a>
+                    <div class="border-input">
+                        <input type="text" name="location">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">ตำแหน่ง</a>
+                    <div class="border-input">
+                        <input type="text" name="position">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">โปรดระบุด้วยว่าหนังสือเรียนถึงใคร</a>
+                    <div class="border-input">
+                        <input type="text" name="receiver" placeholder="(เช่น ผู้อํานวยการ......, ผู้จัดการ..., หัวหน้าส่วน เป็นต้น)">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">ชื่อผู้ประสานงาน</a>
+                    <div class="border-input">
+                        <input type="text" name="coordinator">
+                    </div>
+                </div>
+
+                <div class="uploads-content">
+                    <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                    <div class="border-input">
+                        <input type="text" name="aboutcompany">
+                    </div>
+                </div>
+
+            </div>
+            <div class="topic">
+                <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+            </div>
+            <div class="info-address">
+                <div class="uploads-content">
+                    <a href="">ที่อยู่</a>
+                    <div class="border-input">
+                        <input type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน...">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">บริษัท/หน่วยงาน</a>
+                    <div class="border-input">
+                        <input type="text" name="companyname">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">ตำบล</a>
+                    <div class="border-input">
+                        <input type="text" name="subdistrict">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">อำเภอ</a>
+                    <div class="border-input">
+                        <input type="text" name="district">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">จังหวัด</a>
+                    <div class="border-input">
+                        <input type="text" name="province">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">รหัสไปรษณีย์</a>
+                    <div class="border-input">
+                        <input type="text" name="code">
+                    </div>
+                </div>
+            </div>
+            <div class="topic">
+                <h2 class="sub-txt">เบอร์โทรศัพท์ติดต่อ</h2>
+            </div>
+
+            <div class="info-phone">
+                <div class="uploads-content">
+                    <a href="">ผู้ประสานงาน/พี่เลี้ยง</a>
+                    <div class="border-input">
+                        <input type="text" name="coordinator_tel">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">บริษัท/หน่วยงาน</a>
+                    <div class="border-input">
+                        <input type="text" name="company_tel">
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic2">
+                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</h2>
+                <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง</h2>
+            </div>
+
+            <div class="send-date">
+                <div class="uploads-content">
+                    <div class="border-input">
+                        <input type="date">
+                    </div>
+                </div>
+
+                <div class="uploads-content">
+                    <div class="border-input">
+                        <input type="text" placeholder="ชื่อโรงพยาบาล" name="medical_rights">
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic">
+                <h2>upload document</h2>
+            </div>
+            <div class="uploads-section">
+                <div class="uploads-content">
+                    <a href="">เอกสารยื่นใบฝึกงาน</a>
+                    <div class="border-uploads">
+                        <input type="file" name="file">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">หนังสือยินยอมผู้ปกครอง</a>
+                    <div class="border-uploads">
+                        <input type="file" name="file">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">resume นักศึกษา</a>
+                    <div class="border-uploads">
+                        <input type="file" name="file">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">เอกสารตอบรับ จากบริษัท (กรณีนักศึกษารับมาเอง)</a>
+                    <div class="border-uploads">
+                        <input type="file" name="file">
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">รูปแบบการฝึกงาน</a>
+                    <div class="border-uploads" name="working_style">
+                        <select>
+                            <option selected value="0">รูปแบบการฝึกงาน</option>
+                            <option value="1">Onsite</option>
+                            <option value="2">Work form home</option>
+                            <option value="3">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">transcript</a>
+                    <div class="border-uploads">
+                        <input type="file" name="file">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="submit">
+            <button type="submit">Send</button>
+        </div>
+        <!-- <input type="submit" value="Upload Photo"> -->
+    </form>
+</main>
+
+<div class="status">
+    <h3>Status</h3>
+
+    <details class="details" onclick="adjustNextElementPosition(this)">
+        <summary>
+            <h2>สถานประกอบการ-หน่วยงาน</h2>
+            <span class="material-icons-sharp">mark_email_unread</span>
+            <span class="material-icons-sharp">check_circle</span>
+        </summary>
+        <div class="details-status">
+            <p>ชื่อผู้ดำเนินการ firstname lastname</p>
+            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
+            <p class="bold">comment</p>
+            <div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius blanditiis, maiores minus
+                    fugiat autem recusandae voluptas ipsa repudiandae officiis quis?</p>
+            </div>
+        </div>
+    </details>
+
+    <details class="details" onclick="adjustNextElementPosition(this)">
+        <summary>
+            <h2>เอกสารยื่นคำร้อง</h2>
+            <span class="material-icons-sharp">mark_email_unread</span>
+            <span class="material-icons-sharp">check_circle</span>
+        </summary>
+        <div class="details-status">
+            <p>ชื่อผู้ดำเนินการ firstname lastname</p>
+            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
+            <p class="bold">comment</p>
+            <div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius blanditiis, maiores minus
+                    fugiat autem recusandae voluptas ipsa repudiandae officiis quis?</p>
+            </div>
+        </div>
+    </details>
+
+    <details class="details" onclick="adjustNextElementPosition(this)">
+        <summary>
+            <h2>ส่งเอกสารมอบตัว</h2>
+            <span class="material-icons-sharp">mark_email_unread</span>
+            <span class="material-icons-sharp">check_circle</span>
+        </summary>
+        <div class="details-status">
+            <p>ชื่อผู้ดำเนินการ firstname lastname</p>
+            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
+            <p class="bold">comment</p>
+            <div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius blanditiis, maiores minus
+                    fugiat autem recusandae voluptas ipsa repudiandae officiis quis?</p>
+            </div>
+        </div>
+    </details>
+
+    <details class="details" onclick="adjustNextElementPosition(this)">
+        <summary>
+            <h2>สถานที่ฝึกงานตอบรับกลับ</h2>
+            <span class="material-icons-sharp">mark_email_unread</span>
+            <span class="material-icons-sharp">check_circle</span>
+        </summary>
+        <div class="details-status">
+            <p>ชื่อผู้ดำเนินการ firstname lastname</p>
+            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
+            <p class="bold">comment</p>
+            <div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius blanditiis, maiores minus
+                    fugiat autem recusandae voluptas ipsa repudiandae officiis quis?</p>
+            </div>
+        </div>
+    </details>
+
+    <details class="details" onclick="adjustNextElementPosition(this)">
+        <summary>
+            <h2>ตรวจสอบสำเร็จการฝึกงาน</h2>
+            <span class="material-icons-sharp">mark_email_unread</span>
+            <span class="material-icons-sharp">check_circle</span>
+        </summary>
+        <div class="details-status">
+            <p>ชื่อผู้ดำเนินการ firstname lastname</p>
+            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
+            <p class="bold">comment</p>
+            <div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius blanditiis, maiores minus
+                    fugiat autem recusandae voluptas ipsa repudiandae officiis quis?</p>
+            </div>
+        </div>
+        <div class="summit"></div>
+
+    </details>
+
+</div>
