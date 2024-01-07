@@ -31,6 +31,13 @@
                     <div class="datas">
                         <a>สาขาวิชา</a>
                         <input type="text" placeholder="สาขาวิชา" value="<%= data.factory %>" readonly>
+                        <% if (data.factory==1) { %>
+                            <input type="text" placeholder="สาขาวิชา" value="วิทยาการคอมพิวเตอร์ ภาคปกติ" readonly>
+                            <% } else if (request_doc.doc_approve_company==2) { %>
+                                <input type="text" placeholder="สาขาวิชา" value="วิทยาการคอมพิวเตอร์ ภาคพิเศษ" readonly>
+                                <% } else { %>
+                                    <input type="text" placeholder="สาขาวิชา" value="<%= data.factory %>" readonly>
+                                    <% } %>
                     </div>
                     <div class="datas">
                         <a>เกรดเฉลี่ยสะสม</a>
