@@ -598,7 +598,7 @@ main {
 .request-doc {
     background-color: var(--color-white);
     width: 90%;
-    height: 103rem;
+    height: 110rem;
     display: flex;
     margin: 1rem auto 2rem auto;
     flex-direction: column;
