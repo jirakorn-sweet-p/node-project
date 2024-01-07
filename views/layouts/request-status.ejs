@@ -7,9 +7,7 @@
             <div class="contents">
                 <div class="images-content">
                     <div class="images-area">
-                        <div class="images-add">
-                            <a>เพิ่มรูปภาพ</a>
-                        </div>
+                        <img src="/uploads/<%= data.image %>" alt="image profile">
                     </div>
                 </div>
                 <div class="infomation">
@@ -229,7 +227,7 @@
                         <% if (request_doc.doc_approve_company==1) { %>
                             <button class="border-space" type="button">มารับไปส่งเอง</button>
                             <% } else if (request_doc.doc_approve_company==2) { %>
-                                <button class="border-space" type="button">เจ้าหน้าที่จัดส่างให้</button>
+                                <button class="border-space" type="button">เจ้าหน้าที่จัดส่งให้</button>
                                 <% } else { %>
                                     <button class="border-space" type="button"></button>
                                     <% } %>

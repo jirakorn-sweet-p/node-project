@@ -25,7 +25,7 @@ var storage = multer.diskStorage({
         // console.log(req);
         // console.log(cc);
         // cc++;
-        cb(null, 'uploads')
+        cb(null, 'public/uploads')
     },
     filename: function (req, file, cb) {
         cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
@@ -371,14 +371,15 @@ router.get('/request-teacher', (req,res) => {
     }
     const all_request = [];
 
-request_ser.find({})
+    request_ser.find({status:'Pending'}).populate('student_info').populate('company_info')
     .then(requests => {
     // Process the requests or store them in the 'all_request' array
-    all_request.push(...requests);
-    console.log('Requests:', requests);
+    const count_request = requests.length
 
+    console.log('Requests:', requests);
+    
     // Render the page with the requests
-    res.render('index', { locals,requests });
+    res.render('index', { locals,requests,count_request });
     })
     .catch(error => {
     console.error('Error retrieving documents:', error);

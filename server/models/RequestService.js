@@ -22,6 +22,10 @@ const RequestServiceSchema = new Schema({
         type: String,
         default:"Pending"
     },
+    update_at:{
+        type: Date,
+        default: Date.now
+    }
 });
 
 module.exports = mongoose.model('RequestService',RequestServiceSchema);
