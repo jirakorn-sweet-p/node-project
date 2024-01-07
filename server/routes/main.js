@@ -258,9 +258,9 @@ router.get('/request-status',async (req,res) => {
     
     try{
         // find by username : student_id
-        const request_doc = (await request_info.find({'student_code':'633020568'})).at(0);
-        const data = (await student_info.find({'student_code':'633020568'})).at(0);
-        const company = (await company_info.find({'student_code':'633020568'})).at(0);
+        const request_doc = (await request_info.find({'student_code':'633020568-3'})).at(0);
+        const data = (await student_info.find({'student_code':'633020568-3'})).at(0);
+        const company = (await company_info.find({'student_code':'633020568-3'})).at(0);
         // const addres = (await address.find()).at(0);
         console.log(request_doc);
         // console.log(company.start_intern.toISOString().split('T')[0]);
