@@ -262,7 +262,7 @@ router.get('/request-status',async (req,res) => {
         const data = (await student_info.find({'student_code':'633020568-3'})).at(0);
         const company = (await company_info.find({'student_code':'633020568-3'})).at(0);
         // const addres = (await address.find()).at(0);
-        console.log(request_doc);
+        console.log(data.image);
         // console.log(company.start_intern.toISOString().split('T')[0]);
         res.render('index', {locals,data,company,request_doc});
     }catch(error){
