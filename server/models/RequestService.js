@@ -8,10 +8,6 @@ const RequestServiceSchema = new Schema({
     },
     request_info:{
         type: Schema.Types.ObjectId, 
-        ref: 'StudentInfo'
-    },
-    request_info:{
-        type: Schema.Types.ObjectId, 
         ref: 'RequestInfo'
     },
     company_info:{
@@ -21,6 +17,10 @@ const RequestServiceSchema = new Schema({
     certificate_info:{
         type: Schema.Types.ObjectId, 
         ref: 'CertificateSchema'
+    },
+    status:{//
+        type: String,
+        default:"Pending"
     },
 });
 

@@ -1,240 +1,275 @@
 <% if (locals.status) { %>
-<main>
-    <div class="request-info">
-        <div class="topic">
-            <h2>ข้อมูลนักศึกษา</h2>
-        </div>
-        <div class="contents">
-            <div class="images-content">
-                <div class="images-area">
-                    <div class="images-add">
-                        <a>เพิ่มรูปภาพ</a>
+    <main>
+        <div class="request-info">
+            <div class="topic">
+                <h2>ข้อมูลนักศึกษา</h2>
+            </div>
+            <div class="contents">
+                <div class="images-content">
+                    <div class="images-area">
+                        <div class="images-add">
+                            <a>เพิ่มรูปภาพ</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="infomation">
+                    <div class="datas">
+                        <a>ชื่อ-นามสกุล</a>
+                        <input type="text" placeholder="ชื่อ-นามสกุล" value="<%= data.name %>" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>รหัสประจำตัว</a>
+                        <input type="text" placeholder="รหัสประจำตัว" value="<%= data.student_code %>" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>ระดับการศึกษา</a>
+                        <input type="text" placeholder="ระดับการศึกษา"
+                            value="ปริญญาตรี ชั้นปีที่ <%= data.education %>" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>คณะ</a>
+                        <input type="text" placeholder="คณะ" value="วิทยาลัยการคอมพิวเตอร์" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>สาขาวิชา</a>
+                        <input type="text" placeholder="สาขาวิชา" value="<%= data.factory %>" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>เกรดเฉลี่ยสะสม</a>
+                        <input type="text" placeholder="เกรดเฉลี่ยสะสม" value="<%= data.grade.toFixed(2) %>" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>อีเมล</a>
+                        <input type="text" placeholder="อีเมล" value="<%= data.email %>" readonly>
+                    </div>
+                    <div class="datas">
+                        <a>หมายเลขโทรศัพท์</a>
+                        <input type="text" placeholder="หมายเลขโทรศัพท์" value="<%= data.phone %>" readonly>
                     </div>
                 </div>
             </div>
-            <div class="infomation">
-                <div class="datas">
-                    <a>ชื่อ-นามสกุล</a>
-                    <input type="text" placeholder="ชื่อ-นามสกุล" value="<%= data.name %>">
-                </div>
-                <div class="datas">
-                    <a>รหัสประจำตัว</a>
-                    <input type="text" placeholder="รหัสประจำตัว" value="<%= data.student_code %>">
-                </div>
-                <div class="datas">
-                    <a>ระดับการศึกษา</a>
-                    <input type="text" placeholder="ระดับการศึกษา" value="ปริญญาตรี ชั้นปีที่ <%= data.education %>">
-                </div>
-                <div class="datas">
-                    <a>คณะ</a>
-                    <input type="text" placeholder="คณะ" value="วิทยาลัยการคอมพิวเตอร์">
-                </div>
-                <div class="datas">
-                    <a>สาขาวิชา</a>
-                    <input type="text" placeholder="สาขาวิชา" value="<%= data.factory %>">
-                </div>
-                <div class="datas">
-                    <a>เกรดเฉลี่ยสะสม</a>
-                    <input type="text" placeholder="เกรดเฉลี่ยสะสม" value="<%= data.grade.toFixed(2) %>">
-                </div>
-                <div class="datas">
-                    <a>อีเมล</a>
-                    <input type="text" placeholder="อีเมล" value="<%= data.email %>">
-                </div>
-                <div class="datas">
-                    <a>หมายเลขโทรศัพท์</a>
-                    <input type="text" placeholder="หมายเลขโทรศัพท์" value="<%= data.phone %>">
-                </div>
-            </div>
         </div>
-    </div>
-    <div class="request-doc">
-        <div class="topic">
-            <h2>ยื่นคำร้องขอฝึกงาน</h2>
-        </div>
-        <div class="info-details">
-            <h3>เมื่อนักศึกษาส่งเอกสารยื่นคำร้องขอฝึกงานสำเร็จ ระบบทำการส่งเอกสารให้ทางวิทยาลัยอนุมัติ</h3>
-        </div>
-        <div class="info-warning">
-            <h3>การยื่นของฝึกงาน สามารถยื่นได้ครั้งละ 1 สถานประกอบการ </h3>
-            <h3>เมื่อถูกปฎิเสธจึงสามามรถยื่นสถานประกอบการใหม่ได้ ห้ามยื่นเอกสารขอฝึกงานพร้อมกันมากกว่า 1
-                สถานประกอบการ</h3>
-        </div>
-
-        <div class="topic">
-            <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
-        </div>
-
-        <div class="info-intern">
-            <div class="uploads-content">
-                <a href="">ชื่อสถาที่ฝึกงาน</a>
-                <div class="border-input">
-                    <input type="text" value="<%= company.company_name %>">
-                </div>
+        <div class="request-doc">
+            <div class="topic">
+                <h2>ยื่นคำร้องขอฝึกงาน</h2>
             </div>
-            <div class="uploads-content">
-                <a href="">ตำแหน่ง</a>
-                <div class="border-input">
-                    <input type="text" value="<%= company.position %>">
-                </div>
+            <div class="info-details">
+                <h3>เมื่อนักศึกษาส่งเอกสารยื่นคำร้องขอฝึกงานสำเร็จ ระบบทำการส่งเอกสารให้ทางวิทยาลัยอนุมัติ</h3>
             </div>
-            <div class="uploads-content">
-                <a href="">โปรดระบุด้วยว่าหนังสือเรียนถึงใคร</a>
-                <div class="border-input">
-                    <input type="text"
-                    value="<%= company.receiver_name %>">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">ชื่อผู้ประสานงาน</a>
-                <div class="border-input">
-                    <input type="text" value="<%= company.mentor %>">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
-                <div class="border-input">
-                    <input type="text" value="<%= company.type_business %>">
-                </div>
+            <div class="info-warning">
+                <h3>การยื่นของฝึกงาน สามารถยื่นได้ครั้งละ 1 สถานประกอบการ </h3>
+                <h3>เมื่อถูกปฎิเสธจึงสามามรถยื่นสถานประกอบการใหม่ได้ ห้ามยื่นเอกสารขอฝึกงานพร้อมกันมากกว่า 1
+                    สถานประกอบการ</h3>
             </div>
 
-        </div>
-        <div class="topic">
-            <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
-        </div>
-        <div class="info-address">
-            <div class="uploads-content">
-                <a href="">ที่อยู่</a>
-                <div class="border-input">
-                    <input type="text"  value="<%= addres.location %>">
-                </div>
+            <div class="topic">
+                <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
             </div>
-            <div class="uploads-content">
-                <a href="">บริษัท/หน่วยงาน</a>
-                <div class="border-input">
-                    <input type="text" value="<%= company.company_name %>">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">ตำบล</a>
-                <div class="border-input">
-                    <input type="text" value="<%= addres.sub_district %>">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">อำเภอ</a>
-                <div class="border-input">
-                    <input type="text" value="<%= addres.district %>">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">จังหวัด</a>
-                <div class="border-input">
-                    <input type="text" value="<%= addres.province %>">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">รหัสไปรษณีย์</a>
-                <div class="border-input">
-                    <input type="text" value="<%= addres.code %>">
-                </div>
-            </div>
-        </div>
-        <div class="topic">
-            <h2 class="sub-txt">เบอร์โทรศัพท์</h2>
-        </div>
 
-        <div class="info-phone">
-            <div class="uploads-content">
-                <a href="">ผู้ประสานงาน/พี่เลี้ยง</a>
-                <div class="border-input">
-                    <input type="text"  value="<%= company.mentor %>">
+            <div class="info-intern">
+                <div class="uploads-content">
+                    <a href="">ชื่อสถาที่ฝึกงาน</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.company_name %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">ตำแหน่ง</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.position %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">โปรดระบุด้วยว่าหนังสือเรียนถึงใคร</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.receiver_name %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">เบอร์โทรศัพท์</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.tel %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.type_business %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">ช่วงเวลาที่ฝึกงาน <span>*</span></a>
+                    <div class="border-input2">
+                        <input type="date" name="start_intern"
+                            value="<%= company.start_intern.toISOString().split('T')[0] %>" readonly>
+                        <h2>ถึง</h2>
+                        <input type="date" name="end_intern"
+                            value="<%= company.end_intern.toISOString().split('T')[0] %>" readonly>
+                    </div>
+                </div>
+
+            </div>
+            <div class="topic">
+                <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+            </div>
+            <div class="info-address">
+                <div class="uploads-content">
+                    <a href="">ที่อยู่</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.address %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">บริษัท/หน่วยงาน</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.company_name %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">ตำบล</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.subdistrict %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">อำเภอ</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.district %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">จังหวัด</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.province %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">รหัสไปรษณีย์</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.provinceID %>" readonly>
+                    </div>
                 </div>
             </div>
-            <div class="uploads-content">
-                <a href="">บริษัท/หน่วยงาน</a>
-                <div class="border-input">
-                    <input type="text" value="<%= company.company_name %>">
-                </div>
+            <div class="topic">
+                <h2 class="sub-txt">ผู้ประสานงาน/พี่เลี้ยง</h2>
             </div>
-        </div>
 
-        <div class="topic2">
-            <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</h2>
-            <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง</h2>
-        </div>
-
-        <div class="send-date">
-            <div class="uploads-content">
-                <div class="border-input">
-                    <input type="date" value="<%= company.submission_date %>">
+            <div class="info-phone">
+                <div class="uploads-content">
+                    <a href="">ชื่อ ผู้ประสานงาน/พี่เลี้ยง</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.mentor %>" readonly>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">เบอร์โทรศัพท์</a>
+                    <div class="border-input">
+                        <input type="text" value="<%= company.mentor %>" readonly>
+                    </div>
                 </div>
             </div>
 
-            <div class="uploads-content">
-                <div class="border-input">
-                    <input type="text" value="<%= data.health_coverage %>">
-                </div>
+            <div class="topic2">
+                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</h2>
+                <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง</h2>
             </div>
-        </div>
 
-        <div class="topic">
-            <h2>upload document</h2>
-        </div>
-        <div class="uploads-section">
-            <div class="uploads-content">
-                <a href="">เอกสารยื่นใบฝึกงาน</a>
-                <div class="border-uploads">
-                    <input type="file">
+            <div class="send-date">
+                <div class="uploads-content">
+                    <div class="border-input">
+                        <input type="date" value="<%= company.end_intern.toISOString().split('T')[0] %>" readonly>
+                    </div>
+                </div>
+
+                <div class="uploads-content">
+                    <div class="border-input">
+                        <input type="text" value="<%= data.health_coverage %>" readonly>
+                    </div>
                 </div>
             </div>
-            <div class="uploads-content">
-                <a href="">หนังสือยินยอมผู้ปกครอง</a>
-                <div class="border-uploads">
-                    <input type="file">
+
+            <div class="topic">
+                <h2>upload document</h2>
+            </div>
+            <div class="uploads-section">
+                <div class="uploads-content">
+                    <a href="">เอกสารยื่นใบฝึกงาน</a>
+                    <!-- upload/2024-01-07T05-15-23.435Z-DIP_LAB2.pdf -->
+                    <div class="border-uploads">
+                        <a href="/download-pdf/<%= request_doc.doc_request_intern %>" target="_blank" download>
+                            <button type="button">
+                                <%= request_doc.doc_request_intern %>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">หนังสือยินยอมผู้ปกครอง</a>
+                    <div class="border-uploads">
+                        <a href="/download-pdf/<%= request_doc.doc_approve_parrent %>" target="_blank" download>
+                            <button type="button">
+                                <%= request_doc.doc_approve_parrent %>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">resume นักศึกษา</a>
+                    <div class="border-uploads">
+                        <a href="/download-pdf/<%= request_doc.doc_resume %>" target="_blank" download>
+                            <button type="button">
+                                <%= request_doc.doc_resume %>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">หนังสือขอความอนุเคราะห์จากบริษัท</a>
+                    <div class="border-uploads">
+                        <% if (request_doc.doc_approve_company==1) { %>
+                            <button class="border-space" type="button">มารับไปส่งเอง</button>
+                            <% } else if (request_doc.doc_approve_company==2) { %>
+                                <button class="border-space" type="button">เจ้าหน้าที่จัดส่างให้</button>
+                                <% } else { %>
+                                    <button class="border-space" type="button"></button>
+                                    <% } %>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">รูปแบบการฝึกงาน</a>
+                    <div class="border-uploads">
+                        <% if (request_doc.working_style==1) { %>
+                            <button class="border-space" type="button">Onsite</button>
+                            <% } else if (request_doc.working_style==2) { %>
+                                <button class="border-space" type="button">Work form home</button>
+                                <% } else if (request_doc.working_style==3) { %>
+                                    <button class="border-space" type="button">Hybrid</button>
+                                    <% } else { %>
+                                        <button class="border-space" type="button"></button>
+                                        <% } %>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a href="">transcript</a>
+                    <div class="border-uploads">
+                        <a href="/download-pdf/<%= request_doc.doc_transcript %>" target="_blank" download>
+                            <button type="button">
+                                <%= request_doc.doc_transcript %>
+                            </button>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="uploads-content">
-                <a href="">resume นักศึกษา</a>
-                <div class="border-uploads">
-                    <input type="file">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">เอกสารตอบรับ จากบริษัท (กรณีนักศึกษารับมาเอง)</a>
-                <div class="border-uploads">
-                    <input type="file">
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">รูปแบบการฝึกงาน</a>
-                <div class="border-uploads">
-                    <select>
-                        <option selected value="0">รูปแบบการฝึกงาน</option>
-                        <option value="1">Onsite</option>
-                        <option value="2">Work form home</option>
-                        <option value="3">Hybrid</option>
-                    </select>
-                </div>
-            </div>
-            <div class="uploads-content">
-                <a href="">transcript</a>
-                <div class="border-uploads">
-                    <input type="file">
-                </div>
-            </div>
-        </div>
 
 
-    </div>
-    <!-- <div class="submit">
+        </div>
+        <!-- <div class="submit">
         <button type="submit">Send</button>
     </div> -->
-</main>
-<%- include('../partials/statusbar.ejs') %>
-<% } else { %>
- <main>
-    <h2 style="margin: 0 auto;color: gray;">you don't have any request for internship</h2>
- </main>
-<% } %>
-
+    </main>
+    <%- include('../partials/statusbar.ejs') %>
+        <% } else { %>
+            <main>
+                <h2 style="margin: 0 auto;color: gray;">you don't have any request for internship</h2>
+            </main>
+            <% } %>

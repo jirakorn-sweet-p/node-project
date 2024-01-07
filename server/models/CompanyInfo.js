@@ -3,63 +3,76 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const CompanyInfoSchema = new Schema({
     company_name:{
-        type:String,
+        type:String,//
         require:true
     },
     tel:{
-        type:String,
+        type:String,//
         require:true
     },
     address:{
-        type: Schema.Types.ObjectId, 
+        type: String, //
         ref: 'Address',
     },
-    type_business:{
+    type_business:{//
         type: String,
         require:true
     },
-    student_code:{
+    student_code:{//
         type: String,
         require:true
     },
-    position:{
+    position:{//
         type: String,
         require:true
     },
-    province:{
+    province:{//
         type: String,
         require:true
     },
-    receiver_name:{
+    district:{//
         type: String,
         require:true
     },
-    mentor:{
+    subdistrict:{//
+        type: String,
+        require:true
+    },
+    provinceID:{//
+        type: String,
+        require:true
+    },
+    receiver_name:{//
+        type: String,
+        require:true
+    },
+    mentor:{//
         type: String
     },
-    tel_mentor:{
+    tel_mentor:{//
         type: String
+    },
+    start_intern:{//
+        type: Date,
+        require:true
+    },
+    end_intern:{//
+        type: Date,
+        require:true
     },
     submission_date:{
-        type: String
-    },
-    start_intern:{
         type: Date,
         require:true
     },
-    end_intern:{
-        type: Date,
-        require:true
-    },
-    status:{
+    status:{//
         type: String,
         default:"Pending"
     },
-    editor:{
+    editor:{//
         type: String,
         default:"none"
     },
-    update_status_at:{
+    update_status_at:{//
         type: Date,
         default: Date.now
     },

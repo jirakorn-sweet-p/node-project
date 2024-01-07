@@ -8,50 +8,72 @@
                 <div class="images-content">
                     <div class="images-area">
                         <div class="images-add">
-                            <input type="file" name="file" accept="image/*" title="เพิ่มรูปภาพ">
+                            <input type="file" name="file" accept="image/" title="เพิ่มรูปภาพ">
                         </div>
                     </div>
                 </div>
                 <div class="infomation">
                     <div class="datas">
                         <a>ชื่อ-นามสกุล</a>
-                        <input type="text" placeholder="ชื่อ-นามสกุล" name="fullname">
-                        <p>*</p>
+                        <input type="text" placeholder="ชื่อ-นามสกุล" name="fullname" oninput="checkInput(this)" required>
+                        <p id="fullnameError"></p>
                     </div>
                     <div class="datas">
                         <a>รหัสประจำตัว</a>
-                        <input type="text" placeholder="รหัสประจำตัว" name="std_id">
-                        <p>*</p>
+                        <input type="text" placeholder="รหัสประจำตัว" name="std_id" oninput="formatID(this)" maxlength="10" required>
+                        <p id="std_idError"></p>
                     </div>
                     <div class="datas">
-                        <a>ระดับการศึกษา</a>
-                        <input type="text" placeholder="ระดับการศึกษา" name="lv">
-                        <p>*</p>
+                        <a>ปริญาตรี</a>
+                        <!-- <input type="text" placeholder="ระดับการศึกษา" name="lv"> -->
+                        <div class="border-uploads" >
+                            <select name="lv" required>
+                                <option selected value="0">เลือกชั้นปี</option>
+                                <option value="1">ชั้นปีที่ 1</option>
+                                <option value="2">ชั้นปีที่ 2</option>
+                                <option value="3">ชั้นปีที่ 3</option>
+                                <option value="4">ชั้นปีที่ 4</option>
+                            </select>
+                        </div>
+                        <p></p>
                     </div>
                     <div class="datas">
                         <a>คณะ</a>
-                        <input type="text" placeholder="คณะ" name="factory">
-                        <p>*</p>
+                        <!-- <input type="text" placeholder="คณะ" name="factory"> -->
+                        <div class="border-uploads" >
+                            <select name="factory" required>
+                                <option selected value="0">คณะ</option>
+                                <option value="1" selected>วิทยาลัยการคอมพิวเตอร์</option>
+                            </select>
+                        </div>
+                        <p></p>
                     </div>
                     <div class="datas">
                         <a>สาขาวิชา</a>
-                        <input type="text" placeholder="สาขาวิชา" name="department">
-                        <p>*</p>
+                        <!-- <input type="text" placeholder="สาขาวิชา" name="department"> -->
+                        <div class="border-uploads" >
+                            <select name="department" required>
+                                <option selected value="0">สาขาวิชา</option>
+                                <option value="1" selected>วิทยาลัยการคอมพิวเตอร์ ภาคปกติ</option>
+                                <option value="2" selected>วิทยาลัยการคอมพิวเตอร์ ภาคพิเศษ</option>
+                            </select>
+                        </div>  
+                        <p></p>
                     </div>
                     <div class="datas">
                         <a>เกรดเฉลี่ยสะสม</a>
-                        <input type="text" placeholder="เกรดเฉลี่ยสะสม" name="gpa">
-                        <p>*</p>
+                        <input type="text" placeholder="เกรดเฉลี่ยสะสม" name="gpa" oninput="formatGPA(this)" maxlength="4" required>
+                        <p></p>
                     </div>
                     <div class="datas">
                         <a>อีเมล</a>
-                        <input type="text" placeholder="อีเมล" name="email">
-                        <p>*</p>
+                        <input type="email" placeholder="อีเมล" name="email" required>
+                        <p></p>
                     </div>
                     <div class="datas">
                         <a>หมายเลขโทรศัพท์</a>
-                        <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel">
-                        <p>*</p>
+                        <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel" oninput="formatTEL(this)" maxlength="11" required>
+                        <p id="telError"></p>
                     </div>
                 </div>
             </div>
@@ -75,107 +97,114 @@
 
             <div class="info-intern">
                 <div class="uploads-content">
-                    <a href="">ชื่อสถาที่ฝึกงาน</a>
+                    <a>ชื่อสถาที่ฝึกงาน <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="location">
+                        <input type="text" name="location" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">ตำแหน่ง</a>
+                    <a>ตำแหน่ง <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="position">
+                        <input type="text" name="position" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">โปรดระบุด้วยว่าหนังสือเรียนถึงใคร</a>
+                    <a>ผู้ประสานงาน (โปรดระบุด้วยว่าหนังสือเรียนถึงใคร) <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="receiver" placeholder="(เช่น ผู้อํานวยการ......, ผู้จัดการ..., หัวหน้าส่วน เป็นต้น)">
+                        <input type="text" name="receiver" placeholder="(เช่น ผู้อํานวยการ......, ผู้จัดการ..., หัวหน้าส่วน เป็นต้น)" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">ชื่อผู้ประสานงาน</a>
+                    <a>เบอร์โทร <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="coordinator">
+                        <input type="text" name="company_tel" oninput="formatTEL2(this)" maxlength="11" required>
                     </div>
                 </div>
 
                 <div class="uploads-content">
-                    <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                    <a >บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="aboutcompany">
+                        <input type="text" name="aboutcompany" required>
                     </div>
                 </div>
-
+                <div class="uploads-content">
+                    <a>ช่วงเวลาที่ฝึกงาน <span>*</span></a>
+                    <div class="border-input2">
+                        <input type="date" name="start_intern" required>
+                        <h2>ถึง</h2>
+                        <input type="date" name="end_intern" required>
+                    </div>
+                </div>
             </div>
             <div class="topic">
                 <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
             </div>
             <div class="info-address">
                 <div class="uploads-content">
-                    <a href="">ที่อยู่</a>
+                    <a>ที่อยู่ <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน...">
+                        <input type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน..." required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">บริษัท/หน่วยงาน</a>
+                    <a>บริษัท/หน่วยงาน <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="companyname">
+                        <input type="text" name="companyname" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">ตำบล</a>
+                    <a>ตำบล <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="subdistrict">
+                        <input type="text" name="subdistrict" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">อำเภอ</a>
+                    <a>อำเภอ <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="district">
+                        <input type="text" name="district" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">จังหวัด</a>
+                    <a>จังหวัด <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="province">
+                        <input type="text" name="province" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">รหัสไปรษณีย์</a>
+                    <a>รหัสไปรษณีย์ <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="code">
+                        <input type="text" name="code" required>
                     </div>
                 </div>
             </div>
             <div class="topic">
-                <h2 class="sub-txt">เบอร์โทรศัพท์ติดต่อ</h2>
+                <h2 class="sub-txt">ผู้ประสานงาน/พี่เลี้ยง</h2>
             </div>
 
             <div class="info-phone">
                 <div class="uploads-content">
-                    <a href="">ผู้ประสานงาน/พี่เลี้ยง</a>
+                    <a>ชื่อ ผู้ประสานงาน/พี่เลี้ยง <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="coordinator_tel">
+                        <input type="text" name="coordinator">
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">บริษัท/หน่วยงาน</a>
+                    <a>เบอร์โทร <span>*</span></a>
                     <div class="border-input">
-                        <input type="text" name="company_tel">
+                        <input type="text" name="coordinator_tel"  oninput="formatTEL2(this)" maxlength="11" required>
                     </div>
                 </div>
             </div>
 
             <div class="topic2">
-                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</h2>
-                <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง</h2>
+                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน <span>*</span></h2>
+                <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง <span>*</span></h2>
             </div>
 
             <div class="send-date">
                 <div class="uploads-content">
                     <div class="border-input">
-                        <input type="date">
+                        <input type="date" name="submission_date">
                     </div>
                 </div>
 
@@ -191,33 +220,33 @@
             </div>
             <div class="uploads-section">
                 <div class="uploads-content">
-                    <a href="">เอกสารยื่นใบฝึกงาน</a>
+                    <a>เอกสารยื่นใบฝึกงาน <span>*</span></a>
+                    <div class="border-uploads">
+                        <input type="file" name="file" required>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a>หนังสือยินยอมผู้ปกครอง <span>*</span></a>
+                    <div class="border-uploads">
+                        <input type="file" name="file" required>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a>resume นักศึกษา <span>*</span></a>
+                    <div class="border-uploads">
+                        <input type="file" name="file" required>
+                    </div>
+                </div>
+                <div class="uploads-content">
+                    <a>transcript <span>*</span></a>
                     <div class="border-uploads">
                         <input type="file" name="file">
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">หนังสือยินยอมผู้ปกครอง</a>
-                    <div class="border-uploads">
-                        <input type="file" name="file">
-                    </div>
-                </div>
-                <div class="uploads-content">
-                    <a href="">resume นักศึกษา</a>
-                    <div class="border-uploads">
-                        <input type="file" name="file">
-                    </div>
-                </div>
-                <div class="uploads-content">
-                    <a href="">เอกสารตอบรับ จากบริษัท (กรณีนักศึกษารับมาเอง)</a>
-                    <div class="border-uploads">
-                        <input type="file" name="file">
-                    </div>
-                </div>
-                <div class="uploads-content">
-                    <a href="">รูปแบบการฝึกงาน</a>
-                    <div class="border-uploads" name="working_style">
-                        <select>
+                    <a>รูปแบบการฝึกงาน <span>*</span></a>
+                    <div class="border-uploads" >
+                        <select name="working_style" required>
                             <option selected value="0">รูปแบบการฝึกงาน</option>
                             <option value="1">Onsite</option>
                             <option value="2">Work form home</option>
@@ -226,11 +255,15 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">transcript</a>
+                    <a>หนังสือขอความอนุเคราะห์จากบริษัท (ทั้งนี้ วิธีการส่งอยู่ในดุลยพินิจ ตามความเหมาะสม) <span>*</span></a>
                     <div class="border-uploads">
-                        <input type="file" name="file">
+                        <select name="acceptance" required>
+                            <option value="1">มารับเอง</option>
+                            <option value="2">ให้เจ้าหน้าที่ส่งตามที่อยู่</option>
+                        </select>
                     </div>
                 </div>
+                
             </div>
 
 
@@ -241,7 +274,7 @@
         <!-- <input type="submit" value="Upload Photo"> -->
     </form>
 </main>
-
+<!-- 
 <div class="status">
     <h3>Status</h3>
 
@@ -332,4 +365,4 @@
 
     </details>
 
-</div>
+</div> -->

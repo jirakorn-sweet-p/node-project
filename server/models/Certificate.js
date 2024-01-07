@@ -4,15 +4,12 @@ const Schema = mongoose.Schema;
 const CertificateSchema = new Schema({
     doc_certificate:{
         type:String,
-        require:true
     },
     doc_dailywork:{
         type:String,
-        require:true
     },
     doc_evuluate_work:{
         type: String,
-        require:true
     },
     status:{
         type: String,

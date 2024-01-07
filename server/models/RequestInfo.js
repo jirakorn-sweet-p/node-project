@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 const RequestInfoSchema = new Schema({
+    student_code:{
+        type:String,
+        require:true
+    },
     doc_request_intern:{
         type:String,
         require:true

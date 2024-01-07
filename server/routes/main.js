@@ -12,9 +12,8 @@ const uploadDocs = require('../models/uploadDocs');
 const student_info = require('../models/StudentInfo');
 const company_info = require('../models/CompanyInfo');
 const request_info = require('../models/RequestInfo');
-const imageModel = require('../models/imageModel');
-const address = require('../models/Address');
-
+const request_ser = require('../models/RequestService');
+const certificate = require('../models/Certificate');
 //test
 // SET STORAGE
 // let cc = 0;
@@ -83,7 +82,7 @@ const fileSizeFormatter = (bytes,decimal) => {
 
 const UploadFile = async (req,res,next) => {
     try{
-        console.log(req.body);
+        // console.log(req.body);
         const obj = JSON.parse(JSON.stringify(req.body));
         // console.log(obj['fullname']);
         var files = new uploadFile ({
@@ -93,7 +92,7 @@ const UploadFile = async (req,res,next) => {
             fileSize: fileSizeFormatter(req.file.size,2),
             // stdID: req.file.stdid
         });
-        console.log(files);
+        // console.log(files);
         await files.save();
         res.status(201).send('File Upload Successfully');
     }catch(error){
@@ -103,11 +102,72 @@ const UploadFile = async (req,res,next) => {
 }
 
 const UploadDocuments = async (req,res,next) => {
+
+    std_info = new student_info({
+        name: req.body.fullname,
+        student_code: req.body.std_id,
+        education: req.body.lv,
+        grade:  req.body.gpa,
+        factory: req.body.factory,
+        email: req.body.email,
+        phone: req.body.tel,
+        health_coverage: req.body.medical_rights,
+        image: req.files[0].filename,
+    });
+
+    const saved_std_info = await std_info.save();
+    console.log(req.files);
+    reqInfo = new request_info({
+        student_code: req.body.std_id,
+        doc_request_intern: req.files[1].filename,
+        doc_approve_parrent: req.files[2].filename,
+        doc_resume: req.files[3].filename,
+        doc_transcript: req.files[4].filename,
+        working_style: req.body.working_style,
+        // intern_format: req.body.working_style,
+        doc_approve_company: req.body.acceptance,
+    });
+
+    const saved_reqInfo= await reqInfo.save();
+
+    com_info = new company_info({
+        company_name: req.body.location,
+        tel: req.body.company_tel,
+        address: req.body.address,
+        type_business: req.body.aboutcompany,
+        student_code: req.body.std_id,
+        position: req.body.position,
+        province: req.body.province,
+        receiver_name: req.body.receiver,
+        mentor: req.body.coordinator,
+        tel_mentor: req.body.coordinator_tel,
+        start_intern: req.body.start_intern,
+        end_intern: req.body.end_intern,
+        submission_date: req.body.submission_date,
+        district: req.body.district,
+        subdistrict: req.body.subdistrict,
+        provinceID: req.body.code,
+    });
+
+    const saved_com_info= await com_info.save();
+
+    cer_info = new certificate({});
+
+    const saved_cer_info= await cer_info.save();
+
+    request_service = new request_ser({
+        student_info: saved_std_info._id,
+        request_info: saved_reqInfo._id,
+        company_info: saved_com_info._id,
+        certificate_info: saved_cer_info._id
+    })
+    await request_service.save();
+
     try{
         let filesArray = [];
         const obj = JSON.parse(JSON.stringify(req.body));
         var index = 0;
-        // console.log(req.body); 
+        console.log(req.body); 
         req.files.forEach(element => {
             
             const file = {
@@ -127,19 +187,32 @@ const UploadDocuments = async (req,res,next) => {
             file: filesArray
         });
         await Documents.save();
-        res.status(201).send('File Upload Successfully');
+        res.redirect('/request');
+        // res.status(201).send('File Upload Successfully');
     }catch(error){
         console.log('error');
         res.status(400).send(error);
     }
 }
 
-
+router.get('/download-pdf/:filename', (req, res) => {
+    // Access the dynamic parameter using req.params
+    const fileName = req.params.filename;
+    console.log(fileName);
+    // Assuming the files are in the 'upload' directory
+    const filePath = `uploads/${fileName}`;
+    console.log(filePath);
+    // Set the correct Content-Type header
+    res.setHeader('Content-Type', 'application/pdf');
+    console.log('test');
+    // Trigger the file download
+    res.download(filePath);
+  });
 
 //Router
 
 router.post('/uploadImgProfile',upload.single('file'),UploadFile);
-router.post('/uploadRequest',upload.array('file',6),UploadDocuments);
+router.post('/uploadRequest',upload.array('file',5),UploadDocuments);
 
 router.get('/request', (req,res) => {
     const locals = {
@@ -185,11 +258,12 @@ router.get('/request-status',async (req,res) => {
     
     try{
         // find by username : student_id
-        
+        const request_doc = (await request_info.find({'student_code':'633020568-3'})).at(0);
         const data = (await student_info.find({'student_code':'633020568-3'})).at(0);
         const company = (await company_info.find({'student_code':'633020568-3'})).at(0);
-        const addres = (await address.find()).at(0);
-        res.render('index', {locals,data,company,addres});
+        // const addres = (await address.find()).at(0);
+        // console.log(company.start_intern.toISOString().split('T')[0]);
+        res.render('index', {locals,data,company,request_doc});
     }catch(error){
         console.log("wtf : "+error);
     }
@@ -295,7 +369,23 @@ router.get('/request-teacher', (req,res) => {
         content:"../layouts/teacher/request-teacher.ejs",
         bar1: "active"
     }
-    res.render('index', {locals});
+    const all_request = [];
+
+request_ser.find({})
+    .then(requests => {
+    // Process the requests or store them in the 'all_request' array
+    all_request.push(...requests);
+    console.log('Requests:', requests);
+
+    // Render the page with the requests
+    res.render('index', { locals,requests });
+    })
+    .catch(error => {
+    console.error('Error retrieving documents:', error);
+
+    // Handle the error and render the page with an error message if needed
+    res.render('error', { locals: { errorMessage: 'Failed to retrieve requests.' } });
+    });
 });
 
 router.get('/requests-all-teacher', (req,res) => {

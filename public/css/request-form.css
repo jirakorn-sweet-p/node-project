@@ -498,6 +498,10 @@ main {
     
 }
 
+.topic2 h2 span{
+    color: red;
+}
+
 .topic2 h2 {
     font-size: medium;
     padding-left: 2rem;
@@ -615,6 +619,11 @@ main {
     box-shadow: var(--box-shadow4);
 }
 
+.comment{
+    width: 100%;
+    min-height: 100%;
+}
+
 .info-warning {
     margin: 1rem 5%;
     min-height: 3.5rem;
@@ -670,6 +679,10 @@ main {
     align-items: start;
 }
 
+.uploads-content a span{
+    color: red;
+}
+
 .uploads-content input[type="text"]{
     padding-left: 1rem;
 }
@@ -707,6 +720,13 @@ input[type=file]::file-selector-button:hover {
     display: flex;
     justify-content: left;
     align-items: center;
+}
+
+.datas .border-uploads{
+    width: 40%;
+    height: 100%;
+    border-radius: 5px;
+    margin: 0 2% 0 5%;
 }
 
 .submit{
@@ -946,6 +966,31 @@ strong{
     min-width: 100%;
     border-radius: 4px  ;
     box-shadow: var(--box-shadow2);
+}
+
+.border-input2{
+    background-color: rgba(255, 255, 255, 0);
+    width: 80%;
+    min-height: 50%;
+    padding-left: 1%;
+    border-radius: 4px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.border-input2 input{
+    min-height: 100%;
+    min-width: 46%;
+    padding: 0 1rem;
+    border-radius: 4px  ;
+    box-shadow: var(--box-shadow2);
+}
+
+.border-input2 h2{
+    font-size: small;
+    margin: 0 2%;
+    font-weight: 500;
 }
 
 .info-address{
