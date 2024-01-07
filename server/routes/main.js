@@ -200,7 +200,7 @@ router.get('/download-pdf/:filename', (req, res) => {
     const fileName = req.params.filename;
     console.log(fileName);
     // Assuming the files are in the 'upload' directory
-    const filePath = `uploads/${fileName}`;
+    const filePath = `public/uploads/${fileName}`;
     console.log(filePath);
     // Set the correct Content-Type header
     res.setHeader('Content-Type', 'application/pdf');
