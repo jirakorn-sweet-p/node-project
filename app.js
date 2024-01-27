@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const expressLayout = require('express-ejs-layouts');
+const bodyParser = require('body-parser');
 // const methodOverride = require('method-override');
 // const cookieParser = require('cookie-parser');
 // const session = require('express-session');
@@ -13,6 +14,8 @@ const connectDB = require('./server/config/db');
 const app = express();
 const PORT = process.env.PORT || 8000;
   
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // // Connect to DB
 connectDB();
 

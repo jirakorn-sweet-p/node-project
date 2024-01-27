@@ -35,11 +35,12 @@ const RequestInfoSchema = new Schema({
         require:true
     },
     comment:{
-        type: String
+        type: String,
+        default:"no comment"
     },
     status:{
         type: String,
-        default:"Pending"
+        default:"0"
     },
     editor:{
         type: String,

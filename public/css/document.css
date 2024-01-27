@@ -148,7 +148,7 @@ select::-ms-expand {
 
 .container {
     max-width: 100%;
-    height: 1000px;
+    height: 100vh;
     background-color: var(--color-background);
     display: grid;
     margin: 0 auto;
@@ -230,7 +230,8 @@ aside .sidebar {
     background-color: var(--color-white);
     box-shadow: var(--box-shadow);
     /* border-radius: 15px; */
-    height: 100%;
+    height: 120%;
+    min-height: 100%;
     position: relative;
     top: 1.5rem;
     transition: all .5s ease;
@@ -549,8 +550,18 @@ main {
     align-items: center;
 }
 
+.add-btn:hover{
+    background-color: var(--color-cp);
+    box-shadow: var(--box-shadow-cp);
+    color: var(--color-white);
+}
+
+.add-btn:hover a{
+    color: var(--color-white);
+}
+
 .document-section{
-    height: 85%;
+    height: 100%;
     margin-top: 0;
     width: 100%;
     /* align-items: center; */
@@ -573,8 +584,8 @@ main {
     border-radius: 5px;
     box-shadow: var(--box-shadow2);
     width: 25rem;
-    height: 22%;
-    margin: 1.5rem 0 0 1.5rem;
+    height: 12rem;
+    margin: 0 0 0 1.5rem;
     display: flex;
     flex-direction: column;
 }
@@ -608,7 +619,7 @@ main {
 .edit-ic{
     height: 100%;
     padding: 5px;
-    margin: 2px;
+    margin: 1rem 2px 2px 2px;
 }
 
 .card-document h3{
@@ -628,41 +639,36 @@ main {
     align-items: start;
 }
 
-.downlaod h3{
+.downlaod a{
     margin: 1rem 1rem;
     padding: 0;
     width: 20%;
     font-size: small;
 }
 
-.card-document .downlaod h3:last-child{
+.card-document .downlaod a:last-child{
+    width: 45%;
+    text-decoration: underline solid 1px #0D75BD;
+}
+
+.card-document .downlaod a:last-child:hover{
+    color: #0D75BD;
+    text-decoration: underline solid 1px #0D75BD;
+}
+
+.card-document:last-child .downlaod a:last-child:hover{
+    color: #0D75BD;
+    text-decoration: underline solid 1px #0D75BD;
+}
+
+.card-document:last-child:hover .downlaod a:last-child{
     color: #0D75BD;
     width: 45%;
     text-decoration: underline solid 1px #0D75BD;
 }
 
-.card-document:hover{
-    background-color: #0D75BD;
-    box-shadow: var(--box-shadow-cp);
-    color: white;
-}
-
-.card-document:hover .downlaod h3:last-child{
-    color: white;
-    width: 45%;
-    text-decoration: underline solid 1px white;
-}
-
-.card-document:last-child:hover{
-    background-color: #f79327;
-    box-shadow: var(--box-shadow-cp);
-    color: white;
-}
-
-.card-document:last-child:hover .downlaod h3:last-child{
-    color: white;
-    width: 45%;
-    text-decoration: underline solid 1px white;
+.edit-ic span:hover{
+    color: #0D75BD;
 }
 
 
@@ -672,5 +678,215 @@ main {
     height: 5%;
     margin-top: -1rem;
     margin-right: 1rem;
+}
+
+/* Modal */
+
+.modal{
+    position: fixed;
+    width: 50%;
+    height: 60%;
+    background-color: var(--color-white);
+    box-shadow: var(--box-shadow);
+    z-index: 90;
+    left: 25%;  
+    top: 15%;
+    border-radius: 8px;
+}
+
+.modal:first-child{
+    height: 50%;
+    top: 25%;
+}
+
+.modal-back{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #000b12d6;
+    z-index: 88;
+}
+
+.close{
+    display: none;
+}
+
+.modal .modal-box{
+    margin: 1rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+/* Input */
+.datas {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* background-color: #FF0060; */
+    height: 8%;
+    width: 80%;
+    padding: 2px 0;
+    margin-top: 3%;
+}
+
+.modal:first-child .modal-box .datas {
+    height: 10%;
+}
+
+
+.long{
+    height: 20%;
+}
+
+.datas h2{
+    width: 20%;
+    margin-right: 2rem;
+}
+
+.datas input,
+.datas textarea,
+.datas a,
+.datas .border-uploads{
+    height: 100%;
+}
+
+textarea {
+    resize: none;
+}
+
+textarea.auto {
+    overflow-y: hidden;
+}
+
+input,textarea{
+    width: 100%;
+}
+
+textarea {
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    outline: none;
+    width: 100%;
+    line-height: 22px;
+    padding: 10px;
+    border-radius: 15px;
+    color: #404660;
+    border: none;
+    background: #fff;
+    transition: box-shadow 0.25s;
+    box-shadow: inset 0 0 0 1px var(--border-color, #e1e6f9), 0 0 0 3px var(--focus-color, transparent);
+}
+
+.border-uploads{
+    width: 100%;
+}
+.datas input:not(:first-child){
+    padding-left: 1rem;
+    margin: 0;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow2);
+}
+
+.datas textarea:not(:first-child){
+    padding-left: 1rem;
+    margin: 0;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow2);
+    display: block;
+}
+
+.datas a:not(:first-child){
+    padding-left: 1rem;
+    margin: 0;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow2);
+    display: block;
+}
+
+.border-uploads {
+    background-color: var(--color-white);
+    box-shadow: var(--box-shadow2);
+    width: 100%;
+    border-radius: 10px;
+    display: flex;
+}
+
+.border-uploads a{
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    color: #0D75BD;
+    text-decoration: underline solid 1px #0D75BD;
+}
+
+.submit{
+    width: 100%;
+    height: 15%;
+    /* background-color: red; */
+    padding-left: 1.5rem;
+    display: flex; 
+    align-items: flex-end; 
+}
+
+.submit button{
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem;
+    font-size: medium;
+    font-weight: 700;
+    background: #084cdf;
+    color: #fff;
+
+}
+
+.submit button:hover{
+    background: #0d45a5;
+}
+
+input[type=file]::file-selector-button {
+    margin-right: 20px;
+    border: none;
+    background: #084cdf;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #0d45a5;
+}
+
+.paginator{
+    min-width: 50%;
+    margin-left: 3rem;
+    margin-bottom: 1rem;
+    height: 3rem;
+    /* border: solid 2px #181a1e; */
+    /* justify-self: start;
+    align-self: end;
+    display: flex; */
+    display: flex;
+    align-items: flex-end;
+}
+
+.paginator a{
+    width: 2rem;
+    height: auto;
+    color: var(--color-cp);
+    background-color: var(--color-white);
+    border-radius: 10px;
+    padding: 0.75rem 0.75rem;
+    margin-right: 0.3rem;
+    border: solid 1px #7d8da1;
+}
+
+.paginator .current-page{
+    background-color: var(--color-cp);
+    color: var(--color-white);
 }
 

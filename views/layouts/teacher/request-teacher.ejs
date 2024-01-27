@@ -1,16 +1,5 @@
 <!-- MODAL -->
-<div class="modal-back close" id="modal-back">
-</div>
-<div class="modal close" id="modal">
-    <div class="modal-box">
-        <h2>เลือก</h2>
-        <div class="menu">
-            <a href="request/form">ยื่นคำร้อง</a>
-        </div>
-        <div class="menu">
-            <a href="request-requirment-temp.html">ยื่นเอกสารสำเร็จการศึกษา</a>
-        </div>
-    </div>
+<div class="modal-back <%= modal %>" id="modal-back">
 </div>
 <!-- END MODAL -->
 <main>
@@ -30,7 +19,398 @@
                 </tr>
             </thead>
             <tbody>
-                <% requests.forEach(element => { %>
+
+                <% requests.forEach((element,index) => { %>
+                    <% if (found && found.student_info.student_code == element.student_info.student_code) { %>
+                        <div class="modal" id="modal<%= index %>">
+                     <% } else { %>
+                        <div class="modal close" id="modal<%= index %>">
+                    <% } %>
+                        <form action="/request-teacher/update" method="post" name="request" enctype="/submit-table">
+                        <div class="modal-box">
+
+                            <div class="request-info">
+                                <div class="topic">
+                                    <h2>ข้อมูลนักศึกษา</h2>
+                                </div>
+                                <div class="contents">
+                                    <div class="images-content">
+                                        <div class="images-area">
+                                            <img src="/uploads/<%= element.student_info.image %>" alt="image profile">
+                                        </div>
+                                    </div>
+                                    <div class="infomation">
+                                        <div class="datas">
+                                            <a>ชื่อ-นามสกุล</a>
+                                            <input type="text" placeholder="ชื่อ-นามสกุล"  name="name" value="<%= element.student_info.name %>" >
+                                        </div>
+                                        <div class="datas">
+                                            <a>รหัสประจำตัว</a>
+                                            <input type="text" placeholder="รหัสประจำตัว" oninput="formatID(this)" maxlength="10" name="student_code" value="<%= element.student_info.student_code %>" >
+                                            <p></p>
+                                        </div>
+                                        <div class="datas">
+                                            <a>ระดับการศึกษา</a>
+                                            <!-- <input type="text" placeholder="ระดับการศึกษา" name="education"
+                                                value="ปริญญาตรี ชั้นปีที่ <%= element.student_info.education %>" > -->
+                                                <div class="border-uploads" >
+                                                    <select name="education" required>
+                                                        
+                                                        <% for( let index = 1; index <= 4; index++ ) { %>
+                                                            <% if (element.student_info.education == index) { %>
+                                                                <option selected value="<%= index %>">ชั้นปีที่ <%= index %></option>
+                                                            <% } else { %>
+                                                                <option value="<%= index %>">ชั้นปีที่ <%= index %></option>
+                                                            <% } %>
+                                                        <% } %>
+                                                    </select>
+                                                </div>
+                                        </div>
+                                        <div class="datas">
+                                            <a>คณะ</a>
+                                            <input type="text" placeholder="คณะ" value="วิทยาลัยการคอมพิวเตอร์" >
+                                        </div>
+                                        <div class="datas">
+                                            <a>สาขาวิชา</a>
+                                            <div class="border-uploads" >
+                                                <select name="factory" required>
+                                                    
+                                                    <% for( let index = 1; index <= 2; index++ ) { %>
+                                                        <% if (element.student_info.factory == index && index == 1) { %>
+                                                            <option selected value="<%= index %>">วิทยาการคอมพิวเตอร์ ภาคปกติ</option>
+                                                        <% } else if (element.student_info.factory == index && index == 2){ %>
+                                                            <option selected value="<%= index %>">วิทยาการคอมพิวเตอร์ ภาคพิเศษ</option>
+                                                        <% } %>
+                                                        <% if (element.student_info.factory != index && index==1) { %>
+                                                            <option value="<%= index %>">วิทยาการคอมพิวเตอร์ ภาคปกติ</option>
+                                                        <% } else if (element.student_info.factory != index && index==2){ %>
+                                                            <option value="<%= index %>">วิทยาการคอมพิวเตอร์ ภาคพิเศษ</option>
+                                                        <% } %>
+                                                    <% } %>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="datas">
+                                            <a>เกรดเฉลี่ยสะสม</a>
+                                            <input type="text" placeholder="เกรดเฉลี่ยสะสม" oninput="formatGPA(this)" maxlength="4" name="grade" value="<%= element.student_info.grade.toFixed(2) %>" >
+                                            <p></p>
+                                        </div>
+                                        <div class="datas">
+                                            <a>อีเมล</a>
+                                            <input type="email" placeholder="อีเมล" name="email" value="<%= element.student_info.email %>" >
+                                            <p></p>
+                                        </div>
+                                        <div class="datas">
+                                            <a>หมายเลขโทรศัพท์</a>
+                                            <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel" oninput="formatTEL(this)" maxlength="11" value="<%= element.student_info.phone %>" >
+                                            <p id="telError"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="approved">
+                                    <div class="comment">
+                                        <h3>comments</h3>
+                                        <textarea name="comment1" id="" cols="30" rows="10"><%= element.student_info.comment %></textarea>
+                                    </div>
+                                    <div class="status">
+                                        <div class="border-status">
+                                            <select name="status1" required>
+                                                <% for( let index = 0; index <= 2; index++ ) { %>
+                                                    <% if (element.student_info.status == index && index == 0) { %>
+                                                        <option selected disabled value="<%= index %>">รอดำเนินการ</option>
+                                                    <% } else if (element.student_info.status == index && index == 1) { %>
+                                                        <option selected value="<%= index %>">ผ่าน</option>
+                                                    <% } else if (element.student_info.status == index && index == 2){ %>
+                                                        <option selected value="<%= index %>">ไม่ผ่าน</option>
+                                                    <% } %>
+
+                                                    <% if (element.student_info.status != index && index == 0) { %>
+                                                        <option disabled value="<%= index %>">รอดำเนินการ</option>
+                                                    <% } else if (element.student_info.status != index && index == 1) { %>
+                                                        <option value="<%= index %>">ผ่าน</option>
+                                                    <% } else if (element.student_info.status != index && index == 2){ %>
+                                                        <option value="<%= index %>">ไม่ผ่าน</option>
+                                                    <% } %>
+                                                <% } %>
+                                        </select>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="request-doc">
+                                <div class="topic">
+                                    <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                                </div>
+                    
+                                <div class="info-intern">
+                                    <div class="uploads-content">
+                                        <a href="">ชื่อสถาที่ฝึกงาน</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.company_name %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">ตำแหน่ง</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.position %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">โปรดระบุด้วยว่าหนังสือเรียนถึงใคร</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.receiver_name %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">เบอร์โทรศัพท์</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.tel %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.type_business %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">ช่วงเวลาที่ฝึกงาน</a>
+                                        <div class="border-input2">
+                                            <input type="date" name="start_intern"
+                                                value="<%= element.company_info.start_intern.toISOString().split('T')[0] %>" >
+                                            <h3>ถึง</h3>
+                                            <input type="date" name="end_intern"
+                                                value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>" >
+                                        </div>
+                                    </div>
+                    
+                                </div>
+                                <div class="topic">
+                                    <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+                                </div>
+                                <div class="info-address">
+                                    <div class="uploads-content">
+                                        <a href="">ที่อยู่</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.address %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">บริษัท/หน่วยงาน</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.company_name %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">ตำบล</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.subdistrict %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">อำเภอ</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.district %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">จังหวัด</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.province %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">รหัสไปรษณีย์</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.provinceID %>" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="info-phone">
+                                    <div class="uploads-content">
+                                        <a href="">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</a>
+                                        <div class="border-input">
+                                            <input type="date" value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">สิทธิการรักษาพยาบาล/บัตรทอง</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.student_info.health_coverage %>" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="topic">
+                                    <h2 class="sub-txt">ผู้ประสานงาน/พี่เลี้ยง</h2>
+                                </div>
+                    
+                                <div class="info-phone">
+                                    <div class="uploads-content">
+                                        <a href="">ชื่อ ผู้ประสานงาน/พี่เลี้ยง</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.mentor %>" >
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">เบอร์โทรศัพท์</a>
+                                        <div class="border-input">
+                                            <input type="text" value="<%= element.company_info.mentor %>" >
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="approved">
+                                    <div class="comment">
+                                        <h3>comments</h3>
+                                        <textarea name="comment2" id="" cols="30" rows="10"><%= element.company_info.comment %></textarea>
+                                    </div>
+                                    <div class="status">
+                                        <div class="border-status">
+                                            <select name="status2" required>
+                                            <% for( let index = 0; index <= 2; index++ ) { %>
+                                                <% if (element.company_info.status == index && index == 0) { %>
+                                                    <option selected disabled value="<%= index %>">รอดำเนินการ</option>
+                                                <% } else if (element.company_info.status == index && index == 1) { %>
+                                                    <option selected value="<%= index %>">ผ่าน</option>
+                                                <% } else if (element.company_info.status == index && index == 2){ %>
+                                                    <option selected value="<%= index %>">ไม่ผ่าน</option>
+                                                <% } %>
+
+                                                <% if (element.company_info.status != index && index == 0) { %>
+                                                    <option disabled value="<%= index %>">รอดำเนินการ</option>
+                                                <% } else if (element.company_info.status != index && index == 1) { %>
+                                                    <option value="<%= index %>">ผ่าน</option>
+                                                <% } else if (element.company_info.status != index && index == 2){ %>
+                                                    <option value="<%= index %>">ไม่ผ่าน</option>
+                                                <% } %>
+                                            <% } %>
+                                        </select>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                    
+                    
+                            </div>
+
+                            <div class="request-cer">
+                                <div class="topic">
+                                    <h2>upload document</h2>
+                                </div>
+                                <div class="uploads-section">
+                                    <div class="uploads-content">
+                                        <a href="">เอกสารยื่นใบฝึกงาน</a>
+                                        <!-- upload/2024-01-07T05-15-23.435Z-DIP_LAB2.pdf -->
+                                        <div class="border-uploads">
+                                            <a class="links border-space" href="/download-pdf/<%= element.request_info.doc_request_intern %>" target="_blank" download>
+                                                    <%= element.request_info.doc_request_intern %>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">หนังสือยินยอมผู้ปกครอง</a>
+                                        <div class="border-uploads">
+                                            <a class="links border-space" href="/download-pdf/<%= element.request_info.doc_approve_parrent %>" target="_blank" download>
+                                                    <%= element.request_info.doc_approve_parrent %>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">resume นักศึกษา</a>
+                                        <div class="border-uploads">
+                                            <a class="links border-space" href="/download-pdf/<%= element.request_info.doc_resume %>" target="_blank" download>
+                                                    <%= element.request_info.doc_resume %>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="uploads-content">
+                                        <a href="">transcript</a>
+                                        <div class="border-uploads">
+                                            <a class="links border-space" href="/download-pdf/<%= element.request_info.doc_transcript %>" target="_blank" download>
+                                                    <%= element.request_info.doc_transcript %>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="uploads-content">
+                                        <a href="">หนังสือขอความอนุเคราะห์จากบริษัท</a>
+                                        
+                                        <div class="border-uploads">
+                                            <select name="doc_approve_company" required>
+                                                <% for( let index = 1; index <= 2; index++ ) { %>
+                                                    <% if (element.request_info.doc_approve_company == index && index == 1) { %>
+                                                        <option selected value="<%= index %>">เจ้าหน้าที่จัดส่งให้</option>
+                                                    <% } else if (element.request_info.doc_approve_company == index && index == 2){ %>
+                                                        <option selected value="<%= index %>">มารับไปส่งเอง</option>
+                                                    <% } %>
+                                                    <% if (element.request_info.doc_approve_company != index && index==1) { %>
+                                                        <option value="<%= index %>">เจ้าหน้าที่จัดส่งให้</option>
+                                                    <% } else if (element.request_info.doc_approve_company != index && index==2){ %>
+                                                        <option value="<%= index %>">มารับไปส่งเอง</option>
+                                                    <% } %>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="uploads-content">
+                                        <a href="">รูปแบบการฝึกงาน</a>
+                                        <div class="border-uploads">
+                                            <% if (element.request_info.working_style==1) { %>
+                                                <a class="border-space">Onsite</a>
+                                                <% } else if (element.request_info.working_style==2) { %>
+                                                    <a class="border-space">Work form home</a>
+                                                    <% } else if (element.request_info.working_style==3) { %>
+                                                        <a class="border-space">Hybrid</a>
+                                                        <% } else { %>
+                                                            <a class="border-space" ></a>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="approved">
+                                    <div class="comment">
+                                        <h3>comments</h3>
+                                        <textarea name="comment3" id="" cols="30" rows="10"><%= element.request_info.comment %></textarea>
+                                    </div>
+                                    <div class="status">
+                                        <div class="border-status">
+                                            <select name="status3" required>
+                                            <% for( let index = 0; index <= 2; index++ ) { %>
+                                                <% if (element.request_info.status == index && index == 0) { %>
+                                                    <option selected disabled value="<%= index %>">รอดำเนินการ</option>
+                                                <% } else if (element.request_info.status == index && index == 1) { %>
+                                                    <option selected value="<%= index %>">ผ่าน</option>
+                                                <% } else if (element.request_info.status == index && index == 2){ %>
+                                                    <option selected value="<%= index %>">ไม่ผ่าน</option>
+                                                <% } %>
+
+                                                <% if (element.request_info.status != index && index == 0) { %>
+                                                    <option disabled value="<%= index %>">รอดำเนินการ</option>
+                                                <% } else if (element.request_info.status != index && index == 1) { %>
+                                                    <option value="<%= index %>">ผ่าน</option>
+                                                <% } else if (element.request_info.status != index && index == 2){ %>
+                                                    <option value="<%= index %>">ไม่ผ่าน</option>
+                                                <% } %>
+                                            <% } %>
+                                        </select>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="submit">
+                                <button type="submit">Update</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
                 <tr>
                     <td>
                         <div>
@@ -59,8 +439,8 @@
                         <div class="dropdown">
                             <button class="dropbtn">...</button>
                             <div class="dropdown-content">
-                                <a href="#">รายระเอียดคำร้องขอฝึกงาน</a>
-                                <a href="#">เอกสารยื่นคำร้องขอฝึกงาน</a>
+                                <a href="#" class="request-details" id="request-details" name="<%= index %>">รายระเอียดคำร้องขอฝึกงาน</a>
+                                <a href="#" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
                                 <!-- <a href="#">เอกสารรับรองการสำเร็จการฝึกงาน</a>
                                 <a href="#">บันทึกการฝึกงานและการประเมิน</a> -->
                             </div>

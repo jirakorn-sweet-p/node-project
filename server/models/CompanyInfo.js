@@ -66,7 +66,11 @@ const CompanyInfoSchema = new Schema({
     },
     status:{//
         type: String,
-        default:"Pending"
+        default:"0"
+    },
+    comment:{
+        type: String,
+        default:"no comment"
     },
     editor:{//
         type: String,

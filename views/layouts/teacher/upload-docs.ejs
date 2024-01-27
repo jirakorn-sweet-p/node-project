@@ -1,204 +1,192 @@
-<main>
-    <div class="main">
-        <div class="title-header">
-            <h2>เอกสารที่เกี่ยวข้อง</h2>
-            <div class="add-btn">
-                <a>เพิ่มเอกสาร</a>
-                <span class="material-icons-sharp">
-                        post_add
-                </span>
+<!-- MODAL -->
+
+<div class="modal-back close" id="modal-back">
+</div>
+
+<form action="/update-add" method="post" name="request" enctype="multipart/form-data">
+
+    <div class="modal close" id="modal">
+        <div class="modal-box">
+            <div class="datas">
+                <h1>สร้างเอกสาร</h1>
             </div>
-        </div>
-        
-        <div class="document-section">
-            <div class="documents">
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
+            <div class="datas">
+                <h2>ชื่อเอกสาร</h2>
+                <input type="text" placeholder="ชื่อเอกสาร" name="title" required>
+            </div>
+            <div class="datas long">
+                <h2>คำอธิบาย</h2>
+                <textarea name="details" cols="30" rows="10"></textarea>
+            </div>
+            <div class="datas">
+                <h2>เอกสาร</h2>
+                <div class="border-uploads">
+                    <input type="file" name="file">
                 </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>หนังสือยินยอมผู้ปกครอง</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>ประวัตินักศึกษา</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>ใบรับรองการฝึกงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>ข้อปฏิบัติในการฝึกงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>รายชื่อสถานประกอบการ-หน่วยงานที่เคยรับนักศึกษาฝึกงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-
-                <div class="card-document">
-                    
-                    <div class="card-document-header">
-                        <h2>สมุดบันทึกการฝึกงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>แบบประเมินการฝึกงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <div class="card-document-header">
-                        <h2>ผลระเมินการฝึกงาน</h2>
-                        <div class="edit-ic">
-                            <span class="material-icons-sharp">
-                                edit
-                            </span>
-                            <span class="material-icons-sharp">
-                                delete
-                            </span>
-                        </div>
-                    </div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-
+            </div>
+            <input type="text" name="username" class="close" value="<%= locals.username %>">
+            <div class="submit">
+                <button type="submit">Save</button>
             </div>
 
         </div>
     </div>
+</form>
+<!-- END MODAL -->
+<main>
+    <div class="main">
+        <div class="title-header">
+            <h2>เอกสารที่เกี่ยวข้อง</h2>
+
+            <div class="add-btn" id="add-doc">
+                <a>เพิ่มเอกสาร</a>
+                <span class="material-icons-sharp">
+                    post_add
+                </span>
+            </div>
+        </div>
+
+        <div class="document-section">
+            <div class="documents">
+                <% data.forEach((docs,index)=> { %>
+
+                    <form action="/edit-doc" method="post" name="request" enctype="multipart/form-data">
+
+                        <div class="card-document">
+                            <div class="card-document-header">
+                                <h2>
+                                    <%= docs.title %>
+                                </h2>
+                                <div class="edit-ic">
+                                    <span class="material-icons-sharp edit-btn" name="<%= index+1 %>"
+                                        id="edit-doc<%= index+1 %>">
+                                        edit
+                                    </span>
+                                    <a href="/delete-doc/<%= docs._id %>">
+                                    <span class="material-icons-sharp" hre>
+                                        delete
+                                    </span>
+                                    </a>
+                                    
+                                </div>
+                            </div>
+
+                            <h3>
+                                <%= docs.details %>
+                            </h3>
+                            <div class="downlaod">
+                                <a href="/download-doc-teacher/<%= docs.downloadDoc %>">downlaod</a>
+                            </div>
+                            <div class="date-upload">10-10-2566</div>
+                        </div>
+                        <div class="modal close" id="modal<%= index+1 %>">
+                            <div class="modal-box">
+                                <div class="datas">
+                                    <h1>สร้างเอกสาร</h1>
+                                </div>
+                                <div class="datas">
+                                    <h2>ชื่อเอกสาร</h2>
+                                    <input type="text" value="<%= docs.title %>" name="title">
+                                </div>
+                                <div class="datas long">
+                                    <h2>คำอธิบาย</h2>
+                                    <textarea name="details" cols="30" rows="10"><%= docs.details %></textarea>
+                                </div>
+                                <div class="datas">
+                                    <h2>แก้ไขเอกสาร</h2>
+                                    <div class="border-uploads">
+                                        <input type="file" name="file">
+                                    </div>
+                                </div>
+                                <div class="datas">
+                                    <h2>เอกสารเดิม</h2>
+                                    <div class="border-uploads">
+                                        <a href="/uploads/<%= docs.downloadDoc %>" target="_blank" name="test">
+                                            <%= docs.downloadDoc %>
+                                        </a>
+                                    </div>
+                                </div> 
+                                <input type="text" name="id" class="close" value="<%= docs._id %>">
+                                <input type="text" name="username" class="close" value="<%= locals.username %>">
+                                <div class="submit">
+                                    <button type="submit">Save</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+                    <% }) %>
+
+                        <div class="card-document">
+                            <div class="card-document-header">
+                                <h2>ผลระเมินการฝึกงาน</h2>
+                                <div class="edit-ic">
+                                    <span class="material-icons-sharp edit-btn" name="0" id="edit-doc0">
+                                        edit
+                                    </span>
+                                    <span class="material-icons-sharp">
+                                        delete
+                                    </span>
+                                </div>
+                            </div>
+                            <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
+                                voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
+                            <div class="downlaod">
+                                <h3>downlaod</h3>
+
+                            </div>
+                            <div class="date-upload">10-10-2566</div>
+                        </div>
+
+                        <div class="modal close" id="modal0">
+                            <div class="modal-box">
+                                <div class="datas">
+                                    <h1>สร้างเอกสาร</h1>
+                                </div>
+                                <div class="datas">
+                                    <h2>ชื่อเอกสาร</h2>
+                                    <input type="text" placeholder="ผลระเมินการฝึกงาน" name="title">
+                                </div>
+                                <div class="datas long">
+                                    <h2>คำอธิบาย</h2>
+                                    <textarea name="details" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
+                                    voluptatibus vero eligendi ea enim sequi maxime repellendus?" cols="30"
+                                        rows="10"></textarea>
+                                </div>
+                                <div class="datas">
+                                    <h2>เอกสาร</h2>
+                                    <div class="border-uploads">
+                                        <input type="file" name="file">
+                                    </div>
+                                </div>
+                                <input type="text" name="username" class="close" value="<%= locals.username %>">
+                                <div class="submit">
+                                    <button type="submit">Save</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+            </div>
+
+        </div>
+        <div class="paginator">
+
+            <% for( let index=1; index <=all_pages; index++ ) { %>
+                <% if (index==current) { %>
+                    <a href="?page=<%= index %>" class="current-page">
+                        <%= index %>
+                    </a>
+                    <% } else { %>
+                        <a href="?page=<%= index %>">
+                            <%= index %>
+                        </a>
+                        <% } %>
+                            <% } %>
+
+        </div>
+    </div>
+
+
 </main>

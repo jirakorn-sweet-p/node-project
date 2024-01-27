@@ -20,7 +20,7 @@ const RequestServiceSchema = new Schema({
     },
     status:{//
         type: String,
-        default:"Pending"
+        default:"0"
     },
     update_at:{
         type: Date,

@@ -43,7 +43,7 @@ const StudentInfoSchema = new Schema({
     },
     status:{
         type: String,
-        default:"Pending"
+        default:"0"
     },
     editor:{
         type: String,

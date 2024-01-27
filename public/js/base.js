@@ -4,7 +4,49 @@ const light_mode = document.getElementById('light-mode');
 const dark_mode = document.getElementById('dark-mode');
 const modal_bg = document.getElementById('modal-back');
 const modal = document.getElementById('modal');
+const all_modal = document.querySelectorAll('.modal');
 const add_request = document.getElementById('boder-add-request');
+const add_document= document.getElementById('add-doc');
+
+const edit_document= document.getElementsByClassName('edit-btn');
+const documents = Array.from(edit_document); 
+
+const pendding_request= document.getElementsByClassName('request-details');
+const requests_pendding = Array.from(pendding_request); 
+
+const request_details = document.getElementById('request-details');
+
+
+// request_details.addEventListener('click',()=>{
+//   console.log('hi');
+//   console.log(request_details.getAttribute('name').toString());
+//   modal_bg.classList.remove('close');
+// });
+
+requests_pendding.forEach(function(request) {
+  request.addEventListener('click',()=>{
+    modal_bg.classList.remove('close');
+
+    var modalName = 'modal'+ request.getAttribute('name').toString();
+    console.log(modalName);
+    const modalRequest = document.getElementById(modalName);
+    modal_bg.classList.remove('close');
+    modalRequest.classList.remove('close');
+    
+    modal_bg.addEventListener('click',()=>{
+      modal_bg.classList.add('close');
+      modalRequest.classList.add('close');
+    });
+  });
+});
+
+
+if(add_document){
+  add_document.addEventListener('click',()=>{
+  modal_bg.classList.remove('close');
+  modal.classList.remove('close');
+});
+}
 
 if(add_request){
   add_request.addEventListener('click',()=>{
@@ -16,10 +58,28 @@ if(add_request){
 if(modal_bg){
   modal_bg.addEventListener('click',()=>{
   modal_bg.classList.add('close');
-  modal.classList.add('close');
+  for (var i = 0; i < all_modal.length; i++) {
+    all_modal[i].classList.add("close");
+    
+  }
 });
 }
 
+documents.forEach(function(button) {
+  button.addEventListener('click',()=>{
+    
+    var modalEditName = 'modal'+ button.getAttribute('name').toString();
+    console.log(modalEditName);
+    const modalEdit = document.getElementById(modalEditName);
+    modal_bg.classList.remove('close');
+    modalEdit.classList.remove('close');
+
+    modal_bg.addEventListener('click',()=>{
+      modal_bg.classList.add('close');
+      modalEdit.classList.add('close');
+    });
+  });
+});
 
 menuBtn.addEventListener('click',()=>{
   // sidebar hide or show
