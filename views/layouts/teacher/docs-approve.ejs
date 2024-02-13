@@ -1,0 +1,1041 @@
+<!-- MODAL -->
+<div class="modal-back <%= modal_bg1 %>" id="modal-back">
+</div>
+<div class="modal-back <%= modal_bg2 %>" id="modal-alert">
+</div>
+<div class="modal-back close" id="modal-back2">
+</div>
+
+<!-- END MODAL -->
+<main>
+    <div class="main">
+        <div class="header-main">
+            <h2>หนังสือรอส่ง</h2>
+            <div class="sort">
+                <select id="sort" onchange="handleSortChange2(this)">
+                    <% if (sort == '1') { %>
+                        <option selected value="1">รอหนังสือตอบรับ</option>
+                    <% } else { %>
+                        <option value="1">รอหนังสือตอบรับ</option>
+                    <% } %>
+                    <% if (sort == '2') { %>
+                        <option selected value="2">ได้รับหนังสือแล้ว</option>
+                    <% } else { %>
+                        <option value="2">ได้รับหนังสือแล้ว</option>
+                    <% } %>
+                    <% if (sort == '3') { %>
+                        <option selected value="3">ทั้งหมด</option>
+                    <% } else { %>
+                        <option value="3">ทั้งหมด</option>
+                    <% } %>
+                    <% if (sort == '4') { %>
+                        <option selected value="4">ปฏิเสธการตอบรับ</option>
+                    <% } else { %>
+                        <option value="4">ปฏิเสธการตอบรับ</option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="search">
+                <input type="text" placeholder="searching">
+            </div>
+            <% if (sort == '2') { %>
+            <div class="add-btn success" id="add-approval-docs">
+                <a>ออกหนังสือ</a>
+                <span class="material-icons-sharp">
+                    upload_file
+                </span>
+            </div>
+            <% } %>
+            
+
+        </div>
+        <div class="header-main part2">
+            <div class="checkbox-wrapper-10">
+                <input class="tgl tgl-flip" id="cb5" type="checkbox" checked />
+                <label class="tgl-btn" id="cbx" data-tg-off="ยกเลิก" data-tg-on="เลือก" for="cb5"></label>
+            </div>
+
+            <div class="add-btn pop-position close" id="pop-position">
+                <a>เลือก</a>
+                <span class="material-icons-sharp">
+                    upload_file
+                </span>
+            </div>
+        </div>
+        <div class="modal close" id="approval-docs-modal">
+            <% if (requests.length>0) { %>
+                <% if (sort == '2') { %>
+                <h1>สร้างเอกสารมอบตัวนักศึกษา</h1>
+                <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
+                <% } else if (sort == '1') { %>
+                <h1>รับเอกสารตอบกลับจากสถานประกอบการ</h1>
+                <form action="/docs-approval-pop3" method="post" name="approvalDocs" enctype="/submit-table">
+                <% } %>
+                
+                    <% var cm=[] %>
+                        <% requests.forEach((element,index)=> { %>
+                            <% if (!cm.includes(element.company_info.company.name)) { %>
+                                <% cm.push(element.company_info.company.name) %>
+                                    <% } %>
+                                        <% }) %>
+                                            <% cm.forEach((element,index)=> { %>
+                                                <table class="styled-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>
+                                                                <%= element %>
+                                                            </th>
+                                                            <th> </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="active-row">
+                                                            <td>เลือก</td>
+                                                            <td>ชื่อนักศึกษา</td>
+                                                            <td>รหัสนักศึกษา</td>
+                                                        </tr>
+                                                        <% requests.forEach((element2,index)=> { %>
+                                                            <% if (element2.company_info.company.name===element) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="checkbox-wrapper-4">
+                                                                            <input class="inp-cbx2" id="checkbx-<%= element2._id %>"
+                                                                                name="<%= element2._id %>" type="checkbox" />
+                                                                            <label class="cbx" for="checkbx-<%= element2._id %>">
+                                                                                <span>
+                                                                                    <svg width="12px" height="10px">
+                                                                                        <use xlink:href="#check-4"></use>
+                                                                                    </svg>
+                                                                                </span>
+                                                                                <span></span>
+                                                                            </label>
+                                                                            <svg class="inline-svg">
+                                                                                <symbol id="check-4" viewbox="0 0 12 10">
+                                                                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                                                                </symbol>
+                                                                            </svg>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= element2.student_info.name %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= element2.student_info.student_code %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                    <% }) %>
+                                                                    
+                                                    </tbody>
+                                                </table>
+                                                <% }) %>
+                                                
+                                                    <div class="submit">
+                                                        <button id="generate" class="generate" type="submit">ตกลง</button>
+                                                    </div>
+                </form>
+                <% }else{ %>
+                    <div class="submit">
+                        <a href="/docs-approve">
+                            <button id="generate" class="generate" type="submit">ตกลง</button>
+                        </a>
+                    </div>
+                    <% } %>
+
+        </div>
+
+        <div class="modal close" id="approval-docs-modal2">
+            <% if (requests.length>0) { %>
+                <div class="uploads-content">
+                    <a>เลือกช่วงเวลา</a>
+                    <div class="border-input2">
+                        <input type="date" name="generate_start" id="generateStartDate" value="<%= date.toISOString().split('T')[0] %>">
+                        <h3>ถึง</h3>
+                        <input type="date" name="generate_end" id="generateEndDate" value="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                </div>
+                <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
+                    <% var cm=[] %>
+                    <% requests.forEach((element,index)=> { %>  
+                        <% if (!cm.includes(element.company_info.company.name)) { %>
+                            <% cm.push(element.company_info.company.name) %>
+                        <% } %>
+                    <% }) %>
+                
+                    <% cm.forEach((element,index)=> { %>
+                        <table class="styled-table table-gen">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" style="text-align: center;">
+                                        <%= element %>
+                                    </th>
+                                </tr>
+                                <tr class="active-row">
+                                    <th>เลือก</th>
+                                    <th>ชื่อนักศึกษา</th>
+                                    <th>วันที่ยื่น</th>
+                                    <th>รหัสนักศึกษา</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% requests.forEach((element2,index2)=> { %>
+                                    <% if (element2.company_info.company.name===element) { %>
+                                        <tr class="data-generate" id="<%= index %>-d-<%= element2.update_at.toLocaleDateString() %>-<%= index2  %>">
+                                            <td>
+                                                <div class="checkbox-wrapper-4">
+                                                    <input class="inp-cbx3" id="checkboxs-<%= element2._id %>"
+                                                        name="<%= element2._id %>" type="checkbox" checked/>
+                                                    <label class="cbx" for="checkboxs-<%= element2._id %>">
+                                                        <span>
+                                                            <svg width="12px" height="10px">
+                                                                <use xlink:href="#check-4"></use>
+                                                            </svg>
+                                                        </span>
+                                                        <span></span>
+                                                    </label>
+                                                    <svg class="inline-svg">
+                                                        <symbol id="check-4" viewbox="0 0 12 10">
+                                                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                                        </symbol>
+                                                    </svg>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <%= element2.student_info.name %>
+                                            </td>
+                                            <td><%= element2.update_at.toLocaleDateString() %></td>
+                                            <td>
+                                                <%= element2.student_info.student_code %>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    <% }) %>
+                    <div class="submit">
+                        <button id="generate" class="generate" type="submit">ตกลง</button>
+                    </div>
+                </form>
+                
+                <% }else{ %>
+                    <div class="submit">
+                        <a href="/docs-approve">
+                            <button id="generate" class="generate" class="generate" type="submit">ตกลง</button>
+                        </a>
+                    </div>
+                    <% } %>
+
+        </div>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th class="close th-checkbox" id="th-checkbox">เลือก</th>
+                    <th>วันที่ยื่นเรื่อง</th>
+                    <th>รหัสนักศึกษา</th>
+                    <th>ชื่อนักศึกษา</th>
+                    <th>หน่วยงาน/บริษัท</th>
+                    <th>ช่วงเวลาฝึกงาน</th>
+                    <th>การออกหนังสือ</th>
+                    <th>เพิ่มเติม</th>
+                </tr>
+            </thead>
+            <tbody>
+                <div class="modal <%= alert %>" id="alert">
+                        <div class="modal-box">
+                            <div class="request-doc" id="request-doc">
+                                <div class="border-input">
+                                    <input class="success" name="position_name" type="text" value="<%= error %>"
+                                        readonly>
+                                </div>
+                                <div class="submit">
+                                    <a href="/docs-approve">
+                                        <button id="ok" type="submit">ตกลง</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+                <% requests.forEach((element,index)=> { %>
+
+                    <div class="modal <%= modal1 %>" id="modal<%= index %>">
+                        <form action="/request-teacher/update3" method="post" name="request" enctype="/submit-table">
+                            <div class="modal-box">
+
+                                <% if (element.student_info.status == '1' || element.student_info.status == '2') { %>
+                                    <div class="request-info active" id="request-info<%= index %>">
+                                <% } else { %>
+                                    <div class="request-info" id="request-info<%= index %>">
+                                <% } %>
+                                    <div class="topic">
+                                        <h2>ข้อมูลนักศึกษา</h2>
+                                        <% if (element.student_info.status == '0') { %>
+                                            <span class="material-icons-sharp warnning">pending</span>
+                                        <% } else if (element.student_info.status == '1') { %>
+                                            <span class="material-icons-sharp success">check_circle</span>
+                                        <% } else if (element.student_info.status == '2') { %>
+                                            <span class="material-icons-sharp danger">cancel</span>
+                                        <% } %>
+                                        <span class="material-icons-sharp expand_more"
+                                            id="expand_more<%= index %>">expand_more</span>
+                                    </div>
+                                    <div class="contents">
+                                        <div class="images-content">
+                                            <div class="images-area">
+                                                <img src="/uploads/<%= element.student_info.image %>"
+                                                    alt="image profile">
+                                            </div>
+                                        </div>
+                                        <div class="infomation">
+                                            <div class="datas">
+                                                <a>ชื่อ-นามสกุล</a>
+                                                <input type="text" placeholder="ชื่อ-นามสกุล"
+                                                    name="name"
+                                                    value="<%= element.student_info.name %>">
+                                            </div>
+                                            <div class="datas">
+                                                <a>รหัสประจำตัว</a>
+                                                <input type="text" placeholder="รหัสประจำตัว"
+                                                    oninput="formatID(this)" maxlength="10"
+                                                    name="student_code"
+                                                    value="<%= element.student_info.student_code %>">
+                                                <p></p>
+                                            </div>
+                                            <div class="datas">
+                                                <a>ระดับการศึกษา</a>
+                                                <!-- <input type="text" placeholder="ระดับการศึกษา" name="education"
+                                value="ปริญญาตรี ชั้นปีที่ <%= element.student_info.education %>" > -->
+                                                <div class="border-uploads">
+                                                    <select name="education" required>
+
+                                                        <% for( let index=1; index <=4; index++ ) { %>
+                                                            <% if
+                                                                (element.student_info.education==index)
+                                                                { %>
+                                                                <option selected value="<%= index %>">
+                                                                    ชั้นปีที่ <%= index %>
+                                                                </option>
+                                                                <% } else { %>
+                                                                    <option value="<%= index %>">
+                                                                        ชั้นปีที่ <%= index %>
+                                                                    </option>
+                                                                    <% } %>
+                                                                        <% } %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="datas">
+                                                <a>คณะ</a>
+                                                <input type="text" placeholder="คณะ"
+                                                    value="วิทยาลัยการคอมพิวเตอร์">
+                                            </div>
+                                            <div class="datas">
+                                                <a>สาขาวิชา</a>
+                                                <div class="border-uploads">
+                                                    <select name="factory" required>
+
+                                                        <% for( let index=1; index <=2; index++ ) { %>
+                                                            <% if (element.student_info.factory==index
+                                                                && index==1) { %>
+                                                                <option selected value="<%= index %>">
+                                                                    วิทยาการคอมพิวเตอร์ ภาคปกติ</option>
+                                                                <% } else if
+                                                                    (element.student_info.factory==index
+                                                                    && index==2){ %>
+                                                                    <option selected
+                                                                        value="<%= index %>">
+                                                                        วิทยาการคอมพิวเตอร์ ภาคพิเศษ
+                                                                    </option>
+                                                                    <% } %>
+                                                                        <% if
+                                                                            (element.student_info.factory
+                                                                            !=index && index==1) { %>
+                                                                            <option
+                                                                                value="<%= index %>">
+                                                                                วิทยาการคอมพิวเตอร์
+                                                                                ภาคปกติ</option>
+                                                                            <% } else if
+                                                                                (element.student_info.factory
+                                                                                !=index && index==2){ %>
+                                                                                <option
+                                                                                    value="<%= index %>">
+                                                                                    วิทยาการคอมพิวเตอร์
+                                                                                    ภาคพิเศษ</option>
+                                                                                <% } %>
+                                                                                    <% } %>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                            <div class="datas">
+                                                <a>เกรดเฉลี่ยสะสม</a>
+                                                <input type="text" placeholder="เกรดเฉลี่ยสะสม"
+                                                    oninput="formatGPA(this)" maxlength="4" name="grade"
+                                                    value="<%= element.student_info.grade.toFixed(2) %>">
+                                                <p></p>
+                                            </div>
+                                            <div class="datas">
+                                                <a>อีเมล</a>
+                                                <input type="email" placeholder="อีเมล" name="email"
+                                                    value="<%= element.student_info.email %>">
+                                                <p></p>
+                                            </div>
+                                            <div class="datas">
+                                                <a>หมายเลขโทรศัพท์</a>
+                                                <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
+                                                    value="<%= element.student_info.phone %>">
+                                                <p id="telError"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="approved">
+                                        <div class="comment">
+                                            <h3>comments</h3>
+                                            <textarea name="comment1" id="" cols="30"
+                                                rows="10"><%= element.student_info.comment %></textarea>
+                                        </div>
+                                        <div class="status">
+                                            <div class="border-status">
+                                                <select name="status1" required>
+                                                    <% for( let index=0; index <=2; index++ ) { %>
+                                                        <% if (element.student_info.status==index &&
+                                                            index==0) { %>
+                                                            <option selected disabled
+                                                                value="<%= index %>">รอดำเนินการ
+                                                            </option>
+                                                            <% } else if
+                                                                (element.student_info.status==index &&
+                                                                index==1) { %>
+                                                                <option selected value="<%= index %>">
+                                                                    ผ่าน</option>
+                                                                <% } else if
+                                                                    (element.student_info.status==index
+                                                                    && index==2){ %>
+                                                                    <option selected
+                                                                        value="<%= index %>">ไม่ผ่าน
+                                                                    </option>
+                                                                    <% } %>
+
+                                                                        <% if
+                                                                            (element.student_info.status
+                                                                            !=index && index==0) { %>
+                                                                            <option disabled
+                                                                                value="<%= index %>">
+                                                                                รอดำเนินการ</option>
+                                                                            <% } else if
+                                                                                (element.student_info.status
+                                                                                !=index && index==1) {
+                                                                                %>
+                                                                                <option
+                                                                                    value="<%= index %>">
+                                                                                    ผ่าน</option>
+                                                                                <% } else if
+                                                                                    (element.student_info.status
+                                                                                    !=index &&
+                                                                                    index==2){ %>
+                                                                                    <option
+                                                                                        value="<%= index %>">
+                                                                                        ไม่ผ่าน</option>
+                                                                                    <% } %>
+                                                                                        <% } %>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% if (element.company_info.status == '1' || element.company_info.status == '2') { %>
+                                                    <div class="request-doc active" id="request-Doc<%= index %>">
+                                                <% } else { %>
+                                                    <div class="request-doc" id="request-Doc<%= index %>">
+                                                <% } %>
+                                    <div class="topic">
+                                        <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                                        <% if (element.company_info.status == '0') { %>
+                                            <span class="material-icons-sharp warnning">pending</span>
+                                        <% } else if (element.company_info.status == '1') { %>
+                                            <span class="material-icons-sharp success">check_circle</span>
+                                        <% } else if (element.company_info.status == '2') { %>
+                                            <span class="material-icons-sharp danger">cancel</span>
+                                        <% } %>
+                                        <span class="material-icons-sharp expand_more2"
+                                            id="expand_more2<%= index %>">expand_more</span>
+                                    </div>
+                                    <div class="info-intern">
+                                        <div class="uploads-content">
+                                            <a >ชื่อสถาที่ฝึกงาน</a>
+                                            <div class="border-input <%= com_add[index] %>">
+                                                <input type="text" class="<%= com_add[index] %>"
+                                                    value="<%= element.company_info.company.name %>">
+                                                <a class="add-com" id="new-company">เพิ่ม<span class="material-icons-sharp">add</span></a>
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >ตำแหน่ง</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.position %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >โปรดระบุด้วยว่าหนังสือเรียนถึงใคร</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.receiver_name %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >เบอร์โทรศัพท์</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.tel %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.type_business %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >ช่วงเวลาที่ฝึกงาน</a>
+                                            <div class="border-input2">
+                                                <input type="date" name="start_intern"
+                                                    value="<%= element.company_info.start_intern.toISOString().split('T')[0] %>">
+                                                <h3>ถึง</h3>
+                                                <input type="date" name="end_intern"
+                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="topic">
+                                        <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+                                    </div>
+                                    <div class="info-address">
+                                        <div class="uploads-content">
+                                            <a >ที่อยู่</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.name %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >บริษัท/หน่วยงาน</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.name %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >ตำบล</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.subdistrict %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >อำเภอ</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.district %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >จังหวัด</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.province %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >รหัสไปรษณีย์</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.company.provinceID %>">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-phone">
+                                        <div class="uploads-content">
+                                            <a >กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</a>
+                                            <div class="border-input">
+                                                <input type="date"
+                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >สิทธิการรักษาพยาบาล/บัตรทอง</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.student_info.health_coverage %>">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="topic">
+                                        <h2 class="sub-txt">ผู้ประสานงาน/พี่เลี้ยง</h2>
+                                    </div>
+
+                                    <div class="info-phone">
+                                        <div class="uploads-content">
+                                            <a >ชื่อ ผู้ประสานงาน/พี่เลี้ยง</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.mentor %>">
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >เบอร์โทรศัพท์</a>
+                                            <div class="border-input">
+                                                <input type="text"
+                                                    value="<%= element.company_info.tel_mentor %>">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="approved">
+                                        <div class="comment">
+                                            <h3>comments</h3>
+                                            <textarea name="comment2" id="" cols="30"
+                                                rows="10"><%= element.company_info.comment %></textarea>
+                                        </div>
+                                        <div class="status">
+                                            <div class="border-status">
+                                                <select name="status2" required>
+                                                    <% for( let index=0; index <=2; index++ ) { %>
+                                                        <% if ((element.company_info.status==index &&
+                                                            index==0)) { %>
+                                                            <option selected disabled
+                                                                value="<%= index %>">รอดำเนินการ
+                                                            </option>
+                                                            <% } else if
+                                                                (element.company_info.status==index &&
+                                                                index==1) { %>
+                                                                <option selected value="<%= index %>">
+                                                                    ผ่าน</option>
+                                                                <% } else if
+                                                                    (element.company_info.status==index
+                                                                    && index==2){ %>
+                                                                    <option selected
+                                                                        value="<%= index %>">ไม่ผ่าน
+                                                                    </option>
+                                                                    <% } %>
+
+                                                                        <% if
+                                                                            (element.company_info.status
+                                                                            !=index && index==0) { %>
+                                                                            <option disabled
+                                                                                value="<%= index %>">
+                                                                                รอดำเนินการ</option>
+                                                                            <% } else if
+                                                                                (element.company_info.status
+                                                                                !=index && index==1) {
+                                                                                %>
+                                                                                <option
+                                                                                    value="<%= index %>">
+                                                                                    ผ่าน</option>
+                                                                                <% } else if
+                                                                                    (element.company_info.status
+                                                                                    !=index &&
+                                                                                    index==2){ %>
+                                                                                    <option
+                                                                                        value="<%= index %>">
+                                                                                        ไม่ผ่าน</option>
+                                                                                    <% } %>
+                                                                                        <% } %>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <% if (element.request_info.status == '1' || element.request_info.status == '2') { %>
+                                                    <div class="request-cer active" id="request-cer<%= index %>">
+                                                <% } else { %>
+                                                    <div class="request-cer" id="request-cer<%= index %>">
+                                                <% } %>
+                                    <div class="topic">
+                                        <h2>upload document</h2>
+                                        <% if (element.request_info.status == '0') { %>
+                                            <span class="material-icons-sharp warnning">pending</span>
+                                        <% } else if (element.request_info.status == '1') { %>
+                                            <span class="material-icons-sharp success">check_circle</span>
+                                        <% } else if (element.request_info.status == '2') { %>
+                                            <span class="material-icons-sharp danger">cancel</span>
+                                        <% } %>
+                                        <span class="material-icons-sharp expand_more3"
+                                            id="expand_more3<%= index %>">expand_more</span>
+
+                                    </div>
+                                    <div class="uploads-section">
+                                        <div class="uploads-content">
+                                            <a >เอกสารยื่นใบฝึกงาน</a>
+
+                                            <div class="border-uploads">
+                                                <a class="links border-space"
+                                                    href="/uploads/<%= element.request_info.doc_request_intern %>"
+                                                    target="_blank">
+                                                    <%= element.request_info.doc_request_intern %>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >หนังสือยินยอมผู้ปกครอง</a>
+                                            <div class="border-uploads">
+                                                <a class="links border-space"
+                                                    href="/uploads/<%= element.request_info.doc_approve_parrent %>"
+                                                    target="_blank">
+                                                    <%= element.request_info.doc_approve_parrent %>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >resume นักศึกษา</a>
+                                            <div class="border-uploads">
+                                                <a href="/uploads/<%= element.request_info.doc_resume %>" 
+                                                    target="_blank" name="test" class="links border-space">
+                                                    <%= element.request_info.doc_resume %>
+                                                </a>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="uploads-content">
+                                            <a >transcript</a>
+                                            <div class="border-uploads">
+                                                <a class="links border-space"
+                                                    href="/uploads/<%= element.request_info.doc_transcript %>"
+                                                    target="_blank">
+                                                    <%= element.request_info.doc_transcript %>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="uploads-content">
+                                            <a >หนังสือขอความอนุเคราะห์จากบริษัท</a>
+
+                                            <div class="border-uploads">
+                                                <select name="doc_approve_company" required>
+                                                    <% for( let index=1; index <=2; index++ ) { %>
+                                                        <% if
+                                                            (element.request_info.doc_approve_company==index
+                                                            && index==1) { %>
+                                                            <option selected value="<%= index %>">
+                                                                เจ้าหน้าที่จัดส่งให้</option>
+                                                            <% } else if
+                                                                (element.request_info.doc_approve_company==index
+                                                                && index==2){ %>
+                                                                <option selected value="<%= index %>">
+                                                                    มารับไปส่งเอง</option>
+                                                                <% } %>
+                                                                    <% if
+                                                                        (element.request_info.doc_approve_company
+                                                                        !=index && index==1) { %>
+                                                                        <option value="<%= index %>">
+                                                                            เจ้าหน้าที่จัดส่งให้
+                                                                        </option>
+                                                                        <% } else if
+                                                                            (element.request_info.doc_approve_company
+                                                                            !=index && index==2){ %>
+                                                                            <option
+                                                                                value="<%= index %>">
+                                                                                มารับไปส่งเอง</option>
+                                                                            <% } %>
+                                                                                <% } %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="uploads-content">
+                                            <a >รูปแบบการฝึกงาน</a>
+                                            <div class="border-uploads">
+                                                <% if (element.request_info.working_style==1) { %>
+                                                    <a class="border-space">Onsite</a>
+                                                    <% } else if (element.request_info.working_style==2)
+                                                        { %>
+                                                        <a class="border-space">Work form home</a>
+                                                        <% } else if
+                                                            (element.request_info.working_style==3) { %>
+                                                            <a class="border-space">Hybrid</a>
+                                                            <% } else { %>
+                                                                <a class="border-space"></a>
+                                                                <% } %>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="approved">
+                                        <div class="comment">
+                                            <h3>comments</h3>
+                                            <textarea name="comment3" id="" cols="30"
+                                                rows="10"><%= element.request_info.comment %></textarea>
+                                        </div>
+                                        <div class="status">
+                                            <div class="border-status">
+                                                <select name="status3" required>
+                                                    <% for( let index=0; index <=2; index++ ) { %>
+                                                        <% if (element.request_info.status==index &&
+                                                            index==0) { %>
+                                                            <option selected disabled
+                                                                value="<%= index %>">รอดำเนินการ
+                                                            </option>
+                                                            <% } else if
+                                                                (element.request_info.status==index &&
+                                                                index==1) { %>
+                                                                <option selected value="<%= index %>">
+                                                                    ผ่าน</option>
+                                                                <% } else if
+                                                                    (element.request_info.status==index
+                                                                    && index==2){ %>
+                                                                    <option selected
+                                                                        value="<%= index %>">ไม่ผ่าน
+                                                                    </option>
+                                                                    <% } %>
+
+                                                                        <% if
+                                                                            (element.request_info.status
+                                                                            !=index && index==0) { %>
+                                                                            <option disabled
+                                                                                value="<%= index %>">
+                                                                                รอดำเนินการ</option>
+                                                                            <% } else if
+                                                                                (element.request_info.status
+                                                                                !=index && index==1) {
+                                                                                %>
+                                                                                <option
+                                                                                    value="<%= index %>">
+                                                                                    ผ่าน</option>
+                                                                                <% } else if
+                                                                                    (element.request_info.status
+                                                                                    !=index &&
+                                                                                    index==2){ %>
+                                                                                    <option
+                                                                                        value="<%= index %>">
+                                                                                        ไม่ผ่าน</option>
+                                                                                    <% } %>
+                                                                                        <% } %>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% if (element.approval_document_status == '1' || element.approval_document_status == '2') { %>
+                                    <div class="approval-docs active" id="approval-docs<%= index %>">
+                                                <% } else { %>
+                                                    <div class="approval-docs" id="approval-docs<%= index %>">
+                                                <% } %>
+
+                                    <div class="topic">
+                                        <h2>Approval Document</h2>
+                                        <% if (element.approval_document_status == '0') { %>
+                                            <span class="material-icons-sharp warnning">pending</span>
+                                        <% } else if (element.approval_document_status == '1') { %>
+                                            <span class="material-icons-sharp success">check_circle</span>
+                                        <% } else if (element.approval_document_status == '2') { %>
+                                            <span class="material-icons-sharp danger">cancel</span>
+                                        <% } %>
+                                        <span class="material-icons-sharp expand_more4" id="expand_more4<%= index %>">expand_more</span>
+
+                                    </div>
+                                    <div class="approved">
+                                        <div class="comment">
+                                            <h3>comments</h3>
+                                            <textarea name="comment4" id="" cols="30"
+                                                rows="10"><%= element.approval_document_comment %></textarea>
+                                        </div>
+                                        <div class="status">
+                                            <div class="border-status">
+                                                <select name="status4" required>
+                                                    <% for (let index=0; index <=4; index++) { %>
+                                                        <% if (element.approval_document_status==index && index==0) { %>
+                                                            <option selected value="<%= index %>">รอดำเนินการ</option>
+                                                            <% } else if (element.approval_document_status==index &&
+                                                                index==1) { %>
+                                                                <option selected value="<%= index %>">ออกหนังสือแล้ว
+                                                                </option>
+                                                                <% } else if (element.approval_document_status==index &&
+                                                                    index==2) { %>
+                                                                    <option selected value="<%= index %>">ปฏิเสธการออกหนังสือ
+                                                                    </option>
+                                                                    <% } %>
+                                                                            <% if (element.approval_document_status
+                                                                                !=index && index==0) { %>
+                                                                                <option value="<%= index %>">รอดำเนินการ
+                                                                                </option>
+                                                                                <% } else if
+                                                                                    (element.approval_document_status
+                                                                                    !=index && index==1) { %>
+                                                                                    <option value="<%= index %>">
+                                                                                        ออกหนังสือแล้ว</option>
+                                                                                    <% } else if
+                                                                                        (element.approval_document_status
+                                                                                        !=index && index==2) { %>
+                                                                                        <option value="<%= index %>">
+                                                                                            ปฏิเสธการออกหนังสือ</option>
+                                                                                        <% } %>
+                                                                                                <% } %>
+                                                </select>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% if (element.accepted_company_status == '1' || element.accepted_company_status == '2') { %>
+                                    <div class="approval-docs approval-docs2 active" id="approval-docs2<%= index %>">
+                                                <% } else { %>
+                                                    <div class="approval-docs approval-docs2" id="approval-docs2<%= index %>">
+                                                <% } %>
+
+                                    <div class="topic">
+                                        <h2>Approval Document</h2>
+                                        <% if (element.accepted_company_status == '0') { %>
+                                            <span class="material-icons-sharp warnning">pending</span>
+                                        <% } else if (element.accepted_company_status == '1') { %>
+                                            <span class="material-icons-sharp success">check_circle</span>
+                                        <% } else if (element.accepted_company_status == '2') { %>
+                                            <span class="material-icons-sharp danger">cancel</span>
+                                        <% } %>
+                                        <span class="material-icons-sharp expand_more5" id="expand_more5<%= index %>">expand_more</span>
+
+                                    </div>
+                                    <div class="approved">
+                                        <div class="comment">
+                                            <h3>comments</h3>
+                                            <textarea name="comment5" id="" cols="30"
+                                                rows="10"><%= element.accepted_company_comment %></textarea>
+                                        </div>
+                                        <div class="status">
+                                            <div class="border-status">
+                                                <select name="status5" required>
+                                                    <% for (let index=0; index <=4; index++) { %>
+                                                        <% if (element.accepted_company_status==index && index==0) { %>
+                                                            <option selected value="<%= index %>">รอหนังสือตอบรับ</option>
+                                                            <% } else if (element.accepted_company_status==index &&
+                                                                index==1) { %>
+                                                                <option selected value="<%= index %>">ได้รับหนังสือแล้ว
+                                                                </option>
+                                                                <% } else if (element.accepted_company_status==index &&
+                                                                    index==2) { %>
+                                                                    <option selected value="<%= index %>">ปฏิเสธการตอบรับ
+                                                                    </option>
+                                                                    <% } %>
+                                                                            <% if (element.accepted_company_status
+                                                                                !=index && index==0) { %>
+                                                                                <option value="<%= index %>">รอหนังสือตอบรับ
+                                                                                </option>
+                                                                                <% } else if
+                                                                                    (element.accepted_company_status
+                                                                                    !=index && index==1) { %>
+                                                                                    <option value="<%= index %>">
+                                                                                        ได้รับหนังสือแล้ว</option>
+                                                                                    <% } else if
+                                                                                        (element.accepted_company_status
+                                                                                        !=index && index==2) { %>
+                                                                                        <option value="<%= index %>">
+                                                                                            ปฏิเสธการตอบรับ</option>
+                                                                                        <% } %>
+                                                                                                <% } %>
+                                                </select>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit">
+                                    <button type="submit">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <tr>
+                        <td class="close td-checkbox" id="td-checkbox">
+                            <div class="checkbox-wrapper-4">
+                                <input class="inp-cbx" id="checkbox-<%= element._id %>"
+                                    name="checkbox-<%= element._id %>" type="checkbox" />
+                                <label class="cbx" for="checkbox-<%= element._id %>">
+                                    <span>
+                                        <svg width="12px" height="10px">
+                                            <use xlink:href="#check-4"></use>
+                                        </svg>
+                                    </span>
+                                    <span></span>
+                                </label>
+                                <svg class="inline-svg">
+                                    <symbol id="check-4" viewbox="0 0 12 10">
+                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                    </symbol>
+                                </svg>
+                            </div>
+                        </td>
+                        <td>
+                            <%= element.update_at.toLocaleDateString() %>
+                        </td>
+                        <td>
+                            <%= element.student_info.student_code %>
+                        </td>
+                        <td>
+
+                            <%= element.student_info.name %>
+                        </td>
+                        
+                        <td>
+                            <%= element.company_info.company.name %>
+                        </td>
+                        <td>
+                            <%= element.company_info.start_intern.toISOString().split('T')[0] %> ถึง <%= element.company_info.end_intern.toISOString().split('T')[0] %>
+                            </td>
+                        <td>
+                            <% if (element.accepted_company_status==0) { %>
+                                <div class="status-approve pendding">
+                                    <a>
+                                        รอหนังสือตอบรับ
+                                    </a>
+                                </div>
+                                <% } else if(element.accepted_company_status==1) { %>
+                                    <div class="status-approve success">
+                                        <a>
+                                            ได้รับหนังสือแล้ว
+                                        </a>
+                                    </div>
+                                    <% } else if(element.accepted_company_status==2) { %>
+                                    <div class="status-approve danger">
+                                        <a>
+                                            ปฏิเสธการตอบรับ
+                                        </a>
+                                    </div>
+                                    <% } %>
+
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="dropbtn">...</button>
+                                <div class="dropdown-content">
+                                    <a href="#" class="request-details" id="request-details"
+                                        name="<%= index %>">รายระเอียดคำร้องขอฝึกงาน</a>
+                                    <a href="#" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
+                                    <!-- <a href="#">เอกสารรับรองการสำเร็จการฝึกงาน</a>
+                                <a href="#">บันทึกการฝึกงานและการประเมิน</a> -->
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+
+            </tbody>
+        </table>
+    </div>
+</main>

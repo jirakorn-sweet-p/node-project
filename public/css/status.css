@@ -8,7 +8,7 @@
     --color-warning: #F7D060;
     --color-white: #fff;
     --color-info-dark: #7d8da1;
-    --color-info-pending: #aab1b9;
+    --color-info-pending: #d1d5d9;
     --color-dark: #363949;
     --color-light: rgba(132, 139, 200, 0.24);
     --color-dark-variant: #015fa2;
@@ -177,7 +177,7 @@ select::-ms-expand {
 
 .show-bar aside .sidebar a h3 {
     display:block;
-    padding-right: 10px;
+    padding-right: 5px;
     transition: all 0.5s ease;
 }
 
@@ -245,7 +245,7 @@ aside .sidebar a {
     height: 3.7rem;
     gap: 1rem;
     position: relative;
-    margin-left: 2rem;
+    margin-left: 1.5rem;
     transition: all 0.5s ease;
 }
 
@@ -295,7 +295,7 @@ aside .sidebar a:hover span{
 aside .sidebar .message-count {
     background-color: var(--color-danger);
     padding: 2px 6px;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     color: #fff;
     font-size: 11px;
     border-radius: var(--border-radius-1);
@@ -634,13 +634,12 @@ main {
 }
 
 .uploads-section {
-    width: 90%;
-    min-height: 33%;
+    idth: 90%;
+    min-height: 30%;
     margin: 1rem 5%;
-    /* background-color: #1B9C85; */
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: 25% 25% 25%;
+    grid-template-rows: 33% 33% 33%;
     gap: 5px;
 }
 
@@ -724,9 +723,9 @@ input[type=file]::file-selector-button:hover {
     background-color: var(--color-white);
     box-shadow: var(--box-shadow2);
     width: 100%;
-    height: 35%;
+    height: 25%;
     padding-left: -1px;
-    border-radius: 10px;
+    border-radius: 6px;
     display: flex;
     justify-content: left;
     align-items: center;
@@ -838,11 +837,11 @@ summary {
     white-space: nowrap;
   }
 
-summary span:last-child{
+summary span{
     color: var(--color-info-pending);
 }
 
-summary span:not(:first-child):not(:last-child){
+summary span{
     color: var(--color-info-pending);
 }
 
@@ -1029,4 +1028,34 @@ strong{
     color: var(--color-dark);
 }
 
+.images-area img {
+    width: 100%;
+    height: 22rem;
+    border-radius: 16px;
+}
 
+a.links{
+    color: var(--color-cp);
+    text-decoration: underline solid 1px var(--color-dark);
+}
+
+a.border-space{
+    margin-left: 1rem;
+    font-weight: 500;
+}
+
+.uploads-section .uploads-content{
+    width: 85%;
+}
+
+span.success {
+    color: var(--color-success);
+}
+
+span.warnning {
+    color: var(--color-warning);
+}
+
+span.danger {
+    color: var(--color-danger);
+}

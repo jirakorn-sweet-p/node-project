@@ -1,3 +1,79 @@
+<div class="modal-back close" id="modal-back">
+</div>
+<div class="modal close" id="modal">
+    <div class="modal-box">
+        <div class="request-doc" id="request-doc">
+                <div class="topic header-main">
+                    <h2>รายชื่อตำแหน่ง</h2>
+                    <div class="search">
+                        <input type="text" placeholder="searching">
+                    </div>
+                    <!-- <div class="add-btn add-position" id="add-position">
+                        <a>เพิ่มตำแหน่ง</a>
+                        <span class="material-icons-sharp">
+                            group_add
+                        </span>
+                    </div> -->
+                    <div class="border-uploads sort">
+                        <select name="lv" required>
+                            <option selected value="1">ค้นหาตามชื่อ</option>
+                            <option value="2">ค้นหาตามจังหวัด</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>ชื่อ</th>
+                                <th>จังหวัด</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% data.forEach((company,index) => { %>
+                            <tr>
+                                <td><%= index+1 %></td>
+                                <td class="position">
+                                    <div class="backend">
+                                        <h3 class="company-name"><%= company.name %></h3>
+                                    </div>
+                                </td>
+                                <td class="province" ><%= company.province %></td>
+                                <td class="address close"><%= company.address %></td>
+                                <td class="district close"><%= company.district %></td>
+                                <td class="subdistrict close"><%= company.subdistrict %></td>
+                                <td class="provinceID close"><%= company.provinceID %></td>
+                                <td class="tel close"><%= company.tel %></td>
+                                <td class="type_business close"><%= company.type_business %></td>
+                                <td>
+                                    <div class="more-details add-btn pick">
+                                        <p>เลือก</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="paginator">
+                    <% for (let index = 1; index <= all_pages; index++) { %>
+                        <% if (index == current) { %>
+                            <a href="/all-companys?page=<%= index %>" class="current-page">
+                                <%= index %>
+                            </a>
+                        <% } else { %>
+                            <a href="/all-companys?page=<%= index %>">
+                                <%= index %>
+                            </a>
+                        <% } %>
+                    <% } %>
+                </div>
+        </div>
+    </div>
+</div>
 <main>
     <form action="/uploadRequest" method="post" name="request" enctype="multipart/form-data">
         <div class="request-info">
@@ -15,20 +91,22 @@
                 <div class="infomation">
                     <div class="datas">
                         <a>ชื่อ-นามสกุล</a>
-                        <input type="text" placeholder="ชื่อ-นามสกุล" name="fullname" oninput="checkInput(this)" required>
+                        <input type="text" placeholder="ชื่อ-นามสกุล" name="fullname" oninput="checkInput(this)"
+                            required>
                         <p id="fullnameError"></p>
                     </div>
                     <div class="datas">
                         <a>รหัสประจำตัว</a>
-                        <input type="text" placeholder="รหัสประจำตัว" name="std_id" oninput="formatID(this)" maxlength="10" required>
+                        <input type="text" value="<%= std_code %>" placeholder="รหัสประจำตัว" name="std_id" oninput="formatID(this)"
+                            maxlength="10" required>
                         <p id="std_idError"></p>
                     </div>
                     <div class="datas">
                         <a>ปริญาตรี</a>
                         <!-- <input type="text" placeholder="ระดับการศึกษา" name="lv"> -->
-                        <div class="border-uploads" >
+                        <div class="border-uploads">
                             <select name="lv" required>
-                                <option selected value="0">เลือกชั้นปี</option>
+                                <option disabled selected value="0">เลือกชั้นปี</option>
                                 <option value="1">ชั้นปีที่ 1</option>
                                 <option value="2">ชั้นปีที่ 2</option>
                                 <option value="3">ชั้นปีที่ 3</option>
@@ -40,9 +118,9 @@
                     <div class="datas">
                         <a>คณะ</a>
                         <!-- <input type="text" placeholder="คณะ" name="factory"> -->
-                        <div class="border-uploads" >
+                        <div class="border-uploads">
                             <select name="factory" required>
-                                <option selected value="0">คณะ</option>
+                                <option disabled selected value="0">คณะ</option>
                                 <option value="1" selected>วิทยาลัยการคอมพิวเตอร์</option>
                             </select>
                         </div>
@@ -51,18 +129,19 @@
                     <div class="datas">
                         <a>สาขาวิชา</a>
                         <!-- <input type="text" placeholder="สาขาวิชา" name="department"> -->
-                        <div class="border-uploads" >
+                        <div class="border-uploads">
                             <select name="department" required>
-                                <option selected value="0">สาขาวิชา</option>
+                                <option disabled selected value="0">สาขาวิชา</option>
                                 <option value="1" selected>วิทยาลัยการคอมพิวเตอร์ ภาคปกติ</option>
                                 <option value="2" selected>วิทยาลัยการคอมพิวเตอร์ ภาคพิเศษ</option>
                             </select>
-                        </div>  
+                        </div>
                         <p></p>
                     </div>
                     <div class="datas">
                         <a>เกรดเฉลี่ยสะสม</a>
-                        <input type="text" placeholder="เกรดเฉลี่ยสะสม" name="gpa" oninput="formatGPA(this)" maxlength="4" required>
+                        <input type="text" placeholder="เกรดเฉลี่ยสะสม" name="gpa" oninput="formatGPA(this)"
+                            maxlength="4" required>
                         <p></p>
                     </div>
                     <div class="datas">
@@ -72,7 +151,8 @@
                     </div>
                     <div class="datas">
                         <a>หมายเลขโทรศัพท์</a>
-                        <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel" oninput="formatTEL(this)" maxlength="11" required>
+                        <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel" oninput="formatTEL(this)"
+                            maxlength="11" required>
                         <p id="telError"></p>
                     </div>
                 </div>
@@ -97,38 +177,48 @@
 
             <div class="info-intern">
                 <div class="uploads-content">
-                    <a>ชื่อสถาที่ฝึกงาน <span>*</span></a>
-                    <div class="border-input">
-                        <input type="text" name="location" required>
+                    <a>ชื่อสถาที่ฝึกงาน <span></span></a>
+                    <div class="border-input2 finder">
+                        <input class="close" type="text" name="found" id="found">
+                        <input class="find close" placeholder="กรอกชื่อสถาที่ฝึกงาน" id="find" type="text" name="location" required>
+                        <a class="search" id="search">ค้นหา<span class="material-icons-sharp">search</span></a>
+                        <a class="search" id="new-company">เพิ่ม<span class="material-icons-sharp">add</span></a>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>ตำแหน่ง <span>*</span></a>
+                    <a>ตำแหน่ง <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="position" required>
+                        <!-- <input type="text" name="position" required> -->
+                        <select name="position" required>
+                            <option disabled selected value="0">เลือกตำแหน่ง</option>
+                            <% posit.forEach(element => { %>
+                             <option value="<%= element.name %>"><%= element.name %></option>
+                            <% }) %>
+                        </select>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>ผู้ประสานงาน (โปรดระบุด้วยว่าหนังสือเรียนถึงใคร) <span>*</span></a>
+                    <a>ผู้ประสานงาน (โปรดระบุด้วยว่าหนังสือเรียนถึงใคร) <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="receiver" placeholder="(เช่น ผู้อํานวยการ......, ผู้จัดการ..., หัวหน้าส่วน เป็นต้น)" required>
+                        <input type="text" name="receiver"
+                            placeholder="(เช่น ผู้อํานวยการ......, ผู้จัดการ..., หัวหน้าส่วน เป็นต้น)" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>เบอร์โทร <span>*</span></a>
+                    <a>เบอร์โทร <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="company_tel" oninput="formatTEL2(this)" maxlength="11" required>
+                        <input id="tel2" type="text" name="company_tel" oninput="formatTEL2(this)" maxlength="11" required>
                     </div>
                 </div>
 
                 <div class="uploads-content">
-                    <a >บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด <span>*</span></a>
+                    <a>บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="aboutcompany" required>
+                        <input id="type_business2" type="text" name="aboutcompany" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>ช่วงเวลาที่ฝึกงาน <span>*</span></a>
+                    <a>ช่วงเวลาที่ฝึกงาน <span></span></a>
                     <div class="border-input2">
                         <input type="date" name="start_intern" required>
                         <h2>ถึง</h2>
@@ -141,39 +231,40 @@
             </div>
             <div class="info-address">
                 <div class="uploads-content">
-                    <a>ที่อยู่ <span>*</span></a>
+                    <a>ที่อยู่ <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน..." required>
+                        <input id="address2" type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน..."
+                            required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>บริษัท/หน่วยงาน <span>*</span></a>
+                    <a>บริษัท/หน่วยงาน <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="companyname" required>
+                        <input id="company-name2" type="text" name="companyname" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>ตำบล <span>*</span></a>
+                    <a>ตำบล <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="subdistrict" required>
+                        <input id="subdistrict2" type="text" name="subdistrict" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>อำเภอ <span>*</span></a>
+                    <a>อำเภอ <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="district" required>
+                        <input id="district2" type="text" name="district" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>จังหวัด <span>*</span></a>
+                    <a>จังหวัด <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="province" required>
+                        <input id="province2" type="text" name="province" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>รหัสไปรษณีย์ <span>*</span></a>
+                    <a>รหัสไปรษณีย์ <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="code" required>
+                        <input id="provinceID2" type="text" name="code" required>
                     </div>
                 </div>
             </div>
@@ -183,22 +274,22 @@
 
             <div class="info-phone">
                 <div class="uploads-content">
-                    <a>ชื่อ ผู้ประสานงาน/พี่เลี้ยง <span>*</span></a>
+                    <a>ชื่อ ผู้ประสานงาน/พี่เลี้ยง <span></span></a>
                     <div class="border-input">
                         <input type="text" name="coordinator">
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>เบอร์โทร <span>*</span></a>
+                    <a>เบอร์โทร <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="coordinator_tel"  oninput="formatTEL2(this)" maxlength="11" required>
+                        <input type="text" name="coordinator_tel" oninput="formatTEL2(this)" maxlength="11" required>
                     </div>
                 </div>
             </div>
 
             <div class="topic2">
-                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน <span>*</span></h2>
-                <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง <span>*</span></h2>
+                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน <span></span></h2>
+                <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง <span></span></h2>
             </div>
 
             <div class="send-date">
@@ -220,34 +311,34 @@
             </div>
             <div class="uploads-section">
                 <div class="uploads-content">
-                    <a>เอกสารยื่นใบฝึกงาน <span>*</span></a>
+                    <a>เอกสารยื่นใบฝึกงาน <span></span></a>
                     <div class="border-uploads">
                         <input type="file" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>หนังสือยินยอมผู้ปกครอง <span>*</span></a>
+                    <a>หนังสือยินยอมผู้ปกครอง <span></span></a>
                     <div class="border-uploads">
                         <input type="file" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>resume นักศึกษา <span>*</span></a>
+                    <a>resume นักศึกษา <span></span></a>
                     <div class="border-uploads">
                         <input type="file" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>transcript <span>*</span></a>
+                    <a>transcript <span></span></a>
                     <div class="border-uploads">
                         <input type="file" name="file">
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>รูปแบบการฝึกงาน <span>*</span></a>
-                    <div class="border-uploads" >
+                    <a>รูปแบบการฝึกงาน <span></span></a>
+                    <div class="border-uploads">
                         <select name="working_style" required>
-                            <option selected value="0">รูปแบบการฝึกงาน</option>
+                            <option disabled selected value="0">รูปแบบการฝึกงาน</option>
                             <option value="1">Onsite</option>
                             <option value="2">Work form home</option>
                             <option value="3">Hybrid</option>
@@ -255,15 +346,17 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>หนังสือขอความอนุเคราะห์จากบริษัท (ทั้งนี้ วิธีการส่งอยู่ในดุลยพินิจ ตามความเหมาะสม) <span>*</span></a>
+                    <a>หนังสือขอความอนุเคราะห์จากบริษัท (ทั้งนี้ วิธีการส่งอยู่ในดุลยพินิจ ตามความเหมาะสม)
+                        <span></span></a>
                     <div class="border-uploads">
                         <select name="acceptance" required>
+                            <option disabled selected value="0">เลือกวิธีส่งเอกสาร</option>
                             <option value="1">มารับเอง</option>
                             <option value="2">ให้เจ้าหน้าที่ส่งตามที่อยู่</option>
                         </select>
                     </div>
                 </div>
-                
+
             </div>
 
 

@@ -21,19 +21,21 @@
                 receipt_long
             </span>
             <h3>คำร้อง</h3>
-            <span class="message-count">27</span>
+            <span class="message-count"><%= locals.c %></span>
         </a>
-        <a href="/requests-all-teacher" class="<%= locals.bar2  %>">
+        <a href="/docs-waiting" class="<%= locals.bar2  %>">
             <span class="material-icons-sharp">
-                insights
+                calendar_month
             </span>
-            <h3>ประวัติการยื่นคำร้อง</h3>
+            <h3>หนังสือขอความอนุเคราะห์</h3>
+            <span class="message-count"><%= locals.c2 %></span>
         </a>
-        <a href="/pass-status-requests" class="<%= locals.bar3  %>">
+        <a href="/docs-approve" class="<%= locals.bar3  %>">
             <span class="material-icons-sharp">
-                inventory
+                calendar_month
             </span>
-            <h3>ตรวจสอบสถานะการฝึกงาน</h3>
+            <h3>หนังสือตอบรับการฝึกงาน</h3>
+            <span class="message-count"><%= locals.c3 %></span>
         </a>
         <a href="/upload-docs" class="<%= locals.bar4  %>">
             <span class="material-icons-sharp">
@@ -58,6 +60,18 @@
                 calendar_month
             </span>
             <h3>กำหนดการฝึกงาน</h3>
+        </a>
+        <a href="/requests-all-teacher" class="<%= locals.bar8  %>">
+            <span class="material-icons-sharp">
+                insights
+            </span>
+            <h3>ประวัติการยื่นคำร้อง</h3>
+        </a>
+        <a href="/pass-status-requests" class="<%= locals.bar9  %>">
+            <span class="material-icons-sharp">
+                inventory
+            </span>
+            <h3>ตรวจสอบสถานะการฝึกงาน</h3>
         </a>
         <!-- <a href="#">
                     <span class="material-icons-sharp">

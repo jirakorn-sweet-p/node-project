@@ -77,7 +77,10 @@
                             <div class="downlaod">
                                 <a href="/download-doc-teacher/<%= docs.downloadDoc %>">downlaod</a>
                             </div>
-                            <div class="date-upload">10-10-2566</div>
+                            <div class="date-upload">
+                                <%= docs.createdAt.getDate() %> -
+                                <%= docs.createdAt.getMonth()+1 %> -
+                                    <%= docs.createdAt.getFullYear() %></div>
                         </div>
                         <div class="modal close" id="modal<%= index+1 %>">
                             <div class="modal-box">
@@ -133,7 +136,7 @@
                             <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
                                 voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
                             <div class="downlaod">
-                                <h3>downlaod</h3>
+                                <a>downlaod</a>
 
                             </div>
                             <div class="date-upload">10-10-2566</div>

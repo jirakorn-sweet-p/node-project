@@ -18,6 +18,22 @@ const RequestServiceSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'CertificateSchema'
     },
+    approval_document_status:{//
+        type: String,
+        default:"0"
+    },
+    approval_document_comment:{//
+        type: String,
+        default:""
+    },
+    accepted_company_status:{//
+        type: String,
+        default:"0"
+    },
+    accepted_company_comment:{//
+        type: String,
+        default:""
+    },
     status:{//
         type: String,
         default:"0"

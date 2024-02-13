@@ -12,7 +12,10 @@
     <meta name="description" content="<%= locals.description  %>">
 </head>
 <body>
-    <div class="container show-bar" id="left-bar">
+    <% if (locals.content == '../layouts/register.ejs' || locals.content == '../layouts/login.ejs' || locals.content == '../layouts/approval-docs.ejs') { %>
+        <%- include(locals.content)  %>
+        <% } else { %>
+         <div class="container show-bar" id="left-bar">
         <% if (locals.user=="student" ) { %>
             <%- include("../partials/sidebar-student.ejs") %>
                 <% } else if (locals.user=="teacher" ) { %>
@@ -26,6 +29,8 @@
                             <!-- Ending Main -->
                                 
     </div>
+    <% } %>
+    
 
     <script src="<%= locals.js  %>"></script>
 </body>

@@ -2,17 +2,9 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 const CompanyInfoSchema = new Schema({
-    company_name:{
-        type:String,//
-        require:true
-    },
-    tel:{
-        type:String,//
-        require:true
-    },
-    address:{
-        type: String, //
-        ref: 'Address',
+    company:{
+        type: Schema.Types.ObjectId, 
+        ref: 'Company'
     },
     type_business:{//
         type: String,
@@ -23,22 +15,6 @@ const CompanyInfoSchema = new Schema({
         require:true
     },
     position:{//
-        type: String,
-        require:true
-    },
-    province:{//
-        type: String,
-        require:true
-    },
-    district:{//
-        type: String,
-        require:true
-    },
-    subdistrict:{//
-        type: String,
-        require:true
-    },
-    provinceID:{//
         type: String,
         require:true
     },

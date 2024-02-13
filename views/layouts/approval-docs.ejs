@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เอกสาร</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #005a9e;
+            /* สีของหัวเอกสารของรัฐ */
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            text-align: center;
+            /* Center the content in .section */
+        }
+
+        body {
+            border: 2px solid #005a9e;
+            /* สีของเส้นขอบ */
+            padding: 20px;
+        }
+    </style>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="path/to/your/other/styles.css">
+</head>
+
+<body>
+
+    <div class="section">
+        <h1>หัวข้อเอกสาร</h1>
+        <p>วันที่: 15 กุมภาพันธ์ 2567</p>
+        <p>กระทรวง: [กระทรวงของคุณ]</p>
+        <p>ผู้เขียน: [ชื่อผู้เขียน]</p>
+    </div>
+    <% for( let i=0; i < company_list.length; i++ ) { %>
+        <div class="section">
+            <h2>
+                <%= company_list[i] %>
+            </h2>
+            <% for( let j = 0; j < ser_list[i].length; j++ ) { %>
+            <p><%= ser_list[i][j].at(0).student_info.name + "   " %><strong>ตำแหน่ง<%= "   " + ser_list[i][j].at(0).company_info.position %></strong></p>
+            <% } %>
+            
+        </div>
+        <% } %>
+
+
+</body>
+
+</html>

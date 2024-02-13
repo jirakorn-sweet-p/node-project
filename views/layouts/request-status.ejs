@@ -74,7 +74,7 @@
                 <div class="uploads-content">
                     <a href="">ชื่อสถาที่ฝึกงาน</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.company_name %>" readonly>
+                        <input type="text" value="<%= company_details.name %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
@@ -92,7 +92,7 @@
                 <div class="uploads-content">
                     <a href="">เบอร์โทรศัพท์</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.tel %>" readonly>
+                        <input type="text" value="<%= company_details.tel %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
@@ -120,37 +120,37 @@
                 <div class="uploads-content">
                     <a href="">ที่อยู่</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.address %>" readonly>
+                        <input type="text" value="<%= company_details.address %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">บริษัท/หน่วยงาน</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.company_name %>" readonly>
+                        <input type="text" value="<%= company_details.name %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">ตำบล</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.subdistrict %>" readonly>
+                        <input type="text" value="<%= company_details.subdistrict %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">อำเภอ</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.district %>" readonly>
+                        <input type="text" value="<%= company_details.district %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">จังหวัด</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.province %>" readonly>
+                        <input type="text" value="<%= company_details.province %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">รหัสไปรษณีย์</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company.provinceID %>" readonly>
+                        <input type="text" value="<%= company_details.provinceID %>" readonly>
                     </div>
                 </div>
             </div>
@@ -200,30 +200,25 @@
                     <a href="">เอกสารยื่นใบฝึกงาน</a>
                     <!-- upload/2024-01-07T05-15-23.435Z-DIP_LAB2.pdf -->
                     <div class="border-uploads">
-                        <a href="/download-pdf/<%= request_doc.doc_request_intern %>" target="_blank" download>
-                            <button type="button">
+                        <a href="/uploads<%= request_doc.doc_request_intern %>" class="links border-space" target="_blank">
                                 <%= request_doc.doc_request_intern %>
-                            </button>
+                        </a>
                         </a>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">หนังสือยินยอมผู้ปกครอง</a>
                     <div class="border-uploads">
-                        <a href="/download-pdf/<%= request_doc.doc_approve_parrent %>" target="_blank" download>
-                            <button type="button">
+                        <a href="/uploads<%= request_doc.doc_approve_parrent %>" class="links border-space" target="_blank">
                                 <%= request_doc.doc_approve_parrent %>
-                            </button>
                         </a>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">resume นักศึกษา</a>
                     <div class="border-uploads">
-                        <a href="/download-pdf/<%= request_doc.doc_resume %>" target="_blank" download>
-                            <button type="button">
+                        <a href="/uploads<%= request_doc.doc_resume %>" class="links border-space" target="_blank">
                                 <%= request_doc.doc_resume %>
-                            </button>
                         </a>
                     </div>
                 </div>
@@ -231,11 +226,11 @@
                     <a href="">หนังสือขอความอนุเคราะห์จากบริษัท</a>
                     <div class="border-uploads">
                         <% if (request_doc.doc_approve_company==1) { %>
-                            <button class="border-space" type="button">มารับไปส่งเอง</button>
+                            <a class="border-space" type="button">มารับไปส่งเอง</a>
                             <% } else if (request_doc.doc_approve_company==2) { %>
-                                <button class="border-space" type="button">เจ้าหน้าที่จัดส่งให้</button>
+                                <a class="border-space" type="button">เจ้าหน้าที่จัดส่งให้</a>
                                 <% } else { %>
-                                    <button class="border-space" type="button"></button>
+                                    <a class="border-space" type="button"></a>
                                     <% } %>
                     </div>
                 </div>
@@ -243,23 +238,21 @@
                     <a href="">รูปแบบการฝึกงาน</a>
                     <div class="border-uploads">
                         <% if (request_doc.working_style==1) { %>
-                            <button class="border-space" type="button">Onsite</button>
+                            <a class="border-space" type="button">Onsite</a>
                             <% } else if (request_doc.working_style==2) { %>
-                                <button class="border-space" type="button">Work form home</button>
+                                <a class="border-space" type="button">Work form home</a>
                                 <% } else if (request_doc.working_style==3) { %>
-                                    <button class="border-space" type="button">Hybrid</button>
+                                    <a class="border-space" type="button">Hybrid</a>
                                     <% } else { %>
-                                        <button class="border-space" type="button"></button>
+                                        <a class="border-space" type="button"></a>
                                         <% } %>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a href="">transcript</a>
                     <div class="border-uploads">
-                        <a href="/download-pdf/<%= request_doc.doc_transcript %>" target="_blank" download>
-                            <button type="button">
-                                <%= request_doc.doc_transcript %>
-                            </button>
+                        <a href="/uploads<%= request_doc.doc_transcript %>" class="links border-space" target="_blank">
+                            <%= request_doc.doc_transcript %>
                         </a>
                     </div>
                 </div>

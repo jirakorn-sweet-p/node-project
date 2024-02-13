@@ -19,6 +19,10 @@ const CertificateSchema = new Schema({
         type: String,
         default:"none"
     },
+    comment:{
+        type: String,
+        default:"no comment"
+    },
     update_status_at:{
         type: Date,
         default: Date.now

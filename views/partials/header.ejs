@@ -10,11 +10,11 @@
             </div>
             <div class="profile">
                 <div class="info">
-                    <p>Hey, <b>Sweet P</b></p>
-                    <small class="text-muted">Admin</small>
+                    <p>Hey, <b><%= locals.name %></b></p>
+                    <small class="text-muted"><%= locals.user %></small>
                 </div>
                 <div class="profile-photo">
-                    <img src="/img/profile-1.jpg">
+                    <img src="/uploads/<%= locals.profile  %>">
                 </div>
             </div>
         </div>

@@ -6,7 +6,6 @@
             </h2>
         </div>
     </div>
-
     <div class="sidebar">
         <h4></h4>
         <a href="/request">
@@ -21,14 +20,16 @@
                 receipt_long
             </span>
             <h3>คำร้อง</h3>
-            <span class="message-count">27</span>
         </a>
+        <% if (!locals.first == true) { %>
         <a href="/request-status" class="<%= locals.bar2  %>">
             <span class="material-icons-sharp">
                 insights
             </span>
             <h3>ตรวจสอบสถานะการฝึกงาน</h3>
         </a>
+        <% } %>
+
         <a href="/document" class="<%= locals.bar3  %>">
             <span class="material-icons-sharp">
                 inventory
@@ -53,13 +54,7 @@
             </span>
             <h3>ปฏิทินกำหนดการ</h3>
         </a>
-        <!-- <a href="#">
-                    <span class="material-icons-sharp">
-                        add
-                    </span>
-                    <h3>New Login</h3>
-                </a> -->
-        <a href="#">
+        <a href="/logout">
             <span class="material-icons-sharp">
                 logout
             </span>

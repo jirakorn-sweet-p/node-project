@@ -1,100 +1,50 @@
 <main>
     <div class="main">
-        <h2>เอกสารที่เกี่ยวข้อง</h2>
+        <div class="title-header">
+            <h2>เอกสารที่เกี่ยวข้อง</h2>
+        </div>
+        
         <div class="document-section">
             <div class="documents">
+                
+                <% data.forEach((docs,index)=> { %>
+                 <div class="card-document">
+                        <h2>เอกสารที่เกี่ยวข้อง</h2>
+                        
+                    <h3>
+                        <%= docs.details %>
+                    </h3>
+                    <div class="downlaod">
+                        <a href="/uploads/<%= docs.downloadDoc %>" target="_blank" name="test">
+                            downlaod
+                        </a>
+                    </div>
+                    <div class="date-upload"><%= docs.createdAt.getDate() %> -
+                        <%= docs.createdAt.getMonth()+1 %> -
+                            <%= docs.createdAt.getFullYear() %></div>
+                </div>
+                <% }) %>
+        
                 <div class="card-document">
-                    <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                    <div class="card-document-header">
+                        <h2>ผลระเมินการฝึกงาน</h2>
+                        <div class="edit-ic">
+                            <span class="material-icons-sharp edit-btn" name="0" id="edit-doc0">
+                                edit
+                            </span>
+                            <span class="material-icons-sharp">
+                                delete
+                            </span>
+                        </div>
+                    </div>
                     <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
                         voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
                     <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <h2>หนังสือยินยอมผู้ปกครอง</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <h2>ประวัตินักศึกษา</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <h2>ใบรับรองการฝึกงาน</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <h2>ข้อปฏิบัติในการฝึกงาน</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <h2>รายชื่อสถานประกอบการ-หน่วยงานที่เคยรับนักศึกษาฝึกงาน</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
+                        <a>downlaod</a>
 
-                <div class="card-document">
-                    <h2>สมุดบันทึกการฝึกงาน</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
                     </div>
                     <div class="date-upload">10-10-2566</div>
                 </div>
-                <div class="card-document">
-                    <h2>แบบประเมินการฝึกงาน</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-                <div class="card-document">
-                    <h2>ผลระเมินการฝึกงาน</h2>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <div class="downlaod">
-                        <h3>downlaod</h3>
-                        <h3>Click !</h3>
-                    </div>
-                    <div class="date-upload">10-10-2566</div>
-                </div>
-
             </div>
 
         </div>

@@ -2,11 +2,36 @@ const menuBtn = document.getElementById('menu-btn');
 const sideMenu = document.getElementById('left-bar');
 const light_mode = document.getElementById('light-mode');
 const dark_mode = document.getElementById('dark-mode');
+
 const modal_bg = document.getElementById('modal-back');
 const modal = document.getElementById('modal');
 const all_modal = document.querySelectorAll('.modal');
 const add_request = document.getElementById('boder-add-request');
 const add_document= document.getElementById('add-doc');
+const serch_company= document.getElementById('search');
+
+const find= document.getElementById('find');
+const new_company= document.getElementById('new-company');
+const found= document.getElementById('found');
+
+const select = document.querySelectorAll('.pick');
+const company = document.querySelectorAll('.company-name');
+const company2 = document.getElementById('company-name2');
+const province = document.querySelectorAll('.province');
+const province2= document.getElementById('province2');
+const address = document.querySelectorAll('.address');
+const address2= document.getElementById('address2');
+const district = document.querySelectorAll('.district');
+const district2= document.getElementById('district2');
+const subdistrict = document.querySelectorAll('.subdistrict');
+const subdistrict2= document.getElementById('subdistrict2');
+const provinceID = document.querySelectorAll('.provinceID');
+const provinceID2= document.getElementById('provinceID2');
+const tel = document.querySelectorAll('.tel');
+const tel2= document.getElementById('tel2');
+const type_business = document.querySelectorAll('.type_business');
+const type_business2= document.getElementById('type_business2');
+
 
 const edit_document= document.getElementsByClassName('edit-btn');
 const documents = Array.from(edit_document); 
@@ -15,13 +40,126 @@ const pendding_request= document.getElementsByClassName('request-details');
 const requests_pendding = Array.from(pendding_request); 
 
 const request_details = document.getElementById('request-details');
-
-
+const expand_more = document.getElementById('expand_more');
+const expand_more2 = document.getElementById('expand_more2');
+const expand_more3 = document.getElementById('expand_more3');
+const expand_reqInfo = document.getElementById('request-info');
+const expand_reqDoc = document.getElementById('request-doc');
+const expand_cer = document.getElementById('request-cer');
 // request_details.addEventListener('click',()=>{
 //   console.log('hi');
 //   console.log(request_details.getAttribute('name').toString());
 //   modal_bg.classList.remove('close');
 // });
+
+// expand_more.onclick = function() {
+//     // alert(expand_more.classList.contains('active'))
+//     if(expand_more.classList.contains('active')){
+//       alert(true);
+//       expand_more.classList.add('active');
+//     }else{
+//       alert(false);
+//       expand_more.classList.remove('active');
+//     }
+// };
+
+if(select){
+  for (var i = 0; i < select.length; i++) {
+    let comp = company[i].textContent;
+    let addr = address[i].textContent;
+    let dist = district[i].textContent;
+    let sub = subdistrict[i].textContent;
+    let provId = provinceID[i].textContent;
+    let t = tel[i].textContent;
+    let pro = province[i].textContent;
+    let type = type_business[i].textContent;
+
+    select[i].addEventListener('click',()=>{
+      modal_bg.classList.add('close');
+      modal.classList.add('close');
+      company2.value = comp;
+      find.value = comp;
+      address2.value = addr;
+      district2.value = dist;
+      subdistrict2.value = sub;
+      provinceID2.value = provId;
+      tel2.value = t;
+      province2.value = pro;
+      type_business2.value = type;
+      
+      serch_company.innerHTML = "<span class='material-icons-sharp'>search</span>";
+      new_company.innerHTML = "<span class='material-icons-sharp'>add</span>";
+      
+      found.value = "match";
+      find.classList.remove('close');
+      new_company.classList.add('close');
+    });
+  }
+};
+
+
+if(new_company){
+  new_company.addEventListener('click',()=>{
+    find.classList.remove('close');
+    serch_company.innerHTML = "<span class='material-icons-sharp'>search</span>";
+    new_company.innerHTML = "<span class='material-icons-sharp'>add</span>";
+    found.value = "not-match";
+    new_company.classList.add('close');
+});
+}
+
+
+
+if(serch_company){
+  serch_company.addEventListener('click',()=>{
+  modal_bg.classList.remove('close');
+  modal.classList.remove('close');
+});
+}
+
+if(add_document){
+  add_document.addEventListener('click',()=>{
+  modal_bg.classList.remove('close');
+  modal.classList.remove('close');
+});
+}
+if(expand_more3){
+expand_more3.addEventListener('click',()=>{
+  if(expand_cer.classList.contains('active')){
+          console.log('hiding to show');
+          expand_cer.classList.remove('active');
+    }else{
+          console.log('show to hiding');
+          expand_cer.classList.add('active');
+  }
+});
+}
+
+if(expand_more2){
+expand_more2.addEventListener('click',()=>{
+  if(expand_reqDoc.classList.contains('active')){
+          console.log('hiding to show');
+          expand_reqDoc.classList.remove('active');
+    }else{
+          console.log('show to hiding');
+          expand_reqDoc.classList.add('active');
+  }
+});
+}
+if(expand_more){
+expand_more.addEventListener('click',()=>{
+  if(expand_reqInfo.classList.contains('active')){
+          console.log('hiding to show');
+          expand_reqInfo.classList.remove('active');
+    }else{
+          console.log('show to hiding');
+        expand_reqInfo.classList.add('active');
+  }
+});
+}
+
+
+
 
 requests_pendding.forEach(function(request) {
   request.addEventListener('click',()=>{
@@ -41,12 +179,7 @@ requests_pendding.forEach(function(request) {
 });
 
 
-if(add_document){
-  add_document.addEventListener('click',()=>{
-  modal_bg.classList.remove('close');
-  modal.classList.remove('close');
-});
-}
+
 
 if(add_request){
   add_request.addEventListener('click',()=>{
@@ -60,7 +193,7 @@ if(modal_bg){
   modal_bg.classList.add('close');
   for (var i = 0; i < all_modal.length; i++) {
     all_modal[i].classList.add("close");
-    
+
   }
 });
 }
