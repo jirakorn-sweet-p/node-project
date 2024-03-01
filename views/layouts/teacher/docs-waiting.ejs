@@ -10,7 +10,7 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>หนังสือรอส่ง</h2>
+            <h2>หนังสือขอความอนุเคราะห์</h2>
             <div class="sort">
                 <select id="sort" onchange="handleSortChange(this)">
                     <% if (sort == '1') { %>
@@ -37,7 +37,7 @@
             </div>
 
             <div class="search">
-                <input type="text" placeholder="searching">
+                <input type="text" placeholder="searching" id="searching" oninput="filterTable()">
             </div>
 
             <div class="add-btn success" id="add-approval-docs">
@@ -219,7 +219,8 @@
                     <% } %>
 
         </div>
-        <table class="styled-table">
+        <div class="table">
+            <table class="styled-table" id="styled-table">
             <thead>
                 <tr>
                     <th class="close th-checkbox" id="th-checkbox">เลือก</th>
@@ -231,6 +232,13 @@
                     <th>การออกหนังสือ</th>
                     <th>เพิ่มเติม</th>
                 </tr>
+                <% if (requests.length == 0) { %>
+                    <tr class="no-data">
+                       <th colspan="8">
+                           ไม่มีข้อมูล
+                       </th>
+                   </tr>
+                   <% } %>
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -262,7 +270,7 @@
                                     <div class="request-info" id="request-info<%= index %>">
                                 <% } %>
                                     <div class="topic">
-                                        <h2>ข้อมูลนักศึกษา</h2>
+                                        <h2>ข้อมูลนักศึกษา</h2><h2>ชื่อ: <%= element.student_info.name %> รหัส: <%= element.student_info.student_code %></h2>
                                         <% if (element.student_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.student_info.status == '1') { %>
@@ -324,7 +332,7 @@
                                                     value="วิทยาลัยการคอมพิวเตอร์">
                                             </div>
                                             <div class="datas">
-                                                <a>สาขาวิชา</a>
+                                                <a>หลักสูตร</a>
                                                 <div class="border-uploads">
                                                     <select name="factory" required>
 
@@ -447,6 +455,7 @@
                                                 <% } %>
                                     <div class="topic">
                                         <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                                        <h2><%= element.company_info.company.name %></h2>
                                         <% if (element.company_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.company_info.status == '1') { %>
@@ -483,14 +492,14 @@
                                         <div class="uploads-content">
                                             <a >เบอร์โทรศัพท์</a>
                                             <div class="border-input">
-                                                <input type="text"
+                                                <input type="text" name="company_tel" oninput="formatTEL2(this)" maxlength="11"
                                                     value="<%= element.company_info.company.tel %>">
                                             </div>
                                         </div>
                                         <div class="uploads-content">
                                             <a >บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
                                             <div class="border-input">
-                                                <input type="text"
+                                                <input type="text" 
                                                     value="<%= element.company_info.type_business %>">
                                             </div>
                                         </div>
@@ -586,7 +595,7 @@
                                         <div class="uploads-content">
                                             <a >เบอร์โทรศัพท์</a>
                                             <div class="border-input">
-                                                <input type="text"
+                                                <input type="text" name="coordinator_tel" oninput="formatTEL2(this)" maxlength="11"
                                                     value="<%= element.company_info.tel_mentor %>">
                                             </div>
                                         </div>
@@ -657,7 +666,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                     <div class="topic">
-                                        <h2>upload document</h2>
+                                        <h2>อัพโหลดเอกสาร</h2>
                                         <% if (element.request_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.request_info.status == '1') { %>
@@ -829,7 +838,7 @@
                                                 <% } %>
 
                                     <div class="topic">
-                                        <h2>Approval Document</h2>
+                                        <h2>หนังสือขอความอนุเคราะห์</h2>
                                         <% if (element.approval_document_status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.approval_document_status == '1') { %>
@@ -886,7 +895,7 @@
                                 </div>
 
                                 <div class="submit">
-                                    <button type="submit">Update</button>
+                                    <button type="submit">อัพเดท</button>
                                 </div>
                             </div>
                         </form>
@@ -912,7 +921,7 @@
                             </div>
                         </td>
                         <td>
-                            <%= element.update_at.toLocaleDateString() %>
+                            <%= new Date(element.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                         </td>
                         <td>
                             <%= element.student_info.student_code %>
@@ -925,14 +934,14 @@
                         <td>
                             <%= element.company_info.company.name %>
                         </td>
-                        <td>
+                        <td class="midle">
                             <% if (element.request_info.doc_approve_company==1) { %>
                                 รับไปส่งเอง
                                 <% } else if(element.request_info.doc_approve_company==2) { %>
                                     เจ้าหน้าที่ส่งให้
                                     <% } %>
                             </td>
-                        <td>
+                        <td class="midle">
                             <% if (element.approval_document_status==0) { %>
                                 <div class="status-approve pendding">
                                     <a>
@@ -971,5 +980,22 @@
 
             </tbody>
         </table>
+        </div>
+        
+        <div class="paginator">
+
+<% for( let index=1; index <=all_pages[sort-1]; index++ ) { %>
+    <% if (index==current) { %>
+        <a href="?sort=<%= sort %>&page=<%= index %>" class="current-page">
+            <%= index %>
+        </a>
+        <% } else { %>
+            <a href="?sort=<%= sort %>&page=<%= index %>">
+                <%= index %>
+            </a>
+            <% } %>
+                <% } %>
+
+</div>
     </div>
 </main>

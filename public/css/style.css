@@ -550,10 +550,6 @@ main {
     display: flex;
 }
 
-.card-request:last-child{
-    margin-bottom: 10rem;
-}
-
 .request-details{
     width: 70%;
     height: 100%;
@@ -630,7 +626,8 @@ main {
     margin: 0;
     width: 25%;
     /* background-color: white; */
-    height: 100%;
+    height: 2rem;
+    max-height: 100%;
     display: flex;
     gap: 2%;
 }
@@ -665,10 +662,11 @@ div.status-pass{
 
 .request-doc div{
     width: 80%;
-    height: 20%;
+    height: 3rem;
     margin: 10px auto;
     border-radius: 5rem;
     display: flex;
+    justify-content: space-evenly;
     align-items: center;
 }
 
@@ -692,8 +690,7 @@ div.status-pass{
 }
 
 .request-status.successed h3{
-    margin-left: 2.5rem;
-    font-size: medium;
+    font-size: small;
 }
 
 .request-doc div.waiting{
@@ -715,8 +712,29 @@ div.status-pass{
 }
 
 .request-status.waiting h3{
-    margin-left: 2.5rem;
-    font-size: medium;
+    font-size: small;
+}
+
+.request-doc div.cp{
+    background-color: var(--color-cp);
+    box-shadow: var(--box-shadow-cp);
+    margin-bottom: 3rem;
+}
+
+.request-doc div.cp span{
+    color: white;
+}
+
+.request-doc div.cp h3{
+    color: white;
+}
+
+.request-status.cp span{
+    margin-left: 1rem;
+}
+
+.request-status.cp h3{
+    font-size: small;
 }
 
 .request-doc div.fail{
@@ -738,8 +756,7 @@ div.status-pass{
 }
 
 .request-status.fail h3{
-    margin-left: 2.5rem;
-    font-size: medium;
+    font-size: small;
 }
 
 .request-doc div.upload{
@@ -890,4 +907,8 @@ div.status-pass{
 
 .modal-box .menu:hover a{
     color: var(--color-white);
+}
+
+.details-section .pos h3+h3{
+    width: 75%;
 }

@@ -8,52 +8,59 @@
     </div>
 
     <div class="sidebar">
-        <h4></h4>
-        <a href="/request">
-            <span class="material-icons-sharp">
-                dashboard
-            </span>
-            <h3>Dashboard</h3>
-        </a>
+
         <h4>คำร้อง</h4>
         <a href="/request-teacher" class="<%= locals.bar1  %>">
             <span class="material-icons-sharp">
                 receipt_long
             </span>
             <h3>คำร้อง</h3>
-            <span class="message-count"><%= locals.c %></span>
+            <% if (locals.c != '0') { %>
+                <span class="message-count"><%= locals.c %></span>
+            <% } %>
         </a>
         <a href="/docs-waiting" class="<%= locals.bar2  %>">
             <span class="material-icons-sharp">
-                calendar_month
+                library_books
             </span>
             <h3>หนังสือขอความอนุเคราะห์</h3>
-            <span class="message-count"><%= locals.c2 %></span>
+            <% if (locals.c2 != '0') { %>
+                <span class="message-count"><%= locals.c2 %></span>
+            <% } %>
         </a>
-        <a href="/docs-approve" class="<%= locals.bar3  %>">
+        <a href="/docs-accepted" class="<%= locals.bar3  %>">
             <span class="material-icons-sharp">
-                calendar_month
+                inventory
             </span>
-            <h3>หนังสือตอบรับการฝึกงาน</h3>
-            <span class="message-count"><%= locals.c3 %></span>
+            <h3>หนังสือตอบรับ</h3>
+            <% if (locals.c3 != '0') { %>
+                <span class="message-count"><%= locals.c3 %></span>
+            <% } %>
         </a>
-        <a href="/upload-docs" class="<%= locals.bar4  %>">
+        <a href="/docs-approve" class="<%= locals.bar4  %>">
             <span class="material-icons-sharp">
-                mail_outline
+                content_paste_go
             </span>
-            <h3>เอกสารที่เกี่ยวข้อง</h3>
+            <h3>หนังสือส่งตัว</h3>
+            <% if (locals.c4 != '0') { %>
+                <span class="message-count"><%= locals.c4 %></span>
+            <% } %>
         </a>
-        <a href="/upload-news" class="<%= locals.bar5  %>">
+    
+        <a href="/docs-certificate" class="<%= locals.bar5  %>">
             <span class="material-icons-sharp">
-                newspaper
+                task
             </span>
-            <h3>อัพโหลดข่าวสาร</h3>
+            <h3>เอกสารสำเร็จการฝึกงาน</h3>
+            <% if (locals.c5 != '0') { %>
+                <span class="message-count"><%= locals.c5 %></span>
+            <% } %>
         </a>
         <a href="/all-companys" class="<%= locals.bar6  %>">
             <span class="material-icons-sharp">
-                business
+                apartment
             </span>
-            <h3>สถานประกอบการที่เคยรับฝึกงาน</h3>
+            <h3>สถานประกอบการฝึกงาน</h3>
         </a>
         <a href="/upload-calendar" class="<%= locals.bar7  %>">
             <span class="material-icons-sharp">
@@ -63,15 +70,27 @@
         </a>
         <a href="/requests-all-teacher" class="<%= locals.bar8  %>">
             <span class="material-icons-sharp">
-                insights
+                history
             </span>
             <h3>ประวัติการยื่นคำร้อง</h3>
         </a>
         <a href="/pass-status-requests" class="<%= locals.bar9  %>">
             <span class="material-icons-sharp">
-                inventory
+                checklist
             </span>
             <h3>ตรวจสอบสถานะการฝึกงาน</h3>
+        </a>
+        <a href="/upload-docs" class="<%= locals.bar10  %>">
+            <span class="material-icons-sharp">
+                description
+            </span>
+            <h3>เอกสารที่เกี่ยวข้อง</h3>
+        </a>
+        <a href="/upload-news" class="<%= locals.bar11  %>">
+            <span class="material-icons-sharp">
+                newspaper
+            </span>
+            <h3>อัพโหลดข่าวสาร</h3>
         </a>
         <!-- <a href="#">
                     <span class="material-icons-sharp">

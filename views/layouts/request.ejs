@@ -32,7 +32,8 @@
             <% if (data!=null) { %>
              
             <% data.forEach((element,index) => { %>
-             <div class="card-request">
+                <a href="/request-status">
+                    <div class="card-request">
                 <div class="request-details">
                     <h2>ยื่นคำร้องขอฝึกงาน</h2>
                     <div class="details-section">
@@ -40,7 +41,7 @@
                             <h3>บริษัท</h3>
                             <h3 class="namecomp"><%= element.company_info.company.name %><%= element.company_info.company.name %></h3> 
                         </div>
-                        <div>
+                        <div class="pos">
                             <h3>ตำแหน่ง</h3>
                             <h3><%= element.company_info.position %></h3>
                         </div>
@@ -60,23 +61,59 @@
                                 <div class="block <%= status[index][0] %>"></div>
                                 <div class="block <%= status[index][1] %>"></div>
                                 <div class="block <%= status[index][2] %>"></div>
-                                <div class="block "></div>
-                                <div class="block "></div>
+                                <div class="block <%= status[index][3] %>"></div>
+                                <div class="block <%= status[index][4] %>"></div>
                             </div>
                         </div>
                         
                     </div>
                 </div>
                 <div class="request-doc">
-                    <div class="request-status waiting">
-                        <span class="material-icons-sharp">
-                            hourglass_empty
-                        </span>
+                    <% if (status[index][4] == 'status-pass') { %>
+                        <div class="request-status successed">
+                            <span class="material-icons-sharp">
+                                check_circle
+                            </span>
+                    <% } else if (status[index][3] == 'status-pass' && element.certificate_info.status != '2') { %>
+                        <div class="request-status cp">
+                            <span class="material-icons-sharp">
+                                hourglass_empty
+                            </span>
+                    <% } else if(status[index].includes('2')) { %>
+                        <div class="request-status fail">
+                            <span class="material-icons-sharp">
+                                cancel
+                            </span>
+                    <% } else if(element.certificate_info.status == '2') { %>
+                        <div class="request-status fail">
+                            <span class="material-icons-sharp">
+                                cancel
+                            </span>
+                    <% } else { %>
+                        <div class="request-status waiting">
+                            <span class="material-icons-sharp">
+                                hourglass_empty
+                            </span>
+                    <% } %>
+
                         <h3>
-                            รอดำเนินการ</h3>
+                            <% if (status[index][4] == 'status-pass') { %>
+                                สำเร็จการฝึกงาน
+                            <% } else if (status[index][3] == 'status-pass' && element.certificate_info.status != '2') { %>
+                                รอส่งเอกสารสำเร็จฝึกงาน
+                            <% } else if(status[index].includes('2')) { %>
+                                คำร้องไม่ผ่าน
+                            <% } else if(element.certificate_info.status == '2') { %>
+                                ไม่ผ่านการฝึกงาน
+                            <% } else { %>
+                                รอดำเนินการ
+                            <% } %>
+                            </h3>
                     </div>
                 </div>
             </div>
+                </a>
+             
             <% }) %>
             
             <% } %>

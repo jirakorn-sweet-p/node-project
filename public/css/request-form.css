@@ -1507,3 +1507,8 @@ td.position{
 .border-input select{
     box-shadow: var(--box-shadow2);
 }
+
+.topic pre + p{
+    font-size: 0.8rem;
+    font-weight: 400;
+}

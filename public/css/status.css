@@ -785,7 +785,7 @@ input[type=file]::file-selector-button:hover {
 
 .status h3 {
     font-family: 'Poppins', sans-serif;
-    font-size: small;
+    font-size: medium;
     font-weight: 700;
     margin-left: 1rem;
     width: 100%;
@@ -850,9 +850,10 @@ details summary>* {
 }
 
 details summary h2{
-    font-size: small;
+    font-size: 1rem;
     padding-left: 10px;
     width: 70%;
+    font-weight: 500;
     text-align: left;
     word-wrap: break-word;
 }
@@ -866,6 +867,7 @@ details>div {
     justify-content: start;
     align-items: start;
     min-width: 100%;
+    max-width: 100%;
     border-radius: 0 0 10px 10px;
     background-color: (--color-white);
     margin: 0;
@@ -876,15 +878,15 @@ details>div {
     left: 0;
 }
 
+.not-dop summary {
+    pointer-events: none;
+  }
+
 .details {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
     position: relative;
-}
-
-.details-status p:first-child{
-    font-weight: 800;
 }
 
 .details-status p {
@@ -894,10 +896,17 @@ details>div {
 .details-status p:last-child {
     padding-top: 5px;
     padding-bottom: 10px;
-    min-height: 100px;
+    min-height: 60px;
+    max-height: 100px;
+    font-weight: 500;
+    font-size: small;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    overflow: auto;
+    hyphens: auto;
 }
 
-.details[open] {
+.details.dop[open] {
     transition: all 0.5s ease;
     margin-bottom: 18rem; /* Adjust this value based on your design */
 }

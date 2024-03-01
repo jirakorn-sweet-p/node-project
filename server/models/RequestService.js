@@ -30,6 +30,10 @@ const RequestServiceSchema = new Schema({
         type: String,
         default:"0"
     },
+    sended_company_status:{//
+        type: String,
+        default:"0"
+    },
     accepted_company_comment:{//
         type: String,
         default:""

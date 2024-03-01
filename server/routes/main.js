@@ -20,6 +20,7 @@ const request_info = require('../models/RequestInfo');
 const request_ser = require('../models/RequestService');
 const certificate = require('../models/Certificate');
 const document = require('../models/Document');
+const calendar = require('../models/Calendar');
 const position = require('../models/Position');
 const companies = require('../models/Company');
 const users = require('../models/User');
@@ -30,7 +31,6 @@ const redirectNotAuth = require('../middleware/redirectNotAuth');
 // generate doc
 const Docxtemplater = require('docxtemplater');
 const PizZip = require('pizzip');
-
 // changing modal กำลังแก้
 var modal_bg1 = "close";
 var modal_bg2 = "close";
@@ -60,6 +60,18 @@ var storage = multer.diskStorage({
         cb(null, 'public/uploads')
     },
     filename: function (req, file, cb) {
+        const fileNames = ['imgprofile', 'doc1', 'doc2', 'doc3', 'doc4'];
+        const currentIndex = (req.files.length-1)% fileNames.length;
+        cb(null, fileNames[currentIndex] + '-' + req.body.std_id + '-' + new Date().toISOString().replace(/:/g, '-').split('T')[0]  + '.' + file.originalname.split('.').pop());
+    }
+})
+
+var storage2 = multer.diskStorage({
+    
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
         cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
     }
 })
@@ -75,7 +87,7 @@ const filefilter = (req, file, cb) => {
 }
 
 var upload = multer({storage: storage, fileFilter: filefilter});
-
+var upload2 = multer({storage: storage2, fileFilter: filefilter});
 // END SET STORAGE
 
 const fileSizeFormatter = (bytes,decimal) => {
@@ -124,10 +136,70 @@ const AddDoc = async (req,res,next) => {
         });
 
         await new_document.save();
+        req.session.pass_docs = 'สร้างสำเร็จ';
         res.redirect('/upload-docs');
     }catch(error){
         console.log('error');
-        res.status(400).send(error);
+        req.session.err_docs = 'สร้างไม่สำเร็จ';
+        res.redirect('/upload-docs');
+    }
+}
+
+const AddCal = async (req,res,next) => {
+    try{
+        const obj = JSON.parse(JSON.stringify(req.body));
+        var files = new uploadFile ({
+            fileName: req.file.filename,
+            filePath: req.file.path,
+            fileType: req.file.mimetype,
+            fileSize: fileSizeFormatter(req.file.size,2),
+        });
+        
+        new_document = new calendar({
+            title: req.body.title,
+            details: req.body.details,
+            downloadDoc: files.fileName,
+            createdBy: req.body.username,
+            updatedBy: req.body.username,
+        });
+
+        await new_document.save();
+        req.session.pass_cal = 'สร้างสำเร็จ'
+        res.redirect('/upload-calendar');
+    }catch(error){
+        console.log('error');
+        req.session.err_cal = 'สร้างไม่สำเร็จ'
+        res.redirect('/upload-calendar');
+    }
+}
+
+const AddNews = async (req,res,next) => {
+    try{
+
+        const { htmlContent } = req.body;
+        
+
+        const obj = JSON.parse(JSON.stringify(req.body));
+        var files = new uploadFile ({
+            fileName: req.file.filename,
+            filePath: req.file.path,
+            fileType: req.file.mimetype,
+            fileSize: fileSizeFormatter(req.file.size,2),
+        });
+        console.log(obj);
+        new_document = new Post({
+            title: req.body.title,
+            body: req.body.details,
+            downloadDoc: files.fileName,
+        });
+        console.log(new_document);
+        await new_document.save();
+        req.session.pass_news = 'สร้างสำเร็จ'
+        res.redirect('/upload-news');
+    }catch(error){
+        console.log(error);
+        req.session.err_news = 'สร้างไม่สำเร็จ'
+        res.redirect('/upload-news');
     }
 }
 
@@ -170,11 +242,61 @@ const EditDoc = async (req,res,next) => {
         if(temp!=0){
             await request_doc.save();
         }
-
+        req.session.pass_docs = 'แก้ไขสำเร็จ';
         res.redirect('/upload-docs');
     }catch(error){
         console.log(error);
+        req.session.err_docs = 'แก้ไขไม่สำเร็จ';
+        res.redirect('/upload-docs');
+    }
+}
+
+const EditCal = async (req,res,next) => {
+    try{
+        const obj = JSON.parse(JSON.stringify(req.body));
+
+        const id = req.body.id;
+        var temp = 0;
+        const request_doc = (await cal.find({'_id':id})).at(0);
+        if(request_doc.title!=req.body.title){
+            request_doc.title=req.body.title;
+            temp++;
+        }
+        if(request_doc.details!=req.body.details){
+            request_doc.details=req.body.details;
+            temp++;
+        }
+
+        if(req.file != null){
+            var files = new uploadFile ({
+            fileName: req.file.filename,
+            filePath: req.file.path,
+            fileType: req.file.mimetype,
+            fileSize: fileSizeFormatter(req.file.size,2),
+        });
+        if(request_doc.downloadDoc!=files.fileName ){
+            const path = 'public/uploads/'+ request_doc.downloadDoc;
+            fs.unlink(path, (err) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+            })
+            request_doc.downloadDoc=files.fileName;
+            temp++;
+        }
+        }
+        
+        if(temp!=0){
+            await request_doc.save();
+        }
+        req.session.pass_cal = 'แก้ไขสำเร็จ'
+        res.redirect('/upload-calendar');
+    }catch(error){
+        console.log(error);
         res.status(400).send(error);
+        req.session.err_cal = 'แก้ไขไม่สำเร็จ'
+        res.redirect('/upload-calendar');
     }
 }
 
@@ -223,7 +345,7 @@ const UploadDocuments = async (req,res,next) => {
         temp = "1";
         company = (await companys.find({'name':req.body.location})).at(0);
         company.status = temp;
-        await company.save()
+        await company.save(company)
     }
     const com_info = new company_info({
         company:company,
@@ -291,6 +413,7 @@ const UploadDocuments = async (req,res,next) => {
         res.status(400).send(error);
     }
 }
+
 router.get('/register',redirectIfAuth, (req, res) => {
     const locals = {
         title: "register",
@@ -479,7 +602,7 @@ router.get('/pdf', async (req, res) => {
                     },
                     {
                         $lookup: {
-                            from: 'certificateschemas',
+                            from: 'certificates',
                             localField: 'certificate_info',
                             foreignField: '_id',
                             as: 'certificate_info'
@@ -556,12 +679,15 @@ router.get('/generate-pdf', async (req, res) => {
   });
 
 //Router
-router.post('/uploadImgProfile',upload.single('file'),UploadImgProfile);
+router.post('/uploadImgProfile',upload2.single('file'),UploadImgProfile);
 router.post('/uploadRequest',redirectNotAuth,upload.array('file',5),UploadDocuments);
-router.post('/update-add',upload.single('file'),AddDoc);
-
+router.post('/update-add',upload2.single('file'),AddDoc);
+router.post('/update-add2',upload2.single('file'),AddCal);
+router.post('/add-new',upload2.single('file'),AddNews);
 router.post('/edit-doc', upload.single('file'),EditDoc);
+router.post('/edit-cal', upload.single('file'),EditCal);
 router.get('/delete-doc/:id',async (req,res) => {
+    try{
     const id = req.params.id;
     const request_doc = (await document.find({'_id':id})).at(0);
     const path = 'public/uploads/'+request_doc.downloadDoc.toString();
@@ -572,7 +698,34 @@ router.get('/delete-doc/:id',async (req,res) => {
             return
         }
     })
+    req.session.pass_docs = 'ลบสำเร็จ';
     res.redirect('/upload-docs');
+    }catch(err){
+        req.session.err_docs = 'ลบไม่สำเร็จ';
+    }
+    
+});
+
+router.get('/delete-cal/:id',async (req,res) => {
+    
+    try{
+    
+        const id = req.params.id;
+        const request_cal = (await calendar.find({'_id':id})).at(0);
+        const path = 'public/uploads/'+request_cal.downloadDoc.toString();
+        const result = await calendar.deleteOne(request_cal);
+        fs.unlink(path, (err) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+        })
+        req.session.pass_cal = "ลบสำเร็จ"
+    }catch(err){
+        req.session.err_cal = "ลบไม่สำเร็จ"
+    }
+    
+    res.redirect('/upload-calendar');
 });
 
 router.get('/request',redirectNotAuth, async (req,res) => {
@@ -581,10 +734,8 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     var user = new Object();
     if(dat.role == "student"){
         var userId = new ObjectId(dat.student_info);
-        console.log(userId);
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    console.log(user);
     var image = 'profile-1.jpg';
     var name = dat.username;
     if(user){
@@ -610,6 +761,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     try{
         const data = await request_ser.aggregate([
         { $match: { student_info: user._id } },
+        { $sort: { update_at: 1 } },
         {
             $lookup: {
                 from: 'studentinfos',
@@ -636,7 +788,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -669,10 +821,13 @@ router.get('/request',redirectNotAuth, async (req,res) => {
         var temp = [];
         var all_status = [];
         data.forEach(element => {
-            temp.push(element.student_info.status);
-            temp.push(element.company_info.status);
-            temp.push(element.request_info.status);
+            temp.push(element.status);
+            temp.push(element.approval_document_status);
+            temp.push(element.accepted_company_status);
+            temp.push(element.sended_company_status);
+            temp.push(element.certificate_info.status);
         });
+        console.log(temp);
         for (let index = 0; index < temp.length; index++) {
             const element = temp[index];
              if(element == '1'){
@@ -683,12 +838,12 @@ router.get('/request',redirectNotAuth, async (req,res) => {
                 status.push('')
             }
             // 3status
-            if((index+1)%3 == 0){
+            if((index+1)%5 == 0){
                 all_status.push(status);
                 status=[];
             }
         }
-    
+        console.log(status);
         res.render('index', {locals,data,status:all_status});
     }catch(error){
         console.log(error);
@@ -720,7 +875,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     let page = req.query.page || 1;
     let perPage = 10;
 
-    const data = await companies.aggregate([ { $sort: {name: 1 }}])
+    const data = await companies.aggregate([ { $sort: {name: 1 }},{ $match: { status: '1' } },])
         .skip(perPage*page-perPage)
         .limit(perPage)
         .exec();
@@ -731,7 +886,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     const hasNextPage = nextPage <= allPage;
 
     const posit = await position.aggregate([ { $sort: {name: 1 }}]).exec();
-    console.log(posit);
+
     const locals = {
         title : "request-form",
         description:"Internship request",
@@ -811,7 +966,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
             },
             {
                 $lookup: {
-                    from: 'certificateschemas',
+                    from: 'certificates',
                     localField: 'certificate_info',
                     foreignField: '_id',
                     as: 'certificate_info'
@@ -843,7 +998,6 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
         const request_doc = (await request_info.find({'student_code':data.student_code})).at(0);
         const company = (await company_info.find({'student_code':data.student_code})).at(0);
         const company_details = (await companies.find({'_id':company.company})).at(0);
-        console.log(company_details);
         res.render('index', {locals,data,company,request_doc,company_details,status:status.at(0)});
     }catch(error){
         console.log(error);
@@ -1035,8 +1189,6 @@ router.get('/about',redirectNotAuth, (req,res) => {
 //teacher
 router.get('/request-teacher/req',async (req,res) => {
     req.session.req_id = req.query.req;
-    console.log(req.session.req_id);
-
     res.redirect('/request-teacher');
 });
 
@@ -1049,11 +1201,50 @@ router.get('/request-teacher',async (req,res) => {
         user: "teacher",
         content:"../layouts/teacher/request-teacher.ejs",
         bar1: "active",
+        search:"/js/searching_all.js",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
-    console.log(req.session.req_id);
     var error = req.session.error;
     var current_req = req.session.req_id;
     req.session.destroy();
@@ -1072,12 +1263,11 @@ router.get('/request-teacher',async (req,res) => {
         modal_bg2 = "close";
         alert = "close";
     }
-
-    const perPage = 20;
+    const perPage = 2;
     const page = req.query.page || 1;
     var com_add =[];
     const data = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '0' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
@@ -1107,7 +1297,7 @@ router.get('/request-teacher',async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -1135,7 +1325,11 @@ router.get('/request-teacher',async (req,res) => {
             }
         }
     ]).exec();
-    
+    const count = await request_ser.countDocuments({ status: '0' });
+    let all_pages = Math.ceil(count/perPage);
+    const nextPage = parseInt(page)+1;
+    const hasNextPage = nextPage <= all_pages;
+
     for (const element of data) {
         const found = element.company_info.company.status == '1';
         if (found) {
@@ -1144,8 +1338,7 @@ router.get('/request-teacher',async (req,res) => {
             com_add.push('not-match');
         }
     }
-
-    res.render('index', { locals,requests:data,count_request:data.length,
+    res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
 
 });
@@ -1171,7 +1364,6 @@ router.post('/request-teacher/update', async (req,res) => {
     var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
     var req_info = (await request_info.find({'student_code':req.body.student_code})).at(0);
     var this_request = new Object();
-    console.log(com_info);
     this_request = (await request_ser.find({'student_info':std_info._id})).at(0);
     req.session.req_id = this_request._id;
     var status1 = req.body.status1;
@@ -1187,6 +1379,9 @@ router.post('/request-teacher/update', async (req,res) => {
     }
     if(!req.body.status3){
         status3  = "0";
+    }
+    if(!req.body.status4){
+        status4  = "0";
     }
 
     if(req.body.name != std_info.name){ std_info.name=req.body.name;}
@@ -1231,8 +1426,6 @@ router.post('/request-teacher/update', async (req,res) => {
             this_request.status = process.env.STATUS_FAIL;
         }
     }
-    console.log(req.body.status4);
-    console.log(this_request.approval_document_status);
     if(req.body.status4 != this_request.approval_document_status){
         this_request.approval_document_status=status4;
 
@@ -1305,6 +1498,7 @@ router.post('/request-teacher/update2', async (req,res) => {
     if(!req.body.status3){
         status3  = "0";
     }
+
 
     if(req.body.name != std_info.name){ std_info.name=req.body.name;}
     if(req.body.student_code != std_info.student_code){std_info.student_code=req.body.student_code;}
@@ -1396,7 +1590,6 @@ router.post('/request-teacher/update2', async (req,res) => {
         req.session.error = "Error To Update This Request";
     }
 
-    console.log(req.session.error);
     res.redirect('/docs-waiting');
 });
 
@@ -1437,7 +1630,7 @@ router.post('/request-teacher/update3', async (req,res) => {
     if(req.body.comment2 != com_info.comment){com_info.comment=req.body.comment2;}
     if(req.body.comment3 != req_info.comment){req_info.comment=req.body.comment3;}
     if(req.body.comment4 != this_request.approval_document_comment){this_request.approval_document_comment=req.body.comment4;}
-    if(req.body.comment4 != this_request.accepted_company_comment){this_request.accepted_company_comment=req.body.comment5;}
+    if(req.body.comment5 != this_request.accepted_company_comment){this_request.accepted_company_comment=req.body.comment5;}
     
     if(req.body.status1 != std_info.status){
         std_info.status=status1;
@@ -1523,9 +1716,143 @@ router.post('/request-teacher/update3', async (req,res) => {
         console.log(error);
         req.session.error = "Error To Update This Request";
     }
-
-    console.log(req.session.error);
     res.redirect('/docs-approve');
+});
+
+router.post('/request-teacher/update4', async (req,res) => {
+    
+    var std_info = (await student_info.findOne({'student_code':req.body.student_code}));
+    var com_info = (await company_info.findOne({'student_code':req.body.student_code}));
+    var req_info = (await request_info.findOne({'student_code':req.body.student_code}));
+    
+    var this_request = new Object();
+    this_request = (await request_ser.findOne({'student_info':std_info._id}));
+    var cer_info = (await certificate.findOne({'_id':this_request.certificate_info}));
+    req.session.req_id = this_request._id;
+    var status1 = req.body.status1;
+    var status2 = req.body.status2;
+    var status3 = req.body.status3;
+    var status4 = req.body.status4;
+    var status5 = req.body.status5;
+    var status6 = req.body.status6;
+
+    if(!req.body.status1){
+        status1  = "0";
+    }
+    if(!req.body.status2){
+        status2  = "0";
+    }
+    if(!req.body.status3){
+        status3  = "0";
+    }
+
+    if(req.body.name != std_info.name){ std_info.name=req.body.name;}
+    if(req.body.student_code != std_info.student_code){std_info.student_code=req.body.student_code;}
+    if(req.body.education != std_info.education){std_info.education=req.body.education;}
+    if(req.body.factory != std_info.factory){std_info.factory=req.body.factory;}
+    if(req.body.grade != std_info.grade){std_info.grade=req.body.grade;}
+    if(req.body.email != std_info.email){std_info.email=req.body.email;}
+    if(req.body.tel != std_info.tel){std_info.tel=req.body.tel ;}
+    if(req.body.start_intern != com_info.start_intern){std_info.com_info=new Date(req.body.start_intern);}
+    if(req.body.end_intern != com_info.end_intern){std_info.com_info.end_intern=new Date(req.body.end_intern);}
+    if(req.body.position != com_info.position){com_info.position=req.body.position;}
+    if(req.body.comment1 != std_info.comment){std_info.comment=req.body.comment1;}
+    if(req.body.comment2 != com_info.comment){com_info.comment=req.body.comment2;}
+    if(req.body.comment3 != req_info.comment){req_info.comment=req.body.comment3;}
+    if(req.body.comment4 != this_request.approval_document_comment){this_request.approval_document_comment=req.body.comment4;}
+    if(req.body.comment5 != this_request.accepted_company_comment){this_request.accepted_company_comment=req.body.comment5;}
+    if(req.body.comment6 != cer_info.comment){cer_info.comment=req.body.comment6;}
+    
+    if(req.body.status1 != std_info.status){
+        std_info.status=status1;
+
+        if(status1 == 0 || status1 == 1){
+            this_request.status = process.env.STATUS_PENDING;
+        }else if(status1 == 2 ){
+            this_request.status = process.env.STATUS_FAIL;
+        }
+
+    }
+    if(req.body.status2 != com_info.status){
+        com_info.status=status2;
+
+        if(status2 == 0 || status2 == 1){
+            this_request.status = process.env.STATUS_PENDING;
+        }else if(status2 == 2 ){
+            this_request.status = process.env.STATUS_FAIL;
+        }
+    }
+
+    if(req.body.status3 != req_info.status){
+        req_info.status=status3;
+
+        if(status3 == 0 || status3 == 1){
+            this_request.status = process.env.STATUS_PENDING;
+        }else if(status3 == 2 ){
+            this_request.status = process.env.STATUS_FAIL;
+        }
+    }
+    if(req.body.status4 != this_request.approval_document_status){
+        this_request.approval_document_status=status4;
+
+        if(status4 == '1' ||  this_request.approval_document_status=='1'){///**** */
+            this_request.approval_document_status = process.env.STATUS_PASS;
+        }else if(status4 == '2' ||  this_request.approval_document_status=='2'){
+            this_request.approval_document_status = process.env.STATUS_FAIL;
+        }else if(status4 == '0' || status4 == '1'){
+            this_request.approval_document_status = process.env.STATUS_PENDING;
+        }
+    }
+
+    if(req.body.status5 != this_request.accepted_company_status){
+        this_request.accepted_company_status=status5;
+
+        if(status5 == '1' ||  this_request.accepted_company_status=='1'){
+            this_request.accepted_company_status = process.env.STATUS_PASS;
+        }else if(status5 == '2' ||  this_request.accepted_company_status=='2'){
+            this_request.accepted_company_status = process.env.STATUS_FAIL;
+        }else if(status5 == '0' || status5 == '1'){
+            this_request.accepted_company_status = process.env.STATUS_PENDING;
+        }
+    }
+
+
+    if(req.body.status6 != cer_info.status){
+        cer_info.status=status6;
+    }
+    const com = (await companies.find({'_id':com_info.company})).at(0);
+    if(com.status != process.env.STATUS_PASS){
+        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+        res.redirect('/docs-certificate');
+    }
+
+    try{
+        await std_info.save();
+        await com_info.save();
+        await req_info.save();
+        await cer_info.save();
+
+        req.session.req_id = this_request._id;
+        if(this_request){
+            if(std_info.status == com_info.status && com_info.status == req_info.status && req_info.status == '1'){
+                this_request.status = '1';
+            }else if(std_info.status == '2' || com_info.status == '2' ||req_info.status == '2'){
+                this_request.status = '2';
+                req.session.req_id = null;
+            }else{
+                this_request.status = process.env.STATUS_PENDING;
+            }
+            
+            await this_request.save();
+
+        }
+        req.session.error = "Update Request Successfuly !";
+        
+    }catch(error){
+        console.log(error);
+        req.session.error = "Error To Update This Request";
+    }
+    res.redirect('/docs-certificate');
 });
 
 router.get('/requests-all-teacher', async (req,res) => {
@@ -1533,19 +1860,57 @@ router.get('/requests-all-teacher', async (req,res) => {
         title : "request",
         description:"Internship request",
         styles: "/css/request-teacher.css",
-        js: "/js/base.js",
+        js: "/js/all-request.js",
         user: "teacher",
+        search:"/js/searching_all.js",
         content:"../layouts/teacher/requests-all-teacher.ejs",
         bar8: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
-        console.log(req.session.req_id);
         var error = req.session.error;
         var current_req = req.session.req_id;
         req.session.destroy();
-        console.log(error);
         if(current_req != undefined && current_req != null){
             bg1 = "";
             mod1 = "";
@@ -1565,7 +1930,7 @@ router.get('/requests-all-teacher', async (req,res) => {
         const page = req.query.page || 1;
         var com_add =[];
         const data = await request_ser.aggregate([
-            { $sort: { update_at: -1 } },
+            { $sort: { update_at: 1 } },
             { $skip: perPage * page - perPage },
             { $limit: perPage },
             {
@@ -1594,7 +1959,7 @@ router.get('/requests-all-teacher', async (req,res) => {
             },
             {
                 $lookup: {
-                    from: 'certificateschemas',
+                    from: 'certificates',
                     localField: 'certificate_info',
                     foreignField: '_id',
                     as: 'certificate_info'
@@ -1623,6 +1988,11 @@ router.get('/requests-all-teacher', async (req,res) => {
             }
         ]).exec();
         
+        const count = await request_ser.countDocuments({});
+        let all_pages = Math.ceil(count/perPage);
+        const nextPage = parseInt(page)+1;
+        const hasNextPage = nextPage <= all_pages;
+
         for (const element of data) {
             const found = element.company_info.company.status == '1';
             if (found) {
@@ -1634,7 +2004,7 @@ router.get('/requests-all-teacher', async (req,res) => {
     
         data.sort((a, b) => a.update_at - b.update_at);
         var date = new Date();
-        res.render('index', { locals,requests:data,count_request:data.length,
+        res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
             com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
     
 
@@ -1645,18 +2015,57 @@ router.get('/pass-status-requests', async (req,res) => {
         title : "request",
         description:"Internship request",
         styles: "/css/request-teacher.css",
-        js: "/js/base.js",
+        js: "/js/all-request.js",
         user: "teacher",
+        search:"/js/searching_all.js",
         content:"../layouts/teacher/pass-status-requests.ejs",
         bar9: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
         var error = req.session.error;
         var current_req = req.session.req_id;
         req.session.destroy();
-        console.log(error);
         if(current_req != undefined && current_req != null){
             bg1 = "";
             mod1 = "";
@@ -1671,12 +2080,11 @@ router.get('/pass-status-requests', async (req,res) => {
             modal_bg2 = "close";
             alert = "close";
         }
-    
         const perPage = 20;
         const page = req.query.page || 1;
         var com_add =[];
         const data = await request_ser.aggregate([
-            { $sort: { update_at: -1 } },
+            { $sort: { update_at: 1 } },
             { $skip: perPage * page - perPage },
             { $limit: perPage },
             {
@@ -1705,7 +2113,7 @@ router.get('/pass-status-requests', async (req,res) => {
             },
             {
                 $lookup: {
-                    from: 'certificateschemas',
+                    from: 'certificates',
                     localField: 'certificate_info',
                     foreignField: '_id',
                     as: 'certificate_info'
@@ -1733,7 +2141,10 @@ router.get('/pass-status-requests', async (req,res) => {
                 }
             }
         ]).exec();
-        
+        const count = await request_ser.countDocuments({});
+        let all_pages = Math.ceil(count/perPage);
+        const nextPage = parseInt(page)+1;
+        const hasNextPage = nextPage <= all_pages;
         for (const element of data) {
             const found = element.company_info.company.status == '1';
             if (found) {
@@ -1742,8 +2153,7 @@ router.get('/pass-status-requests', async (req,res) => {
                 com_add.push('not-match');
             }
         }
-    
-        res.render('index', { locals,requests:data,count_request:data.length,
+        res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
             com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
 });
 
@@ -1756,10 +2166,49 @@ router.get('/upload-docs',async (req,res) => {
         user: "teacher",
         username: "teacher01",
         content:"../layouts/teacher/upload-docs.ejs",
-        bar4: "active",
+        bar10: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
     try{
         let perPage = 15;
@@ -1774,10 +2223,26 @@ router.get('/upload-docs',async (req,res) => {
         let allPage = Math.ceil(count/perPage);
         const nextPage = parseInt(page)+1;
         const hasNextPage = nextPage <= allPage;
+        var alert_docs = 'close';
+        var err = "";
+        if(req.session.pass_docs){
+            err = req.session.pass_docs;
+            req.session.destroy();
+        }else if(req.session.err_docs){
+            err = req.session.err_docs;
+            req.session.destroy();
+        }else{
+            req.session.destroy();
+            alert_docs = 'close';
+        }
 
+        if(err != ""){
+            alert_docs = "";
+        }
+        
         res.render('index', {
-            locals, 
-            data,
+            locals, alert:alert_docs,
+            data,err,
             tt: count,
             current: page,
             all_pages:allPage,
@@ -1794,13 +2259,52 @@ router.get('/upload-news', async (req,res) => {
         title : "news",
         description:"Internship request",
         styles: "/css/news.css",
-        js: "/js/base.js",
+        js: "/js/news.js",
         user: "teacher",
         content:"../layouts/teacher/upload-news.ejs",
-        bar5: "active",
+        bar11: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
 
     try{
@@ -1817,8 +2321,25 @@ router.get('/upload-news', async (req,res) => {
         const nextPage = parseInt(page)+1;
         const hasNextPage = nextPage <= allPage;
 
+        var alert_docs = 'close';
+        var err = "";
+        if(req.session.pass_docs){
+            err = req.session.pass_docs;
+            req.session.destroy();
+        }else if(req.session.err_docs){
+            err = req.session.err_docs;
+            req.session.destroy();
+        }else{
+            req.session.destroy();
+            alert_docs = 'close';
+        }
+
+        if(err != ""){
+            alert_docs = "";
+        }
+
         res.render('index', {
-            locals, 
+            locals,
             data,
             tt: count,
             current: page,
@@ -1833,6 +2354,75 @@ router.get('/upload-news', async (req,res) => {
     
 });
 
+router.get('/news/:id', async (req,res) => {
+    const locals = {
+        title : "news",
+        description:"Internship request",
+        styles: "/css/news-details.css",
+        js: "/js/base.js",
+        user: "teacher",
+        content:"../layouts/teacher/more-news.ejs",
+        bar11: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    
+    try{
+        const shouldEdit = 'false';
+        const new_post = await Post.findOne({'_id':req.params.id});
+        var test = new_post.body.replace('<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">','');
+        console.log(new_post);
+        res.render('index', {
+            locals,news:new_post,shouldEdit,test
+        });
+    }catch(error){  
+        console.log(error);
+    }
+
+    
+});
+
+
 router.get('/all-companys',async (req,res) => {
     const locals = {
         title : "company",
@@ -1840,20 +2430,58 @@ router.get('/all-companys',async (req,res) => {
         styles: "/css/company.css",
         js: "/js/company.js",
         user: "teacher",
+        search:"/js/searching_company.js",
         content:"../layouts/teacher/all-companys.ejs"   , 
         bar6: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
     var err = "";
     var status = "";
     try{
 
         if(modal_bg1 = "" && modal2 == "" && modal_bg2 == "close" && modal2 == "close"){
-            console.log("TEST");
         }
-        console.log(req.query.page);
         if(req.query.page === undefined && req.session.page === undefined){
             modal_bg2 = "close";
             modal_bg1 = "close";
@@ -1899,9 +2527,6 @@ router.get('/all-companys',async (req,res) => {
         let page = req.query.page || 1;
         let perPage = 10;
 
-        // const results = await position.find({});
-        // console.log(results.length);
-
         const data = await position.aggregate([ { $sort: {name: 1 }}])
         .skip(perPage*page-perPage)
         .limit(perPage)
@@ -1916,11 +2541,268 @@ router.get('/all-companys',async (req,res) => {
         var a = alert;
         alert = "close";
 
-        res.render('index', {locals,error:err,status,alert:a,modal_bg1,modal_bg2,modal1,modal2,modal3,data,current: page,all_pages:allPage,
-        nextPage: hasNextPage ? nextPage : null});
+        let page2 = req.query.page2 || 1;
+        let perPage2 = 4;
+        // const all_companies = await companies.find({'status':'1'});
+        const all_companies = await companies.aggregate([
+            { $match: { status: { $in: ['0', '1' ,'2'] } } },
+            { $skip: perPage2 * page2 - perPage2 },
+            { $limit: perPage2 },
+        ]).exec();
+        const count2 = await companies.countDocuments({});
+        let allPage2= Math.ceil(count2/perPage2);
+        const nextPage2 = parseInt(page2)+1;
+        const hasNextPage2 = nextPage2 <= allPage2;
+        
+        const data2 =  await request_ser.aggregate([
+            { $sort: { update_at: 1 } },
+            { $match: { status: '1' } },
+            { $match: { approval_document_status: '1' } },
+            { $match: { accepted_company_status: '1' } },
+            { $match: { sended_company_status: '1' } },
+            { $skip: perPage * page - perPage },
+            { $limit: perPage },
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
+            }
+        ]).exec();
+        
+
+        var all_position = [];
+        var this_position = [];
+        for (let i = 0; i < all_companies.length; i++) {
+            const element = all_companies[i];
+            this_position = [];
+
+            data2.forEach((e,index) => {
+                if(e.company_info.company.name == all_companies[i].name){
+                    this_position.push(e.company_info.position);
+                    all_position[i] = this_position;
+                }
+                
+            });
+
+        }
+        all_position.forEach((element,index) => {
+            var myList = all_position[index];
+            element.forEach((element2,index2) => {
+                myList = myList.filter((item, index3) => item !== element2 || myList.indexOf(element2) === index3);
+            });
+            all_position[index] = myList;
+        });
+        
+        console.log(all_position);
+        res.render('index', {locals,error:err,status,alert:a,modal_bg1,modal_bg2,modal1,modal2,modal3,data,current: page,all_pages:allPage,all_position,all_companies,
+        nextPage: hasNextPage ? nextPage : null,hasNextPage2,nextPage2,all_pages2:allPage2,count2,current2:page2,});
     }catch(error){  
         console.log(error);
     }
+});
+
+router.get('/all-companys/:id',async (req,res) => {
+    const locals = {
+        title : "company",
+        description:"Internship request",
+        styles: "/css/company-details.css",
+        js: "/js/company.js",
+        user: "teacher",
+        search:"/js/searching_company.js",
+        content:"../layouts/teacher/company-details.ejs"   , 
+        bar6: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    const perPage = 6;
+    const page = req.query.page || 1;
+    var com_add =[];
+
+    const data = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        },
+    ]).exec();
+    const found_data = [];
+    data.forEach((element,index) => {
+        console.log(element.company_info.company.name);
+        if(element.company_info.company._id.toString()==req.params.id){
+            found_data.push(element);
+        }
+    });
+
+    const count = found_data.length;
+    let all_pages = Math.ceil(count/perPage);
+    const nextPage = parseInt(page)+1;
+    const hasNextPage = nextPage <= all_pages;
+
+    const data2 = await companies.findOne({'_id':req.params.id});
+    req.session.company_details = req.params.id;
+    res.render('index', {locals,requests:found_data,count_request:found_data.length,hasNextPage,nextPage,all_pages,count,current:page,company:data2});
+});
+
+router.post('/all-companys/update',async (req,res) => {
+    console.log(req.body);
+    const redir ='/all-companys/'+req.session.company_details;
+    const data = await companies.findOne({'_id':req.session.company_details});
+    console.log(data);
+    req.session.destroy();
+    
+    try{
+        data.status = req.body.status1;
+        data.comment = req.body.comment1;
+        await data.save();
+    }catch(err){
+        console.log(err);
+    }
+    
+
+    res.redirect(redir);
 });
 
 router.post('/all-companys/add', async (req, res) => {
@@ -1936,8 +2818,47 @@ router.post('/all-companys/add', async (req, res) => {
         content: "../layouts/teacher/all-companys.ejs",
         bar6: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
 
     var found = await position.find({ 'name': name });
@@ -1976,6 +2897,7 @@ router.get('/all-companys/delete/:id', async (req,res) => {
     res.redirect('/all-companys');
 });
 
+
 router.get('/upload-calendar', async (req,res) => {
     const locals = {
         title : "calendar",
@@ -1986,11 +2908,91 @@ router.get('/upload-calendar', async (req,res) => {
         content:"../layouts/teacher/upload-calendar.ejs"   , 
         bar7: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
     
-    res.render('index', {locals});
+    try{
+        let perPage = 15;
+        let page = req.query.page || 1;
+        var err = "";
+        var alert_cal = 'close';
+
+        if(req.session.pass_cal){
+            err = req.session.pass_cal;
+            req.session.destroy();
+        }else if(req.session.err_cal){
+            err = req.session.err_cal;
+            req.session.destroy();
+        }else{
+            req.session.destroy();
+            alert_cal = 'close';
+        }
+
+        if(err != ""){
+            alert_cal = "";
+        }
+        const data = await calendar.aggregate([ { $sort: {createdAt: -1 }}])
+        .skip(perPage*page-perPage)
+        .limit(perPage)
+        .exec();
+
+        const count = await calendar.countDocuments({});
+        let allPage = Math.ceil(count/perPage);
+        const nextPage = parseInt(page)+1;
+        const hasNextPage = nextPage <= allPage;
+
+        res.render('index', {
+            locals,err,alert:alert_cal,
+            data,
+            tt: count,
+            current: page,
+            all_pages:allPage,
+            nextPage: hasNextPage ? nextPage : null
+        });
+
+    }catch(error){  
+        console.log(error);
+    }
 });
 
 router.get('/docs-waiting',async (req,res) => {
@@ -1999,12 +3001,52 @@ router.get('/docs-waiting',async (req,res) => {
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
+        search:"/js/searching.js",
         user: "teacher",
         content:"../layouts/teacher/docs-waiting.ejs",
         bar2: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
     var sort = req.query.sort || 1;
     var error = req.session.error;
@@ -2026,12 +3068,16 @@ router.get('/docs-waiting',async (req,res) => {
         modal_bg2 = "close";
         alert = "close";
     }
+    var count=[];
+    var all_pages=[];
+    var nextPage=[];
+    var hasNextPage=[];
 
-    const perPage = 20;
+    const perPage = 5;
     const page = req.query.page || 1;
     var com_add =[];
     const data = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '0' } },
         { $skip: perPage * page - perPage },
@@ -2062,7 +3108,7 @@ router.get('/docs-waiting',async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2090,9 +3136,12 @@ router.get('/docs-waiting',async (req,res) => {
             }
         }
     ]).exec();
-
+     count.push(data.length);
+     all_pages.push(Math.ceil(count[0]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[0] <= all_pages[0]);
     const data2 = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
         { $skip: perPage * page - perPage },
@@ -2123,7 +3172,7 @@ router.get('/docs-waiting',async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2151,8 +3200,12 @@ router.get('/docs-waiting',async (req,res) => {
             }
         }
     ]).exec();
+    count.push(data2.length);
+    all_pages.push(Math.ceil(count[1]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[1] <= all_pages[1]);
     const data3 = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: { $in: ['0', '1' ,'2'] } } },
         { $skip: perPage * page - perPage },
@@ -2183,7 +3236,7 @@ router.get('/docs-waiting',async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2211,8 +3264,12 @@ router.get('/docs-waiting',async (req,res) => {
             }
         }
     ]).exec();
+    count.push(data3.length);
+    all_pages.push(Math.ceil(count[2]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[2] <= all_pages[2]);
     const data4 = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '2' } },
         { $skip: perPage * page - perPage },
@@ -2243,7 +3300,7 @@ router.get('/docs-waiting',async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2271,6 +3328,398 @@ router.get('/docs-waiting',async (req,res) => {
             }
         }
     ]).exec();
+    count.push(data4.length);
+    all_pages.push(Math.ceil(count[3]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[3] <= all_pages[3]);
+
+    
+    for (const element of data) {
+        const found = element.company_info.company.status == '1';
+        if (found) {
+            com_add.push('match');
+        } else {
+            com_add.push('not-match');
+        }
+    }
+    data.sort((a, b) => a.update_at - b.update_at);
+    var date = new Date();
+    if(data.at(0)){
+        date = data.at(0).update_at;
+    }
+    data2.sort((a, b) => a.update_at - b.update_at);
+    if(data2.at(0)){
+        date = data2.at(0).update_at;
+    }
+    data3.sort((a, b) => a.update_at - b.update_at);
+    if(data3.at(0)){
+        date = data3.at(0).update_at;
+    }
+    data4.sort((a, b) => a.update_at - b.update_at);
+    if(data4.at(0)){
+        date = data4.at(0).update_at;
+    }
+    var ttt = []
+    if(sort == '1'){
+        ttt = data;
+    }else if(sort == '2'){
+        ttt = data2;
+    }else if(sort == '3'){
+        ttt = data3;
+    }else if(sort == '4'){
+        ttt = data4;
+    }
+    res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
+        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
+
+});
+
+router.get('/docs-approve', async (req,res) => {
+    const locals = {
+        title : "approval document",
+        description:"Internship request",
+        styles: "/css/docs-waiting.css",
+        js: "/js/all-request.js",
+        user: "teacher",
+        content:"../layouts/teacher/docs-approve.ejs", 
+        search:"/js/searching.js",
+        bar4: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    var sort = req.query.sort || 1;
+    var error = req.session.error;
+    var current_req = req.session.req_id;
+    req.session.destroy();
+
+    if(current_req != undefined && current_req != null){
+        bg1 = "";
+        mod1 = "";
+    }else{
+        bg1 = "close";
+        mod1 = "close";
+    }
+    if(error){
+        modal_bg2 = "";
+        alert = "";
+
+    }else{
+        modal_bg2 = "close";
+        alert = "close";
+    }
+
+    var count=[];
+    var all_pages=[];
+    var nextPage=[];
+    var hasNextPage=[];
+
+    const perPage = 20;
+    const page = req.query.page || 1;
+    var com_add =[];
+    const data = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '0' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        }
+    ]).exec();
+    count.push(await request_ser.find({'accepted_company_status': '1','sended_company_status': '0'}).countDocuments({}));
+     all_pages.push(Math.ceil(count[0]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[0] <= all_pages[0]);
+    const data2 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        }
+    ]).exec();
+    count.push(data2.length);
+     all_pages.push(Math.ceil(count[1]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[1] <= all_pages[1]);
+    const data3 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: { $in: ['0', '1' ,'2'] } } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        }
+    ]).exec();
+    count.push(data3.length);
+     all_pages.push(Math.ceil(count[2]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[2] <= all_pages[2]);
+    const data4 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '2' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        }
+    ]).exec();
+    count.push(data4.length);
+     all_pages.push(Math.ceil(count[3]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[3] <= all_pages[3]);
     for (const element of data) {
         const found = element.company_info.company.status == '1';
         if (found) {
@@ -2307,23 +3756,63 @@ router.get('/docs-waiting',async (req,res) => {
         ttt = data4;
     }
     
-    res.render('index', { locals,requests:ttt,count_request:data.length,sort,
+    res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
 
 });
 
-router.get('/docs-approve', async (req,res) => {
+router.get('/docs-accepted', async (req,res) => {
     const locals = {
         title : "approval document",
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
         user: "teacher",
-        content:"../layouts/teacher/docs-approve.ejs", 
+        content:"../layouts/teacher/docs-accepted.ejs", 
+        search:"/js/searching.js",
         bar3: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
     var sort = req.query.sort || 1;
     var error = req.session.error;
@@ -2346,11 +3835,16 @@ router.get('/docs-approve', async (req,res) => {
         alert = "close";
     }
 
+    var count=[];
+    var all_pages=[];
+    var nextPage=[];
+    var hasNextPage=[];
+
     const perPage = 20;
     const page = req.query.page || 1;
     var com_add =[];
     const data = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
         { $match: { accepted_company_status: '0' } },
@@ -2382,7 +3876,7 @@ router.get('/docs-approve', async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2410,9 +3904,12 @@ router.get('/docs-approve', async (req,res) => {
             }
         }
     ]).exec();
-
+    count.push(data.length);
+    all_pages.push(Math.ceil(count[0]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[0] <= all_pages[0]);
     const data2 = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
         { $match: { accepted_company_status: '1' } },
@@ -2444,7 +3941,7 @@ router.get('/docs-approve', async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2472,8 +3969,12 @@ router.get('/docs-approve', async (req,res) => {
             }
         }
     ]).exec();
+    count.push(data2.length);
+    all_pages.push(Math.ceil(count[1]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[1] <= all_pages[1]);
     const data3 = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
         { $match: { accepted_company_status: { $in: ['0', '1' ,'2'] } } },
@@ -2505,7 +4006,7 @@ router.get('/docs-approve', async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2533,8 +4034,12 @@ router.get('/docs-approve', async (req,res) => {
             }
         }
     ]).exec();
+    count.push(data3.length);
+    all_pages.push(Math.ceil(count[2]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[2] <= all_pages[2]);
     const data4 = await request_ser.aggregate([
-        { $sort: { update_at: -1 } },
+        { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
         { $match: { accepted_company_status: '2' } },
@@ -2566,7 +4071,7 @@ router.get('/docs-approve', async (req,res) => {
         },
         {
             $lookup: {
-                from: 'certificateschemas',
+                from: 'certificates',
                 localField: 'certificate_info',
                 foreignField: '_id',
                 as: 'certificate_info'
@@ -2593,6 +4098,410 @@ router.get('/docs-approve', async (req,res) => {
                 'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
             }
         }
+    ]).exec();
+    count.push(data4.length);
+    all_pages.push(Math.ceil(count[3]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[3] <= all_pages[3]);
+    for (const element of data) {
+        const found = element.company_info.company.status == '1';
+        if (found) {
+            com_add.push('match');
+        } else {
+            com_add.push('not-match');
+        }
+    }
+    data.sort((a, b) => a.update_at - b.update_at);
+    var date = new Date();
+    if(data.at(0)){
+        date = data.at(0).update_at;
+    }
+    data2.sort((a, b) => a.update_at - b.update_at);
+    if(data2.at(0)){
+        date = data2.at(0).update_at;
+    }
+    data3.sort((a, b) => a.update_at - b.update_at);
+    if(data3.at(0)){
+        date = data3.at(0).update_at;
+    }
+    data4.sort((a, b) => a.update_at - b.update_at);
+    if(data4.at(0)){
+        date = data4.at(0).update_at;
+    }
+    var ttt = []
+    if(sort == '1'){
+        ttt = data;
+    }else if(sort == '2'){
+        ttt = data2;
+    }else if(sort == '3'){
+        ttt = data3;
+    }else if(sort == '4'){
+        ttt = data4;
+    }
+    
+    res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
+        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
+});
+
+router.get('/docs-certificate', async (req,res) => {
+    const locals = {
+        title : "approval document",
+        description:"Internship request",
+        styles: "/css/docs-waiting.css",
+        js: "/js/all-request.js",
+        user: "teacher",
+        content:"../layouts/teacher/certificate.ejs", 
+        search:"/js/searching.js",
+        bar5: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '1' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    var sort = req.query.sort || 1;
+    var error = req.session.error;
+    var current_req = req.session.req_id;
+    req.session.destroy();
+    if(current_req != undefined && current_req != null){
+        bg1 = "";
+        mod1 = "";
+    }else{
+        bg1 = "close";
+        mod1 = "close";
+    }
+    if(error){
+        modal_bg2 = "";
+        alert = "";
+
+    }else{
+        modal_bg2 = "close";
+        alert = "close";
+    }
+
+    var count=[];
+    var all_pages=[];
+    var nextPage=[];
+    var hasNextPage=[];
+
+    const perPage = 20;
+    const page = req.query.page || 1;
+    var com_add =[];
+    const data = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        },
+        {
+            $match: {
+                'certificate_info.status': '0'
+            }
+        }
+    ]).exec();
+    const count_page = await request_ser.aggregate([
+        {
+          $lookup: {
+            from: 'certificateschemas',  // Replace 'certificateschemas' with the actual name of your CertificateSchema collection
+            localField: 'certificate_info',
+            foreignField: '_id',
+            as: 'certificate'
+          }
+        },
+        {
+          $match: {
+            'certificate.status': '0'
+          }
+        },
+        {
+          $count: 'totalDocuments'
+        }
+      ]).exec();
+    count.push(data.length);
+    all_pages.push(Math.ceil(count[0]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[0] <= all_pages[0]);
+    const data2 =  await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        },
+        {
+            $match: {
+                'certificate_info.status': '1'
+            }
+        }
+    ]).exec();
+    const data3 =  await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        },
+    ]).exec();
+    const data4 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '2' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        },
     ]).exec();
     for (const element of data) {
         const found = element.company_info.company.status == '1';
@@ -2630,11 +4539,10 @@ router.get('/docs-approve', async (req,res) => {
         ttt = data4;
     }
     
-    res.render('index', { locals,requests:ttt,count_request:data.length,sort,
+    res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
 
 });
-
 
 router.post('/docs-approval-pop', async (req, res) => {
     req.session.approval = JSON.parse(JSON.stringify(req.body));
@@ -2691,7 +4599,7 @@ router.post('/docs-approval-pop', async (req, res) => {
                     },
                     {
                         $lookup: {
-                            from: 'certificateschemas',
+                            from: 'certificates',
                             localField: 'certificate_info',
                             foreignField: '_id',
                             as: 'certificate_info'
@@ -2741,11 +4649,10 @@ router.post('/docs-approval-pop', async (req, res) => {
             data2['date'] = new Date().toLocaleDateString();
             data2['dear'] = ser_list[i][0][0].company_info.receiver_name;
             data2['countStd'] = ser_list[i].length;
-
+            
             for (let j = 0; j < ser_list[i].length; j++) {
                 const element = ser_list[i][j][0];
                 const studentObj = {};
-
                 studentObj['num'] = (j + 1).toString();
                 studentObj['fname'] = element.student_info.name.split(' ')[0];
                 studentObj['lname'] = element.student_info.name.split(' ')[1];
@@ -2795,6 +4702,8 @@ router.post('/docs-approval-pop2', async (req, res) => {
 
         if(onValue == 'on'){
             reqItem.approval_document_status = '1';
+            reqItem.accepted_company_status = '1';
+            reqItem.sended_company_status = '1';
             await reqItem.save();
         }
     }
@@ -2840,7 +4749,7 @@ router.post('/docs-approval-pop2', async (req, res) => {
                     },
                     {
                         $lookup: {
-                            from: 'certificateschemas',
+                            from: 'certificates',
                             localField: 'certificate_info',
                             foreignField: '_id',
                             as: 'certificate_info'
@@ -2962,11 +4871,41 @@ router.post('/docs-approval-pop3', async (req, res) => {
     if (approval) {
         for (const key in approval) {
             const ser = await request_ser.findOne({ '_id': key });
+            ser.approval_document_status = '1';
             ser.accepted_company_status = '1';
             await ser.save();
         }
     }
     res.redirect('/docs-approve');
+    
+});
+
+router.post('/docs-approval-pop4', async (req, res) => {
+    req.session.approval = JSON.parse(JSON.stringify(req.body));
+    const approval = req.session.approval;
+
+    for (const key in req.session.approval) {
+        const reqItem = await request_ser.findOne({ '_id': key });
+        const onValue = approval[key];
+
+        if(onValue == 'on'){
+            reqItem.approval_document_status = '1';
+            await reqItem.save();
+        }
+    }
+
+    if (approval) {
+        for (const key in approval) {
+            const ser = await request_ser.findOne({ '_id': key });
+            const cerItem = await certificate.findOne({ '_id': ser.certificate_info });
+            cerItem.status = '1';
+            ser.approval_document_status = '1';
+            ser.accepted_company_status = '1';
+            await ser.save();
+            await cerItem.save();
+        }
+    }
+    res.redirect('/docs-certificate');
     
 });
 
@@ -3024,11 +4963,56 @@ router.get('/uploads/:file', async (req,res) => {
         content:"../layouts/file-pdf.ejs"   , 
         bar7: "active",
         c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({'approval_document_status':'0'})).length,
-        c3:(await request_ser.find({'accepted_company_status':'0'})).length
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
     }
 
     res.render('index', {locals});
+});
+
+// API
+router.get('/getAll-company',async (req,res) => {
+    const responseObject = await companies.find({'status':'1'});
+    res.json(responseObject);
 });
 
 

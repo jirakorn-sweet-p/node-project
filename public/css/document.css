@@ -892,3 +892,65 @@ input[type=file]::file-selector-button:hover {
     color: var(--color-white);
 }
 
+h2 p{
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+
+.modal#alert .border-input {
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 5%;
+}
+
+.modal#alert .border-input input {
+    text-align: center;
+}
+
+.modal#alert .border-input input.pass {
+    box-shadow: var(--box-shadow4);
+    color: var(--color-success);
+    font-weight: 700;
+}
+
+.modal#alert .border-input input.fail {
+    box-shadow: var(--box-shadow5);
+    color: var(--color-danger);
+    font-weight: 700;
+}
+
+.modal#alert .submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0;
+    margin: 1rem 0 0 0;
+}
+
+.modal-back#modal-alert {
+    z-index: 98;
+}
+
+.modal#alert {
+    background-color: none;
+    z-index: 99;
+    left: 37.5%;
+    top: 45%;
+    height: 15%;
+    width: 25%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.modal#alert .request-doc {
+    height: 100%;
+    box-shadow: none;
+    margin: 0 auto;
+}
+
+.modal#alert .modal-box {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}

@@ -1,192 +1,218 @@
+
+<!-- <details class="details" onclick="adjustNextElementPosition(this)">
+    <summary>
+        <h2>ตรวจสอบสำเร็จการฝึกงาน</h2>
+        <span class="material-icons-sharp">mark_email_unread</span>
+        <span class="material-icons-sharp">check_circle</span>
+    </summary>
+    <div class="details-status">
+        <p class="bold">ชื่อผู้ดำเนินการ</p>
+        <p class="editor">
+            <%= data.editor %>
+        </p>
+        <p>ดำเนินการเมื่อ วันที่ เวลา</p>
+        <p class="bold">comment</p>
+        <div class="comment">
+            <p></p>
+        </div>
+    </div>
+    <div class="summit"></div>
+
+</details> -->
 <div class="status">
     <h3>Status</h3>
     <% if (status) { %>
-     <details class="details" onclick="adjustNextElementPosition(this)">
-        <summary>
-            <% if (status.student_info.status == '0') { %>
-                <h2>รอตรวจสอบข้อมูลนักศึกษา</h2>
-            <% } else if (status.student_info.status == '1') { %>
-                <h2>ตรวจสอบข้อมูลนักศึกษาแล้ว</h2>
-            <% } else if (status.student_info.status == '2') { %>
-                <h2>ข้อมูลนักศึกษาไม่ถูกต้อง</h2>
-            <% } %>
-            <% if (status.student_info.comment == '') { %>
-                <span class="material-icons-sharp">mark_email_unread</span>
-            <% } else { %>
-                <span class="material-icons-sharp success">mark_email_unread</span>
-            <% } %>
-            <% if (status.student_info.status == '0') { %>
-                <span class="material-icons-sharp warnning">pending</span>
-            <% } else if (status.student_info.status == '1') { %>
-                <span class="material-icons-sharp success">check_circle</span>
-            <% } else if (status.student_info.status == '2') { %>
-                <span class="material-icons-sharp danger">check_circle</span>
-            <% } %>
-            
-        </summary>
-        <div class="details-status">
-            <p>ชื่อผู้ดำเนินการ</p>
-            <p class="editor"><%= data.editor %></p>
-            <p>เมื่อ <%= data.update_status_at.toLocaleString() %> </p>
-            <p class="bold">comment</p>
-            <div class="comment">
-                <p><%= status.student_info.comment %></p>
+        <details class="details dop" onclick="adjustNextElementPosition(this)">
+            <summary>
+                <% if (status.student_info.status=='0' || status.company_info.status=='0' || status.request_info.status=='0') { %>
+                    <h2>รอตรวจสอบข้อมูลคำร้อง</h2>
+                    <% } else if (status.student_info.status=='1' && status.company_info.status=='1' && status.request_info.status=='1') { %>
+                        <h2>ตรวจสอบข้อมูลคำร้อง</h2>
+                        <% } else if (status.student_info.status=='2' || status.company_info.status=='2' || status.request_info.status=='2') { %>
+                            <h2>ข้อมูลไม่ถูกต้อง</h2>
+                            <% } %>
+                                <% if (status.request_info.comment=='') { %>
+                                    <span class="material-icons-sharp">mark_email_unread</span>
+                                    <% } else if (status.student_info.status=='1' && status.company_info.status=='1' && status.request_info.status=='1') { %>
+                                        <span class="material-icons-sharp success">mark_email_unread</span>
+                                        <% } else if (status.student_info.status=='2' || status.company_info.status=='2' || status.request_info.status=='2') { %>
+                                            <span class="material-icons-sharp danger">mark_email_unread</span>
+                                            <% } else if (status.student_info.status=='0') { %>
+                                                <span class="material-icons-sharp"></span>
+                                        <% } %>
+                                            <% if (status.student_info.status=='0' || status.company_info.status=='0' || status.request_info.status=='0') { %>
+                                                <span class="material-icons-sharp warnning">pending</span>
+                                                <% } else if (status.student_info.status=='1' && status.company_info.status=='1' && status.request_info.status=='1') { %>
+                                                    <span class="material-icons-sharp success">check_circle</span>
+                                                    <% } else if (status.student_info.status=='2' || status.company_info.status=='2' || status.request_info.status=='2') { %>
+                                                        <span class="material-icons-sharp danger">cancel</span>
+                                                        <% } %>
+
+            </summary>
+            <div class="details-status">
+                <p class="bold">ชื่อผู้ดำเนินการ</p>
+                <p class="editor">
+                    <%= data.editor %>
+                </p>
+                <p>ดำเนินการเมื่อ  <%= new Date(status.student_info.update_status_at).toLocaleString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
+                </p>
+                <p class="bold">comment</p>
+                <div class="comment">
+                    <p>
+                        <%= status.request_info.comment %>
+                    </p>
+                </div>
             </div>
-        </div>
-    </details>
+        </details>
 
-    <details class="details" onclick="adjustNextElementPosition(this)">
-        <summary>
-            <% if (status.company_info.status == '0') { %>
-                <h2>รอการตรวจสอบข้อมูลสถานฝึกงาน</h2>
-            <% } else if (status.company_info.status == '1') { %>
-                <h2>ตรวจสอบข้อมูลสถานฝึกงานแล้ว</h2>
-            <% } else if (status.company_info.status == '2') { %>
-                <h2>ข้อมูลสถานฝึกงานไม่ถูกต้อง</h2>
-            <% } %>
-            <% if (status.company_info.comment == '') { %>
-                <span class="material-icons-sharp">mark_email_unread</span>
-            <% } else { %>
-                <span class="material-icons-sharp success">mark_email_unread</span>
-            <% } %>
-            <% if (status.company_info.status == '0') { %>
-                <span class="material-icons-sharp warnning">pending</span>
-            <% } else if (status.company_info.status == '1') { %>
-                <span class="material-icons-sharp success">check_circle</span>
-            <% } else if (status.company_info.status == '2') { %>
-                <span class="material-icons-sharp danger">check_circle</span>
-            <% } %>
-        </summary>
-        <div class="details-status">
-            <p>ชื่อผู้ดำเนินการ</p>
-            <p class="editor"><%= data.editor %></p>
-            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
-            <p class="bold">comment</p>
-            <div class="comment">
-                <p><%= status.company_info.comment %></p>
-            </div>
-        </div>
-    </details>
+                        <% if (status.student_info.status=='1' && status.company_info.status=='1' && status.request_info.status=='1') { %>
+                            <details class="details dop" onclick="adjustNextElementPosition(this)">
+                                <summary>
+                                    <% if (status.approval_document_status=='0' ) { %>
+                                        <h2>รอออกหนังสือขอความอนุเคราะห์ </h2>
+                                        <% } else if (status.approval_document_status=='1' ) { %>
+                                            <h2>ออกหนังสือขอความอนุเคราะห์แล้ว </h2>
+                                            <% } else if (status.approval_document_status=='2' ) { %>
+                                                <h2>ปฏิเสธการออกหนังสือขอความอนุเคราะห์</h2>
+                                                <% } %>
 
-    <details class="details" onclick="adjustNextElementPosition(this)">
-        <summary>
-            <% if (status.request_info.status == '0') { %>
-                <h2>รอตรวจสอบเอกสารยื่นเรื่องฝึกงาน</h2>
-            <% } else if (status.request_info.status == '1') { %>
-                <h2>ตรวจสอบเอกสารยื่นเรื่องฝึกงานแล้ว</h2>
-            <% } else if (status.request_info.status == '2') { %>
-                <h2>เอกสารยื่นเรื่องฝึกงานไม่ถูกต้อง</h2>
-            <% } %>
-            <% if (status.request_info.comment == '') { %>
-                <span class="material-icons-sharp">mark_email_unread</span>
-            <% } else { %>
-                <span class="material-icons-sharp success">mark_email_unread</span>
-            <% } %>
-            <% if (status.request_info.status == '0') { %>
-                <span class="material-icons-sharp warnning">pending</span>
-            <% } else if (status.request_info.status == '1') { %>
-                <span class="material-icons-sharp success">check_circle</span>
-            <% } else if (status.request_info.status == '2') { %>
-                <span class="material-icons-sharp danger">check_circle</span>
-            <% } %>
-        </summary>
-        <div class="details-status">
-            <p>ชื่อผู้ดำเนินการ</p>
-            <p class="editor"><%= data.editor %></p>
-            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
-            <p class="bold">comment</p>
-            <div class="comment">
-                <p><%= status.request_info.comment %></p>
-            </div>
-        </div>
-    </details>
 
-    <details class="details" onclick="adjustNextElementPosition(this)">
-        <summary>
-            <% if (status.approval_document_status == '0') { %>
-                <h2>รอออกหนังสือขอความอนุเคราะห์</h2>
-            <% } else if (status.approval_document_status == '1') { %>
-                <h2>ออกหนังสือขอความอนุเคราะห์แล้ว</h2>
-            <% } else if (status.approval_document_status== '2') { %>
-                <h2>ปฏิเสธการออกหนังสือขอความอนุเคราะห์</h2>
-            <% } %>
-            <% if (status.approval_document_comment == '') { %>
-                <span class="material-icons-sharp">mark_email_unread</span>
-            <% } else { %>
-                <span class="material-icons-sharp success">mark_email_unread</span>
-            <% } %>
-            <% if (status.approval_document_status == '0') { %>
-                <span class="material-icons-sharp warnning">pending</span>
-            <% } else if (status.approval_document_status == '1' || status.approval_document_status == '3' ||status.approval_document_status == '4') { %>
-                <span class="material-icons-sharp success">check_circle</span>
-            <% } else if (status.approval_document_status == '2') { %>
-                <span class="material-icons-sharp danger">check_circle</span>
-            <% } %>
-        </summary>
-        <div class="details-status">
-            <p>ชื่อผู้ดำเนินการ</p>
-            <p class="editor"><%= data.editor %></p>
-            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
-            <p class="bold">comment</p>
-            <div class="comment">
-                <p><%= status.approval_document_comment %></p>
-            </div>
-        </div>
-    </details>
+                                                    
+                                                    <% if (status.approval_document_comment=='' ) { %>
+                                                        <span class="material-icons-sharp">mark_email_unread</span>
+                                                        <% } else if (status.approval_document_status=='1') { %>
+                                                            <span class="material-icons-sharp success">mark_email_unread</span>
+                                                            <% } else if (status.approval_document_status=='2') { %>
+                                                                <span class="material-icons-sharp danger">mark_email_unread</span>
+                                                                <% } else if (status.approval_document_status=='0') { %>
+                                                                    <span class="material-icons-sharp"></span>
+                                                            <% } %>
 
-    <details class="details" onclick="adjustNextElementPosition(this)">
-        <summary>
-            <% if (status.approval_document_status == '1') { %>
-                <h2>รอหนังสือตอบรับสถานฝีกงาน</h2>
-            <% } else if (status.approval_document_status == '3') { %>
-                <h2>ได้รับหนังสือตอบรับแล้ว</h2>
-            <% } else if (status.approval_document_status== '4') { %>
-                <h2>สถานฝึกงานปฏิเสธการตอบรับ</h2>
-            <% } %>
-            <% if (status.approval_document_comment == '') { %>
-                <span class="material-icons-sharp">mark_email_unread</span>
-            <% } else { %>
-                <span class="material-icons-sharp success">mark_email_unread</span>
-            <% } %>
-            <% if (status.approval_document_status == '1') { %>
-                <span class="material-icons-sharp warnning">pending</span>
-            <% } else if (status.approval_document_status == '3') { %>
-                <span class="material-icons-sharp success">check_circle</span>
-            <% } else if (status.approval_document_status == '4') { %>
-                <span class="material-icons-sharp danger">check_circle</span>
-            <% } %>
-        </summary>
-        <div class="details-status">
-            <p>ชื่อผู้ดำเนินการ</p>
-            <p class="editor"><%= data.editor %></p>
-            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
-            <p class="bold">comment</p>
-            <div class="comment">
-                <p></p>
-            </div>
-        </div>
-        <div class="summit"></div>
 
-    </details>
+                                                            <% if (status.approval_document_status=='1') { %>
+                                                                <span
+                                                                class="material-icons-sharp success">check_circle</span>
+                                                                <% } else if (status.approval_document_status=='2' ) { %>
+                                                                    <span
+                                                                        class="material-icons-sharp danger">cancel</span>
+                                                                <% } else if (status.approval_document_status=='0' ) { %>
+                                                                    <span
+                                                                        class="material-icons-sharp warnning">pending</span>
 
-    <details class="details" onclick="adjustNextElementPosition(this)">
-        <summary>
-            <h2>ตรวจสอบสำเร็จการฝึกงาน</h2>
-            <span class="material-icons-sharp">mark_email_unread</span>
-            <span class="material-icons-sharp">check_circle</span>
-        </summary>
-        <div class="details-status">
-            <p>ชื่อผู้ดำเนินการ</p>
-            <p class="editor"><%= data.editor %></p>
-            <p>ดำเนินการเมื่อ วันที่ เวลา</p>
-            <p class="bold">comment</p>
-            <div class="comment">
-                <p></p>
-            </div>
-        </div>
-        <div class="summit"></div>
+                                                                <% } %>
+                                </summary>
+                                <div class="details-status">
+                                    <p class="bold">ชื่อผู้ดำเนินการ</p>
+                                    <p class="editor">
+                                        <%= data.editor %>
+                                    </p>
+                                    <p>ดำเนินการเมื่อ  <%= new Date(status.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
+                                    <p class="bold">comment</p>
+                                    <div class="comment">
+                                        <p>
+                                            <%= status.approval_document_comment %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </details>
+                            <% } %>
 
-    </details>
-    <% } %>
+                            <% if (status.approval_document_status=='1') { %>
+                                <details class="details dop" onclick="adjustNextElementPosition(this)">
+                                    <summary>
+                                        <% if (status.approval_document_status=='1' && status.accepted_company_status == '0') { %>
+                                            <h2>รอหนังสือตอบรับ</h2>
+                                            <% } else if (status.approval_document_status=='1' && status.accepted_company_status == '1') { %>
+                                                <h2>ได้รับหนังสือตอบรับแล้ว </h2>
+                                                <% } else if (status.accepted_company_status == '2') { %>
+                                                    <h2>ปฏิเสธหนังสือตอบรับ</h2>
+                                                    <% } %>
     
+    
+                                                    <% if (status.accepted_company_comment=='' ) { %>
+                                                        <span class="material-icons-sharp">mark_email_unread</span>
+                                                        <% } else if (status.sended_company_status=='1') { %>
+                                                            <span class="material-icons-sharp success">mark_email_unread</span>
+                                                            <% } else if (status.sended_company_status=='2') { %>
+                                                                <span class="material-icons-sharp danger">mark_email_unread</span>
+                                                                <% } else if (status.sended_company_status=='0') { %>
+                                                                    <span class="material-icons-sharp"></span>
+                                                            <% } %>
+    
+    
+                                                                <% if (status.accepted_company_status=='1') { %>
+                                                                    <span
+                                                                    class="material-icons-sharp success">check_circle</span>
+                                                                    <% } else if (status.accepted_company_status=='2' ) { %>
+                                                                        <span
+                                                                            class="material-icons-sharp danger">cancel</span>
+                                                                    <% } else if (status.accepted_company_status=='0' ) { %>
+                                                                        <span
+                                                                            class="material-icons-sharp warnning">pending</span>
+    
+                                                                    <% } %>
+                                    </summary>
+                                    <div class="details-status">
+                                        <p class="bold">ชื่อผู้ดำเนินการ</p>
+                                        <p class="editor">
+                                            <%= data.editor %>
+                                        </p>
+                                        <p>ดำเนินการเมื่อ  <%= new Date(status.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
+                                        <p class="bold">comment</p>
+                                        <div class="comment">
+                                            <p>
+                                                <%= status.accepted_company_comment %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </details>
+                                <% } %>
+
+                                <% if (status.accepted_company_status=='1') { %>
+                                    <details class="details not-dop" onclick="adjustNextElementPosition(this)">
+                                        <summary>
+                                            <% if (status.approval_document_status=='1' && status.sended_company_status == '0') { %>
+                                                <h2>รอออกหนังสือส่งตัว</h2>
+                                                <% } else if (status.approval_document_status=='1' && status.sended_company_status == '1') { %>
+                                                    <h2>ออกหนังสือส่งตัวแล้ว </h2>
+                                                    <% } else if (status.sended_company_status == '2') { %>
+                                                        <h2>ปฏิเสธการออกหนังสือส่งตัว</h2>
+                                                        <% } %>
+        
+        
+                                                            
+                                                        <span class="material-icons-sharp">mark_email_unread</span>
+        
+        
+                                                                    <% if (status.sended_company_status=='1') { %>
+                                                                        <span
+                                                                        class="material-icons-sharp success">check_circle</span>
+                                                                        <% } else if (status.sended_company_status=='2' ) { %>
+                                                                            <span
+                                                                                class="material-icons-sharp danger">cancel</span>
+                                                                        <% } else if (status.sended_company_status=='0' ) { %>
+                                                                            <span
+                                                                                class="material-icons-sharp warnning">pending</span>
+                                                                        <% } %>
+                                        </summary>
+                                    </details>
+                                    <% } %>
+
+                                        <% if (status.accepted_company_status =='1' && status.approval_document_status =='1' && status.sended_company_status =='1') { %>
+                                            <details class="details dop" onclick="adjustNextElementPosition(this)">
+                                                <summary style="background-color:#1B9C85 ;">
+                                                    <h2 style="text-align: center;color: white;">คำยื่นสำเร็จ</h2>
+                                                </summary>
+                                            </details>
+                                            <% } else if (status.accepted_company_status=='2' || status.approval_document_status =='2'|| status.sended_company_status =='2'|| status.student_info.status=='2' && status.company_info.status=='2' && status.request_info.status=='2') { %>
+                                                <details class="details dop" onclick="adjustNextElementPosition(this)">
+                                                <summary style="background-color:#FF0060 ;">
+                                                    <h2 style="text-align: center;color: white;font-size: large;">คำยื่นไม่สำเร็จ</h2>
+                                                </summary>
+                                            </details>
+                                            <% } %>
+
+
+                                                <% } %>
+
 </div>

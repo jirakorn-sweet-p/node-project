@@ -1,96 +1,191 @@
-<main>
-    <div class="main">
-        <div class="title-header">
-            <h2>กำหนดการ</h2>
-            <div class="add-btn">
-                <a>เพิ่มเอกสาร</a>
-                <span class="material-icons-sharp">
-                    edit_calendar
-                </span>
+<!-- MODAL -->
+
+<div class="modal-back <%= alert %>" id="modal-back">
+</div>
+<div class="modal <%= alert %>" id="alert">
+    <div class="modal-box">
+        <div class="request-doc" id="request-doc">
+            <div class="border-input">
+                <input class="success" name="position_name" type="text" value="<%= err %>"
+                    readonly>
+            </div>
+            <div class="submit">
+                <a href="/upload-calendar">
+                    <button id="ok" type="submit">ตกลง</button>
+                </a>
             </div>
         </div>
-        <div class="document-section">
-            <div class="documents">
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
-                <div class="card-document">
-                    <h2>28/10/2566</h2>
-                    <div class="calendar-detail">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, vel?</div>
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
-                        voluptatibus vero eligendi ea enim sequi maxime repellendus?</h3>
-                    <p>document download here</p>
-                </div>
+    </div>
+</div>          
+<form action="/update-add2" method="post" name="request" enctype="multipart/form-data">
 
+    <div class="modal close" id="modal">
+        <div class="modal-box">
+            <div class="datas">
+                <h1>สร้างเอกสารกำหนดการ</h1>
+            </div>
+            <div class="datas">
+                <h2>ปีการศึกษา</h2>
+                <input type="text" placeholder="ปีการศึกษา" name="title" required>
+            </div>
+            <div class="datas long">
+                <h2>คำอธิบาย</h2>
+                <textarea name="details" cols="30" rows="10"></textarea>
+            </div>
+            <div class="datas">
+                <h2>เอกสาร<p>(pdf, png, jpeg)</p></h2>
+                <div class="border-uploads">
+                    <input type="file" name="file">
+                </div>
+            </div>
+            <input type="text" name="username" class="close" value="<%= locals.username %>">
+            <div class="submit">
+                <button type="submit">สร้าง</button>
             </div>
 
         </div>
     </div>
+</form>
+<!-- END MODAL -->
+<main>
+    <div class="main">
+        <div class="title-header">
+            <h2>เอกสารที่เกี่ยวข้อง</h2>
+
+            <div class="add-btn" id="add-doc">
+                <a>เพิ่มเอกสาร</a>
+                <span class="material-icons-sharp">
+                    post_add
+                </span>
+            </div>
+        </div>
+
+        <div class="document-section">
+            <div class="documents">
+                <% if (data.length == 0) { %>
+                 <h2>ไม่มีข้อมูล</h2>
+                <% } %>
+                <% data.forEach((docs,index)=> { %>
+
+                    <form action="/edit-doc" method="post" name="request" enctype="multipart/form-data">
+
+                        <div class="card-document">
+                            <div class="card-document-header">
+                                <h2>
+                                    ปีการศึกษา <%= docs.title %>
+                                </h2>
+                                <div class="edit-ic">
+                                    <span class="material-icons-sharp edit-btn" name="<%= index+1 %>"
+                                        id="edit-doc<%= index+1 %>">
+                                        edit
+                                    </span>
+                                    <a href="/delete-cal/<%= docs._id %>">
+                                    <span class="material-icons-sharp" hre>
+                                        delete
+                                    </span>
+                                    </a>
+                                    
+                                </div>
+                            </div>
+
+                            <h3>
+                                <%= docs.details %>
+                            </h3>
+                            <div class="downlaod">
+                                <a href="/download-doc-teacher/<%= docs.downloadDoc %>">downlaod</a>
+                            </div>
+                            <div class="date-upload">
+                                <%= docs.createdAt.getDate() %> -
+                                <%= docs.createdAt.getMonth()+1 %> -
+                                    <%= docs.createdAt.getFullYear() %></div>
+                        </div>
+                        <div class="modal close" id="modal<%= index+1 %>">
+                            <div class="modal-box">
+                                <div class="datas">
+                                    <h1>สร้างเอกสาร</h1>
+                                </div>
+                                <div class="datas">
+                                    <h2>ชื่อเอกสาร</h2>
+                                    <input type="text" value="<%= docs.title %>" name="title">
+                                </div>
+                                <div class="datas long">
+                                    <h2>คำอธิบาย</h2>
+                                    <textarea name="details" cols="30" rows="10"><%= docs.details %></textarea>
+                                </div>
+                                <div class="datas">
+                                    <h2>แก้ไขเอกสาร</h2>
+                                    <div class="border-uploads">
+                                        <input type="file" name="file">
+                                    </div>
+                                </div>
+                                <div class="datas">
+                                    <h2>เอกสารเดิม</h2>
+                                    <div class="border-uploads">
+                                        <a href="/uploads/<%= docs.downloadDoc %>" target="_blank" name="test">
+                                            <%= docs.downloadDoc %>
+                                        </a>
+                                    </div>
+                                </div> 
+                                <input type="text" name="id" class="close" value="<%= docs._id %>">
+                                <input type="text" name="username" class="close" value="<%= locals.username %>">
+                                <div class="submit">
+                                    <button type="submit">บันทึก</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+                    <% }) %>
+
+                        <div class="modal close" id="modal0">
+                            <div class="modal-box">
+                                <div class="datas">
+                                    <h1>สร้างเอกสาร</h1>
+                                </div>
+                                <div class="datas">
+                                    <h2>ชื่อเอกสาร</h2>
+                                    <input type="text" placeholder="ผลระเมินการฝึกงาน" name="title">
+                                </div>
+                                <div class="datas long">
+                                    <h2>คำอธิบาย</h2>
+                                    <textarea name="details" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo placeat rerum neque
+                                    voluptatibus vero eligendi ea enim sequi maxime repellendus?" cols="30"
+                                        rows="10"></textarea>
+                                </div>
+                                <div class="datas">
+                                    <h2>เอกสาร</h2>
+                                    <div class="border-uploads">
+                                        <input type="file" name="file">
+                                    </div>
+                                </div>
+                                <input type="text" name="username" class="close" value="<%= locals.username %>">
+                                <div class="submit">
+                                    <button type="submit">บันทึก</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+            </div>
+
+        </div>
+        <div class="paginator">
+
+            <% for( let index=1; index <=all_pages; index++ ) { %>
+                <% if (index==current) { %>
+                    <a href="?page=<%= index %>" class="current-page">
+                        <%= index %>
+                    </a>
+                    <% } else { %>
+                        <a href="?page=<%= index %>">
+                            <%= index %>
+                        </a>
+                        <% } %>
+                            <% } %>
+
+        </div>
+    </div>
+
+
 </main>

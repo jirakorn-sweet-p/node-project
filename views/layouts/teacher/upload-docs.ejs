@@ -1,6 +1,21 @@
 <!-- MODAL -->
 
-<div class="modal-back close" id="modal-back">
+<div class="modal-back <%= alert %>" id="modal-back">
+</div>
+<div class="modal <%= alert %>" id="alert">
+    <div class="modal-box">
+        <div class="request-doc" id="request-doc">
+            <div class="border-input">
+                <input class="success" name="position_name" type="text" value="<%= err %>"
+                    readonly>
+            </div>
+            <div class="submit">
+                <a href="/upload-docs">
+                    <button id="ok" type="submit">ตกลง</button>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <form action="/update-add" method="post" name="request" enctype="multipart/form-data">
@@ -19,14 +34,14 @@
                 <textarea name="details" cols="30" rows="10"></textarea>
             </div>
             <div class="datas">
-                <h2>เอกสาร</h2>
+                <h2>เอกสาร<p>(pdf, png, jpeg)</p></h2>
                 <div class="border-uploads">
                     <input type="file" name="file">
                 </div>
             </div>
             <input type="text" name="username" class="close" value="<%= locals.username %>">
             <div class="submit">
-                <button type="submit">Save</button>
+                <button type="submit">บันทึก</button>
             </div>
 
         </div>

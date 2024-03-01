@@ -1,0 +1,190 @@
+<main>
+    <div class="main">
+        <div class="title-header">
+            <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+        </div>
+        <form action="/all-companys/update" method="post" name="request" enctype="/submit-table">
+            <div class="request-doc">
+                <div class="info-intern">
+                    <div class="uploads-content">
+                        <a href="">ชื่อสถาที่ฝึกงาน</a>
+                        <div class="border-input">
+                            <input type="text" name="company_name" value="<%= company.name %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">เบอร์โทรศัพท์</a>
+                        <div class="border-input">
+                            <input type="text" name="tel" value="<%= company.tel %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                        <div class="border-input">
+                            <input type="text" name="type_business" value="<%= company.type_business %>" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-address">
+                    <div class="uploads-content">
+                        <a href="">ที่อยู่</a>
+                        <div class="border-input">
+                            <input type="text" name="address" value="<%= company.address %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">บริษัท/หน่วยงาน</a>
+                        <div class="border-input">
+                            <input type="text" name="name" value="<%= company.name %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">ตำบล</a>
+                        <div class="border-input">
+                            <input type="text" name="subdistrict" value="<%= company.subdistrict %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">อำเภอ</a>
+                        <div class="border-input">
+                            <input type="text" name="district" value="<%= company.district %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">จังหวัด</a>
+                        <div class="border-input">
+                            <input type="text" name="province" value="<%= company.province %>" readonly>
+                        </div>
+                    </div>
+                    <div class="uploads-content">
+                        <a href="">รหัสไปรษณีย์</a>
+                        <div class="border-input">
+                            <input type="text" name="provinceID" value="<%= company.provinceID %>" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="topic">
+                    <h2>รายชื่อนักศึกษาที่เคยฝึกงาน</h2>
+                </div>
+                <div class="table">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>ชื่อ</th>
+                                <th>รหัสนักศึกษา</th>
+                                <th>ระยะเวลาฝึก</th>
+                                <th>เบอร์โทรศัพท์</th>
+                                <th>ผลการฝึก</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% requests.forEach(element=> { %>
+                                <tr>
+                                    <td>
+                                        <%= element.student_info.name %>
+                                    </td>
+                                    <td>
+                                        <%= element.student_info.student_code %>
+                                    </td>
+                                    <td>
+                                        <% var company=element.company_info; %>
+                                            <%= new Date(company.start_intern).toLocaleString('th-TH', { year: 'numeric'
+                                                , month: 'numeric' , day: 'numeric' }); %>
+                                                ถึง
+                                                <%= new Date(company.end_intern).toLocaleString('th-TH', {
+                                                    year: 'numeric' , month: 'numeric' , day: 'numeric' }); %>
+                                    </td>
+                                    <td>
+                                        <%= element.student_info.phone %>
+                                    </td>
+                                    <td class="position">
+
+                                        <% if (element.certificate_info.status=='0' ) { %>
+                                            <div class="status-approve cp">
+                                                <a>กำลังฝึกงาน
+                                                    <% } else if (element.certificate_info.status=='1' ) { %>
+                                                        <div class="status-approve success">
+                                                            <a>ผ่านการฝึกงาน
+                                                                <% } else if (element.certificate_info.status=='1' ) {
+                                                                    %>
+                                                                    <div class="status-approve danger">
+                                                                        <a>ไม่ผ่านการฝึกงาน
+                                                                            <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% for( let index=0; index < 6-requests.length; index++ ) { %>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="position"></td>
+                                        </tr>
+                                        <% } %>
+                        </tbody>
+                    </table>
+                    <div class="paginator">
+
+                        <% for( let index=1; index <=all_pages; index++ ) { %>
+                            <% if (index==current) { %>
+                                <a href="?page=<%= index %>" class="current-page">
+                                    <%= index %>
+                                </a>
+                                <% } else { %>
+                                    <a href="?page=<%= index %>">
+                                        <%= index %>
+                                    </a>
+                                    <% } %>
+                                        <% } %>
+
+                    </div>
+
+                </div>
+                <div class="approved">
+                    <div class="comment">
+                        <h3>comments</h3>
+                        <textarea name="comment1" id="" cols="30" rows="10"><%= company.comment %></textarea>
+                    </div>
+                    <div class="status">
+                        <div class="border-status">
+                            <select name="status1" required>
+                                <% for( let index=0; index <=2; index++ ) { %>
+                                    <% if (company.status==index && index==0) { %>
+                                        <option selected disabled value="<%= index %>">รอดำเนินการ
+                                        </option>
+                                        <% } else if (company.status==index && index==1) { %>
+                                            <option selected value="<%= index %>">
+                                                อนุมัติ</option>
+                                            <% } else if (company.status==index && index==2){ %>
+                                                <option selected value="<%= index %>">ไม่อนุมัติ
+                                                </option>
+                                                <% } %>
+
+                                                    <% if (company.status !=index && index==0) { %>
+                                                        <option disabled value="<%= index %>">
+                                                            รอดำเนินการ</option>
+                                                        <% } else if (company.status !=index && index==1) { %>
+                                                            <option value="<%= index %>">
+                                                                อนุมัติ</option>
+                                                            <% } else if (company.status !=index && index==2){ %>
+                                                                <option value="<%= index %>">
+                                                                    ไม่อนุมัติ</option>
+                                                                <% } %>
+                                                                    <% } %>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="submit">
+                    <button type="submit">Update</button>
+                </div>
+            </div>
+        </form>
+
+        
+    </div>
+
+
+</main>

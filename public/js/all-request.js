@@ -9,7 +9,7 @@ const modal_bg2 = document.getElementById('modal-back2');
 const modal = document.getElementById('modal');
 const all_modal = document.querySelectorAll('.modal');
 const add_request = document.getElementById('boder-add-request');
-const serch_company= document.getElementById('search');
+// const serch_company= document.getElementById('search');
 
 const edit_document= document.getElementsByClassName('edit-btn');
 const documents = Array.from(edit_document); 
@@ -23,6 +23,7 @@ const em2= document.querySelectorAll('.expand_more2');
 const em3= document.querySelectorAll('.expand_more3');
 const em4= document.querySelectorAll('.expand_more4');
 const em5= document.querySelectorAll('.expand_more5');
+const em6= document.querySelectorAll('.expand_more6');
 const approval = document.getElementById('approval-docs');
 
 const modal_alert = document.getElementById('alert');
@@ -230,12 +231,12 @@ if (ok) { // Check if the element is found
   });
 }
 
-if(serch_company){
-  serch_company.addEventListener('click',()=>{
-  modal_bg.classList.remove('close');
-  modal.classList.remove('close');
-});
-}
+// if(serch_company){
+//   serch_company.addEventListener('click',()=>{
+//   modal_bg.classList.remove('close');
+//   modal.classList.remove('close');
+// });
+// }
 
   if(em1){
     for (var i = 0; i < em1.length; i++) {
@@ -313,6 +314,21 @@ if(serch_company){
     }
   }
 
+  if(em6){
+    for (var i = 0; i < em6.length; i++) {
+      const approval_docs = document.getElementById('approval-docs3'+i);
+      const expand_more = document.getElementById('expand_more6'+i);
+      expand_more.addEventListener('click',()=>{
+            if(approval_docs.classList.contains('active')){
+              console.log('hiding to show');
+              approval_docs.classList.remove('active');
+            }else{
+              console.log('show to hiding');
+              approval_docs.classList.add('active');
+            }   
+      });
+    }
+  }
 
 
 requests_pendding.forEach(function(request) {
@@ -567,3 +583,54 @@ function handleSortChange2(selectElement) {
           // Handle the default case or do nothing
   }
 }
+
+function handleSortChange3(selectElement) {
+  var selectedValue = selectElement.value;
+
+  // Redirect to the desired URL based on the selected value
+  switch (selectedValue) {
+      case '1':
+          window.location.href = '/docs-accepted';
+          break;
+      case '2':
+          window.location.href = '/docs-accepted?sort=2';
+          break;
+      case '3':
+          window.location.href = '/docs-accepted?sort=3';
+          break;
+      case '4':
+          window.location.href = '/docs-accepted?sort=4';
+          break;
+      // Add more cases as needed for other options
+      default:
+          window.location.href = '/docs-accepted';
+          break;
+          // Handle the default case or do nothing
+  }
+}
+
+function handleSortChange4(selectElement) {
+  var selectedValue = selectElement.value;
+
+  // Redirect to the desired URL based on the selected value
+  switch (selectedValue) {
+      case '1':
+          window.location.href = '/docs-certificate';
+          break;
+      case '2':
+          window.location.href = '/docs-certificate?sort=2';
+          break;
+      case '3':
+          window.location.href = '/docs-certificate?sort=3';
+          break;
+      case '4':
+          window.location.href = '/docs-certificate?sort=4';
+          break;
+      // Add more cases as needed for other options
+      default:
+          window.location.href = '/docs-certificate';
+          break;
+          // Handle the default case or do nothing
+  }
+}
+

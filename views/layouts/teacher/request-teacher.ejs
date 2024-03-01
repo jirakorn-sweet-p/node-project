@@ -7,8 +7,14 @@
 <!-- END MODAL -->
 <main>
     <div class="main">
-        <h2>คำร้องล่าสุด</h2>
-        <table class="styled-table">
+        <div class="header-main">
+            <h2>คำร้องล่าสุด</h2>
+            <div class="search">
+                <input type="text" placeholder="searching" id="searching" oninput="filterTable()">
+            </div>
+        </div>
+        <div class="table">
+            <table class="styled-table" id="styled-table">
             <thead>
                 <tr>
                     <th>วันที่ยื่นเรื่อง</th>
@@ -20,6 +26,13 @@
                     <th>การอนุมัติ</th>
                     <th>เพิ่มเติม</th>
                 </tr>
+                <% if (requests.length == 0) { %>
+                    <tr class="no-data">
+                       <th colspan="8">
+                           ไม่มีข้อมูล
+                       </th>
+                   </tr>
+                   <% } %>
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -51,7 +64,7 @@
                                                     <div class="request-info" id="request-info<%= index %>">
                                                 <% } %>
                                                     <div class="topic">
-                                                        <h2>ข้อมูลนักศึกษา</h2>
+                                                        <h2>ข้อมูลนักศึกษา</h2><h2>ชื่อ: <%= element.student_info.name %> รหัส: <%= element.student_info.student_code %></h2>
                                                         <% if (element.student_info.status == '0') { %>
                                                             <span class="material-icons-sharp warnning">pending</span>
                                                         <% } else if (element.student_info.status == '1') { %>
@@ -113,7 +126,7 @@
                                                                     value="วิทยาลัยการคอมพิวเตอร์">
                                                             </div>
                                                             <div class="datas">
-                                                                <a>สาขาวิชา</a>
+                                                                <a>หลักสูตร</a>
                                                                 <div class="border-uploads">
                                                                     <select name="factory" required>
 
@@ -235,6 +248,7 @@
                                                 <% } %>
                                                     <div class="topic">
                                                         <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                                                        <h2><%= element.company_info.company.name %></h2>
                                                         <% if (element.company_info.status == '0') { %>
                                                             <span class="material-icons-sharp warnning">pending</span>
                                                         <% } else if (element.company_info.status == '1') { %>
@@ -446,7 +460,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                                     <div class="topic">
-                                                        <h2>upload document</h2>
+                                                        <h2>อัพโหลดเอกสาร</h2>
                                                         <% if (element.request_info.status == '0') { %>
                                                             <span class="material-icons-sharp warnning">pending</span>
                                                         <% } else if (element.request_info.status == '1') { %>
@@ -618,7 +632,7 @@
                                 </div>
                                 <tr>
                                     <td>
-                                        <%= element.update_at.toLocaleDateString() %>
+                                        <%= new Date(element.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                                     </td>
                                     <td>
                                         <%= element.student_info.student_code %>
@@ -635,11 +649,11 @@
 
                                     <td>
                                         <% var company=element.company_info; %>
-                                            <%= company.start_intern.toLocaleDateString() %>
+                                            <%= new Date(company.start_intern).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                                             ถึง
-                                            <%= company.end_intern.toLocaleDateString() %>
+                                            <%= new Date(company.end_intern).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                                     </td>
-                                    <td>
+                                    <td class="midle">
                                         <div class="status-approve pendding">
                                             <a>
                                                 รอดำเนินการ
@@ -663,5 +677,23 @@
             
             </tbody>
         </table>
+        </div>
+        
+        <div class="paginator">
+
+<% for( let index=1; index <=all_pages; index++ ) { %>
+    <% if (index==current) { %>
+        <a href="?page=<%= index %>" class="current-page">
+            <%= index %>
+        </a>
+        <% } else { %>
+            <a href="?page=<%= index %>">
+                <%= index %>
+            </a>
+            <% } %>
+                <% } %>
+
+        </div>
+        
     </div>
 </main>

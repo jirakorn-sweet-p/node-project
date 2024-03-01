@@ -39,7 +39,6 @@ const StudentInfoSchema = new Schema({
     },
     comment:{
         type: String,
-        default:"no comment"
     },
     status:{
         type: String,

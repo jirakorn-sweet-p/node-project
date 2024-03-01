@@ -29,7 +29,7 @@
                         <input type="text" placeholder="คณะ" value="วิทยาลัยการคอมพิวเตอร์" readonly>
                     </div>
                     <div class="datas">
-                        <a>สาขาวิชา</a>
+                        <a>หลักสูตร</a>
                         <% if (data.factory==1) { %>
                             <input type="text" placeholder="สาขาวิชา" value="วิทยาการคอมพิวเตอร์ ภาคปกติ" readonly>
                             <% } else if (request_doc.doc_approve_company==2) { %>
@@ -193,12 +193,11 @@
             </div>
 
             <div class="topic">
-                <h2>upload document</h2>
+                <h2>อัพโหลดเอกสาร</h2>
             </div>
             <div class="uploads-section">
                 <div class="uploads-content">
                     <a href="">เอกสารยื่นใบฝึกงาน</a>
-                    <!-- upload/2024-01-07T05-15-23.435Z-DIP_LAB2.pdf -->
                     <div class="border-uploads">
                         <a href="/uploads<%= request_doc.doc_request_intern %>" class="links border-space" target="_blank">
                                 <%= request_doc.doc_request_intern %>
@@ -225,9 +224,9 @@
                 <div class="uploads-content">
                     <a href="">หนังสือขอความอนุเคราะห์จากบริษัท</a>
                     <div class="border-uploads">
-                        <% if (request_doc.doc_approve_company==1) { %>
+                        <% if (request_doc.doc_approve_company=='1') { %>
                             <a class="border-space" type="button">มารับไปส่งเอง</a>
-                            <% } else if (request_doc.doc_approve_company==2) { %>
+                            <% } else if (request_doc.doc_approve_company=='2') { %>
                                 <a class="border-space" type="button">เจ้าหน้าที่จัดส่งให้</a>
                                 <% } else { %>
                                     <a class="border-space" type="button"></a>
@@ -237,11 +236,11 @@
                 <div class="uploads-content">
                     <a href="">รูปแบบการฝึกงาน</a>
                     <div class="border-uploads">
-                        <% if (request_doc.working_style==1) { %>
+                        <% if (request_doc.working_style=='1') { %>
                             <a class="border-space" type="button">Onsite</a>
-                            <% } else if (request_doc.working_style==2) { %>
+                            <% } else if (request_doc.working_style=='2') { %>
                                 <a class="border-space" type="button">Work form home</a>
-                                <% } else if (request_doc.working_style==3) { %>
+                                <% } else if (request_doc.working_style=='3') { %>
                                     <a class="border-space" type="button">Hybrid</a>
                                     <% } else { %>
                                         <a class="border-space" type="button"></a>

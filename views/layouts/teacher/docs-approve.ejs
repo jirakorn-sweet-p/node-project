@@ -10,18 +10,18 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>หนังสือรอส่ง</h2>
+            <h2>หนังสือส่งตัวนักศึกษา</h2>
             <div class="sort">
                 <select id="sort" onchange="handleSortChange2(this)">
                     <% if (sort == '1') { %>
                         <option selected value="1">รอหนังสือตอบรับ</option>
                     <% } else { %>
-                        <option value="1">รอหนังสือตอบรับ</option>
+                        <option value="1">รอหนังสือส่งตัว</option>
                     <% } %>
                     <% if (sort == '2') { %>
-                        <option selected value="2">ได้รับหนังสือแล้ว</option>
+                        <option selected value="2">ออกหนังสือแล้ว</option>
                     <% } else { %>
-                        <option value="2">ได้รับหนังสือแล้ว</option>
+                        <option value="2">ออกหนังสือแล้ว</option>
                     <% } %>
                     <% if (sort == '3') { %>
                         <option selected value="3">ทั้งหมด</option>
@@ -29,24 +29,22 @@
                         <option value="3">ทั้งหมด</option>
                     <% } %>
                     <% if (sort == '4') { %>
-                        <option selected value="4">ปฏิเสธการตอบรับ</option>
+                        <option selected value="4">ปฏิเสธการออกหนังสือ</option>
                     <% } else { %>
-                        <option value="4">ปฏิเสธการตอบรับ</option>
+                        <option value="4">ปฏิเสธการออกหนังสือ</option>
                     <% } %>
                 </select>
             </div>
 
             <div class="search">
-                <input type="text" placeholder="searching">
+                <input type="text" placeholder="searching" id="searching" oninput="filterTable()">
             </div>
-            <% if (sort == '2') { %>
             <div class="add-btn success" id="add-approval-docs">
                 <a>ออกหนังสือ</a>
                 <span class="material-icons-sharp">
                     upload_file
                 </span>
             </div>
-            <% } %>
             
 
         </div>
@@ -65,13 +63,8 @@
         </div>
         <div class="modal close" id="approval-docs-modal">
             <% if (requests.length>0) { %>
-                <% if (sort == '2') { %>
                 <h1>สร้างเอกสารมอบตัวนักศึกษา</h1>
                 <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
-                <% } else if (sort == '1') { %>
-                <h1>รับเอกสารตอบกลับจากสถานประกอบการ</h1>
-                <form action="/docs-approval-pop3" method="post" name="approvalDocs" enctype="/submit-table">
-                <% } %>
                 
                     <% var cm=[] %>
                         <% requests.forEach((element,index)=> { %>
@@ -229,7 +222,8 @@
                     <% } %>
 
         </div>
-        <table class="styled-table">
+        <div class="table">
+            <table class="styled-table" id="styled-table">
             <thead>
                 <tr>
                     <th class="close th-checkbox" id="th-checkbox">เลือก</th>
@@ -241,6 +235,14 @@
                     <th>การออกหนังสือ</th>
                     <th>เพิ่มเติม</th>
                 </tr>
+                <% if (requests.length == 0) { %>
+                    <tr class="no-data">
+                       <th colspan="8">
+                           ไม่มีข้อมูล
+                       </th>
+                   </tr>
+                   <% } %>
+                
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -259,7 +261,6 @@
                         </div>
                     </div>            
                 <% requests.forEach((element,index)=> { %>
-
                     <div class="modal <%= modal1 %>" id="modal<%= index %>">
                         <form action="/request-teacher/update3" method="post" name="request" enctype="/submit-table">
                             <div class="modal-box">
@@ -270,7 +271,7 @@
                                     <div class="request-info" id="request-info<%= index %>">
                                 <% } %>
                                     <div class="topic">
-                                        <h2>ข้อมูลนักศึกษา</h2>
+                                        <h2>ข้อมูลนักศึกษา</h2><h2>ชื่อ: <%= element.student_info.name %> รหัส: <%= element.student_info.student_code %></h2>
                                         <% if (element.student_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.student_info.status == '1') { %>
@@ -332,7 +333,7 @@
                                                     value="วิทยาลัยการคอมพิวเตอร์">
                                             </div>
                                             <div class="datas">
-                                                <a>สาขาวิชา</a>
+                                                <a>หลักสูตร</a>
                                                 <div class="border-uploads">
                                                     <select name="factory" required>
 
@@ -455,6 +456,7 @@
                                                 <% } %>
                                     <div class="topic">
                                         <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                                        <h2><%= element.company_info.company.name %></h2>
                                         <% if (element.company_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.company_info.status == '1') { %>
@@ -665,7 +667,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                     <div class="topic">
-                                        <h2>upload document</h2>
+                                        <h2>อัพโหลดเอกสาร</h2>
                                         <% if (element.request_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.request_info.status == '1') { %>
@@ -837,7 +839,7 @@
                                                 <% } %>
 
                                     <div class="topic">
-                                        <h2>Approval Document</h2>
+                                        <h2>หนังสือขอความอนุเคราะห์</h2>
                                         <% if (element.approval_document_status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.approval_document_status == '1') { %>
@@ -892,7 +894,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <% if (element.accepted_company_status == '1' || element.accepted_company_status == '2') { %>
                                     <div class="approval-docs approval-docs2 active" id="approval-docs2<%= index %>">
                                                 <% } else { %>
@@ -900,7 +902,7 @@
                                                 <% } %>
 
                                     <div class="topic">
-                                        <h2>Approval Document</h2>
+                                        <h2>หนังสือตอบรับ</h2>
                                         <% if (element.accepted_company_status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.accepted_company_status == '1') { %>
@@ -922,10 +924,10 @@
                                                 <select name="status5" required>
                                                     <% for (let index=0; index <=4; index++) { %>
                                                         <% if (element.accepted_company_status==index && index==0) { %>
-                                                            <option selected value="<%= index %>">รอหนังสือตอบรับ</option>
+                                                            <option selected value="<%= index %>">รอดำเนินการ</option>
                                                             <% } else if (element.accepted_company_status==index &&
                                                                 index==1) { %>
-                                                                <option selected value="<%= index %>">ได้รับหนังสือแล้ว
+                                                                <option selected value="<%= index %>">ได้รับแล้ว
                                                                 </option>
                                                                 <% } else if (element.accepted_company_status==index &&
                                                                     index==2) { %>
@@ -934,13 +936,13 @@
                                                                     <% } %>
                                                                             <% if (element.accepted_company_status
                                                                                 !=index && index==0) { %>
-                                                                                <option value="<%= index %>">รอหนังสือตอบรับ
+                                                                                <option value="<%= index %>">รอดำเนินการ
                                                                                 </option>
                                                                                 <% } else if
                                                                                     (element.accepted_company_status
                                                                                     !=index && index==1) { %>
                                                                                     <option value="<%= index %>">
-                                                                                        ได้รับหนังสือแล้ว</option>
+                                                                                        ได้รับแล้ว</option>
                                                                                     <% } else if
                                                                                         (element.accepted_company_status
                                                                                         !=index && index==2) { %>
@@ -982,7 +984,7 @@
                             </div>
                         </td>
                         <td>
-                            <%= element.update_at.toLocaleDateString() %>
+                            <%= new Date(element.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                         </td>
                         <td>
                             <%= element.student_info.student_code %>
@@ -995,26 +997,28 @@
                         <td>
                             <%= element.company_info.company.name %>
                         </td>
-                        <td>
-                            <%= element.company_info.start_intern.toISOString().split('T')[0] %> ถึง <%= element.company_info.end_intern.toISOString().split('T')[0] %>
+                        <td class="midle">
+                            <%= new Date(element.company_info.start_intern).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
+                            ถึง
+                            <%= new Date(element.company_info.end_intern).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                             </td>
-                        <td>
-                            <% if (element.accepted_company_status==0) { %>
+                        <td class="midle">
+                            <% if (element.sended_company_status=='0') { %>
                                 <div class="status-approve pendding">
                                     <a>
-                                        รอหนังสือตอบรับ
+                                        รอออกหนังสือส่งตัว
                                     </a>
                                 </div>
-                                <% } else if(element.accepted_company_status==1) { %>
+                                <% } else if(element.sended_company_status=='1') { %>
                                     <div class="status-approve success">
                                         <a>
-                                            ได้รับหนังสือแล้ว
+                                            ออกหนังสือแล้ว
                                         </a>
                                     </div>
-                                    <% } else if(element.accepted_company_status==2) { %>
+                                    <% } else if(element.sended_company_status=='2') { %>
                                     <div class="status-approve danger">
                                         <a>
-                                            ปฏิเสธการตอบรับ
+                                            ปฏิเสธการออกหนังสือ
                                         </a>
                                     </div>
                                     <% } %>
@@ -1037,5 +1041,21 @@
 
             </tbody>
         </table>
+        </div>
+        <div class="paginator">
+
+<% for( let index=1; index <=all_pages[sort-1]; index++ ) { %>
+    <% if (index==current) { %>
+        <a href="?sort=<%= sort %>&page=<%= index %>" class="current-page">
+            <%= index %>
+        </a>
+        <% } else { %>
+            <a href="?sort=<%= sort %>&page=<%= index %>">
+                <%= index %>
+            </a>
+            <% } %>
+                <% } %>
+
+</div>
     </div>
 </main>

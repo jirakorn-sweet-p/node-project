@@ -46,7 +46,6 @@ const CompanyInfoSchema = new Schema({
     },
     comment:{
         type: String,
-        default:"no comment"
     },
     editor:{//
         type: String,

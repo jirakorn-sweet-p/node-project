@@ -1,8 +1,45 @@
+<div class="modal-back close" id="modal-back">
+</div>
+
+<form action="/add-new" method="post" name="request" enctype="multipart/form-data">
+
+    <div class="modal close" id="modal">
+        <div class="modal-box">
+            <div class="datas">
+                <h1>สร้างเอกสารกำหนดการ</h1>
+            </div>
+            <div class="datas">
+                <h2>ชื่อเรื่องข่าวสาร</h2>
+                <input type="text" placeholder="ชื่อเรื่องข่าวสาร" name="title" required>
+            </div>
+            <div class="datas long">
+                <h2>คำอธิบาย</h2>
+                <div class="editor">
+                    <div id="editor">
+                    </div>
+                </div>
+                <input id="details" class="close" type="text" name="details" >
+            </div>
+            <div class="datas last">
+                <h2>เอกสาร<p>(pdf, png, jpeg)</p></h2>
+                <div class="border-uploads">
+                    <input type="file" name="file">
+                </div>
+            </div>
+            <input type="text" name="username" class="close" value="<%= locals.username %>">
+            <div class="submit">
+                <button type="submit">สร้าง</button>
+            </div>
+
+        </div>
+    </div>
+</form>
+
 <main>
     <div class="main">
         <div class="title-header">
             <h2>ข่าวสาร</h2>
-            <div class="add-btn">
+            <div class="add-btn" id="add-doc">
                 <a>เพิ่มข่าวสาร</a>
                 <span class="material-icons-sharp">
                         post_add
@@ -11,6 +48,9 @@
         </div>
         <div class="news">
             <section class="articles">
+                <% if (data.length == 0) { %>
+                 <h2>ไม่มีข้อมูล</h2>
+                <% } %>
                 <% data.forEach(news => { %>
                     
                  <article>
@@ -20,12 +60,12 @@
                         </figure>
                         <div class="article-body">
                             <h2><%= news.title %></h2>
-                            <p class="update">update <%= news.updatedAt.toDateString() %></p>
-                            <p>
-                                <%= news.body %>
+                            <p class="update">เมื่อ <%= new Date(news.updatedAt).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                             </p>
+                            <p class="read-more"><%- news.body.replace(/<\/?[^>]+(>|$)/g, '');  %></p>
+                                
                             <a href="/news/<%= news._id %>" class="read-more">
-                                Read more <span class="sr-only">about this is some title</span>
+                                เพิ่มเติม <span class="sr-only">about this is some title</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"

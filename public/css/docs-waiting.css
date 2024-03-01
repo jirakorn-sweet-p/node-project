@@ -519,7 +519,6 @@ main {
 
 .main h2 {
     height: 3.5rem;
-    margin-right: 40%;
 }
 
 .request-section {
@@ -536,7 +535,7 @@ main {
 .main .header-main {
     height: 3.5rem;
     margin-left: 10rem;
-    margin-top: 3rem;
+    margin-top: 1rem;
     display: flex;
     justify-content: start;
     align-items: start;
@@ -618,8 +617,6 @@ main {
 
 .main .header-main h2 {
     width: fit-content;
-
-
 }
 
 .header-main .sort {
@@ -887,10 +884,18 @@ main {
 .styled-table th,
 .styled-table td {
     padding: 12px 15px;
-    text-align: center;
     font-size: medium;
 }
-
+.styled-table th{
+    text-align: center;
+}
+.styled-table td {
+    text-align: left;
+}
+.styled-table th.midle,
+.styled-table td.midle{
+    text-align: center;
+}
 .styled-table td a {
     font-size: small;
 }
@@ -1566,13 +1571,35 @@ textarea.auto {
     justify-content: space-around;
 }
 .approval-docs.active .topic h2,
-.request-cer.active .topic h2,
-.request-doc.active .topic h2,
-.request-info.active .topic h2 {
+.request-cer.active .topic h2{
     height: 100%;
     width: 80%;
     padding: 1rem 0;
+
 }
+.request-doc.active .topic h2,
+.request-info.active .topic h2{
+    height: 100%;
+    width: 20%;
+    padding: 1rem 0;
+}
+.request-doc.active .topic h2+h2,
+.request-info.active .topic h2+h2{
+    height: 100%;
+    width: 54%;
+    padding: 1rem 0;
+}
+
+.topic h2+ h2{
+    display: none;
+}
+.active .topic h2+ h2{
+    display: block;
+}
+/* .active .topic h2+span{
+    margin-left: 4rem;
+} */
+
 .approval-docs .topic span,
 .request-cer .topic span,
 .request-doc .topic span,
@@ -1985,4 +2012,44 @@ span.danger {
 
 .modal#approval-docs-modal h1{
     margin-left: 3rem;
+}
+
+.styled-table thead tr.no-data{
+    text-align: center;
+    background-color: var(--color-white);
+    color: var(--color-dark);
+}
+
+.paginator{
+    min-width: 50%;
+    margin-left: 3rem;
+    margin-bottom: 1rem;
+    height: 3rem;
+    /* border: solid 2px #181a1e; */
+    /* justify-self: start;
+    align-self: end;
+    display: flex; */
+    display: flex;
+    align-items: flex-end;
+}
+
+.paginator a{
+    width: 2rem;
+    height: auto;
+    color: var(--color-cp);
+    background-color: var(--color-white);
+    border-radius: 10px;
+    padding: 0.75rem 0.75rem;
+    margin-right: 0.3rem;
+    border: solid 1px #7d8da1;
+}
+
+.paginator .current-page{
+    background-color: var(--color-cp);
+    color: var(--color-white);
+}
+
+.table{
+    width: 100%;
+    min-height: 40rem;
 }
