@@ -1,5 +1,22 @@
-<div class="modal-back close" id="modal-back">
+<div class="modal-back <%= alert %>" id="modal-back">
 </div>
+<div class="modal-back close" id="modal-back2">
+</div>
+<div class="modal <%= alert %>" id="alert">
+    <div class="modal-box">
+        <div class="request-doc" id="request-doc">
+            <div class="border-input">
+                <input class="success" name="position_name" type="text" value="<%= err %>"
+                    readonly>
+            </div>
+            <div class="submit">
+                <a href="/account">
+                    <button id="ok" type="submit">ตกลง</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>  
 
 <form action="/account/add" method="post" name="request">
 
@@ -32,7 +49,7 @@
             </div>
             <div class="datas close" id="stdid">
                 <h2>รหัสนักศึกษา</h2>
-                <input type="text" placeholder="รหัสนักศึกษา" name="std_id" required>
+                <input type="text" placeholder="รหัสนักศึกษา" name="std_id">
             </div>
             
             <div class="submit">
@@ -48,16 +65,23 @@
         <div class="header-main">
             <h2>การจัดการรหัสผู้ใช้งาน</h2>
             <div class="sort">
-                <select>
-                    <option selected value="0">จัดเรียงตาม</option>
-                    <option value="1">ชื่อ</option>
-                    <option value="2">สถานที่ฝึกงาน</option>
-                    <option value="3">จังหวัด</option>
+                <select id="sort" onchange="handleSortChange(this)">
+                    <% if (sort == '1') { %>
+                        <option selected value="1">นักศึกษา</option>
+                    <% } else { %>
+                        <option value="1">นักศึกษา</option>
+                    <% } %>
+                    <% if (sort == '2') { %>
+                        <option selected value="2">เจ้าหน้าที่</option>
+                    <% } else { %>
+                        <option value="2">เจ้าหน้าที่</option>
+                    <% } %>
+
                 </select>
             </div>
             
             <div class="search">
-                <input type="text" placeholder="ค้นหา">
+                <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
             </div>
 
             <div class="add-btn" id="add-user">
@@ -68,38 +92,90 @@
             </div>
         </div>
         <div class="table">
-            <table class="styled-table">
+            <table class="styled-table" id="styled-table">
                 <thead>
                     <tr>
                         <th class="on-left">รหัสนักศึกษา</th>
                         <th class="on-left">รหัสผู้ใช้</th>
                         <th class="on-left">ชื่อ</th>
-                        <th>สถานะการใช้งาน</th>
+                        <!-- <th>สถานะการใช้งาน</th> -->
                         <th class="last"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% users.forEach(user => { %>
+
+                    <% users.forEach((user,index) => { %>
+                        <form action="/account/update/<%= user._id %>" method="post" name="request">
+                            <div class="modal close" id="modal2<%= index %>">                
+                            <div class="modal-box">
+                                <div class="datas">
+                                    <h1>สร้างรหัสผู้ใช้</h1>
+                                </div>
+                                <div class="datas">
+                                    <h2>อีเมล</h2>
+                                    <input type="text" placeholder="อีเมล" name="username" value="<%= user.username %>" required>
+                                </div>
+                                <div class="datas">
+                                    <h2>รหัสผ่าน</h2>
+                                    <input type="password" placeholder="รหัสผ่าน" name="password" value="<%= user.password %>" required>
+                                </div>
+                                <div class="datas selection-user">
+                                    <div class="sort">
+                                    <select id="sort" name="role">
+                                        <% if (user.role == 'student') { %>
+                                         <option selected value="1">นักศึกษา</option>
+                                         <option value="2">เจ้าหน้าที่</option>
+                                        <% } else { %>
+                                            <option value="1">นักศึกษา</option>
+                                            <option selected value="2">เจ้าหน้าที่</option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                
+                                </div>
+                                <div class="datas">
+                                    <h2>ชื่อนาม-สกุล</h2>
+                                        <input type="text" placeholder="ชื่อนาม-สกุล" value="<%= user.student_info.name %>" name="name" required>
+                                </div>
+                                    <div class="datas" >
+                                        <% if (user.role == 'student') { %>
+                                         <h2>รหัสนักศึกษา</h2>
+                                        <input type="text" value="<%= user.student_info.student_code %>" placeholder="รหัสนักศึกษา" name="std_id">
+                                        <% } %>
+                                    
+                                </div>
+                                
+                                
+                                <div class="submit">
+                                    <button type="submit">อัพเดท</button>
+                                    <a id="deleteLink" name="<%= index %>" class="btn danger">ลบ</a>
+
+                                </div>
+                    
+                            </div>
+                        </div>
+                        </form>
+                        <form id="deleteForm<%= index %>" action="/account/delete/<%= user._id %>" method="POST" style="display: none;">
+                        </form>
                       <tr>
-                        <% if (!user.student_code) { %>
+
                          <td class="on-left"><%= user.student_info.student_code%></td>
                            <td class="on-left"><%= user.username %></td>
                            <!-- <td>บัญชี / ผู้ตรวจบัญชี</td> -->
                            <td class="on-left"><%= user.student_info.name %></td>
-                           <td class="position">
+                           <!-- <td class="position">
                                <div class="backend danger">
                                 test
                                 </div>
-                           </td>
+                           </td> -->
                            <td class="last">
-                            <a href="/all-companys">
+                            <a name="<%= index %>" class="pop">
                                 <div class="more-details">
                                 <p>เพิ่มเติม</p>
                             </div>
                             </a>
                             
                         </td>
-                        <% } %>
                            
                        </tr>
                 
@@ -108,6 +184,21 @@
             </table>
         </div>
 
+        <div class="paginator">
+
+<% for( let index=1; index <=all_pages[sort-1]; index++ ) { %>
+    <% if (index==current) { %>
+        <a href="?sort=<%= sort %>&page=<%= index %>" class="current-page">
+            <%= index %>
+        </a>
+        <% } else { %>
+            <a href="?sort=<%= sort %>&page=<%= index %>">
+                <%= index %>
+            </a>
+            <% } %>
+                <% } %>
+
+</div>
 
     </div>
 </main>

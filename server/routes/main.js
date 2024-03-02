@@ -26,6 +26,7 @@ const companies = require('../models/Company');
 const users = require('../models/User');
 
 const redirectIfAuth = require('../middleware/redirectIfAuth');
+const redirectIfAuth2 = require('../middleware/redirectIfAuth2');
 const redirectNotAuth = require('../middleware/redirectNotAuth');
 
 // generate doc
@@ -515,7 +516,7 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
     };
 
     const { username, password } = req.body;
-
+    console.log(username);
     try {
         const user = await users.findOne({ username: username });
 
@@ -524,7 +525,12 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
 
             if (match) {
                 req.session.userId = user._id;
-                res.redirect('/request');
+                if (user.role == 'teacher') {
+                    res.redirect('/request-teacher');
+                }else{
+                    res.redirect('/request');
+                }
+                
             } else {
                 res.redirect('/login');
             }
@@ -1400,15 +1406,30 @@ router.get('/request-teacher/req',async (req,res) => {
     res.redirect('/request-teacher');
 });
 
-router.get('/request-teacher',async (req,res) => {
+router.get('/request-teacher',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': loggedIn });
+    var user = new Object();
+    if(dat.role == "teacher"){
+        var userId = new ObjectId(dat.student_info);
+        user = await student_info.findOne({ '_id': dat.student_info });
+    }
+    var image = 'profile-1.jpg';
+    // var name = dat.username;
+    if(user){
+        req.session.firstlogin = false;
+    }else{
+        req.session.firstlogin = true;
+    }
+    console.log(dat);
     const locals = {
         title : "request",
         description:"Internship request",
         styles: "/css/request-teacher.css",
         js: "/js/all-request.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/request-teacher.ejs",
         bar1: "active",
+        profile:image,
         search:"/js/searching_all.js",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
@@ -5291,6 +5312,141 @@ router.get('/account',async (req,res) => {
         js: "/js/admin.js",
         user: "admin",
         content:"../layouts/admin/account.ejs", 
+        search:"/js/searching_acc.js",
+        bar12: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    var sort = req.query.sort || 1;
+    var count=[];
+    var all_pages=[];
+    var nextPage=[];
+    var hasNextPage=[];
+
+    const perPage = 20;
+    const page = req.query.page || 1;
+    var com_add =[];
+    
+    const data = await users.aggregate([
+        { $match: { role: 'student' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] }
+            }
+        },
+    ]).exec();
+
+    count.push(await users.find({'role': 'student'}).countDocuments({}));
+     all_pages.push(Math.ceil(count[0]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[0] <= all_pages[0]);
+
+    const data2 = await users.aggregate([
+        { $match: { role: 'teacher' } },
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] }
+            }
+        },
+    ]).exec();
+    count.push(await users.find({'role': 'teacher'}).countDocuments({}));
+     all_pages.push(Math.ceil(count[1]/perPage));
+     nextPage.push(parseInt(page)+1);
+     hasNextPage.push(nextPage[1] <= all_pages[1]);
+
+    var alert_docs = 'close';
+    var err = "";
+    if(req.session.acc_pass){
+            err = req.session.acc_pass;
+            req.session.destroy();
+    }else if(req.session.acc_err){
+            err = req.session.acc_err;
+            req.session.destroy();
+    }else{
+            req.session.destroy();
+            alert_docs = 'close';
+    }
+
+    if(err != ""){
+            alert_docs = "";
+    }
+    var ttt = []
+    if(sort == '1'){
+        ttt = data;
+    }else if(sort == '2'){
+        ttt = data2;
+    }
+    res.render('index', { locals ,users:ttt,alert:alert_docs,err,hasNextPage,nextPage,all_pages,count,current:page,sort });
+});
+
+router.get('/account/:id',async (req,res) => {
+    const locals = {
+        title : "approval document",
+        description:"Internship request",
+        styles: "/css/account-details.css",
+        js: "/js/admin.js",
+        user: "admin",
+        content:"../layouts/admin/update-account.ejs", 
         search:"/js/searching.js",
         bar12: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -5336,65 +5492,108 @@ router.get('/account',async (req,res) => {
           ]
           )).length,
     }
-
-    const perPage = 20;
-    const page = req.query.page || 1;
-    var com_add =[];
-    const data = await users.aggregate([
-        { $skip: perPage * page - perPage },
-        { $limit: perPage },
-        {
-            $lookup: {
-                from: 'studentinfos',
-                localField: 'student_info',
-                foreignField: '_id',
-                as: 'student_info'
-            }
-        },
-        {
-            $addFields: {
-                student_info: { $arrayElemAt: ['$student_info', 0] }
-            }
-        },
-    ]).exec();
-    const count = await users.countDocuments({});
-    let all_pages = Math.ceil(count/perPage);
-    const nextPage = parseInt(page)+1;
-    const hasNextPage = nextPage <= all_pages;
-    res.render('index', { locals ,users:data});
+    res.render('index', { locals });
 });
-
 router.post('/account/add',async (req,res) => {
-    var role = '';
-    if (req.body.role == '1') {
-        role = 'student'
-    }else if (req.body.role == '2') {
-        role = 'teacher'
-    }else{
-        role = 'student'
-    }
-    const std_add = new student_info({student_code: req.body.std_id,student_code: req.body.name});
-    console.log(std_add);
-
+    
 
     try {
-        // Save the student_info instance to the database
-        await std_add.save();
 
+        var role = '';
+        if (req.body.role == '1') {
+            role = 'student'
+            const std_add = new student_info({student_code: req.body.std_id,name: req.body.name});
+
+            await std_add.save();
+            console.log(std_add);
         // Create the user
-        await users.create({
+            await users.create({
             username: req.body.username,
             password: req.body.password,
             role: role,
+            student_info:std_add,
             student_code: req.body.std_id
         });
+        console.log(users);
+        }else if (req.body.role == '2') {
+            role = 'teacher';
+            var code = 'xxxxxxxxx-x'
+            const std_add = new student_info({student_code: code,name: req.body.name});
+            await std_add.save(); 
+            // Create the user
+            console.log(std_add);
+            await users.create({
+            username: req.body.username,
+            password: req.body.password,
+            student_info:std_add,
+            role: role,
+        });
+        console.log(users);
+    }else{
+        role = 'student'
+    }
 
-        console.log("User and Student Info Registered Successfully!");
+    
+
+        req.session.acc_pass = 'สร้างผู้ใช้สำเร็จ';
         res.redirect('/account');
     } catch (error) {
         // Handle validation errors and log the error
         console.error(error);
-        res.status(500).send('Internal Server Error');
+        req.session.acc_err = 'สร้างผู้ใช้ไม่สำเร็จ';
+        res.redirect('/account');
+    }
+});
+router.post('/account/update/:id',async (req,res) => {
+    
+
+    try {
+        const this_id = req.params.id;
+        const this_user = await users.findOne({'_id':this_id});
+        console.log(this_user);
+        if (req.body.role == '1'){
+            this_user.role = 'student';
+        }else if(req.body.role == '2'){
+            this_user.role = 'teacher';
+        }
+        this_user.username =req.body.username;
+        this_user.password =req.body.password;
+        const std_add = await student_info.findOne({ '_id': this_user.student_info });
+
+        console.log(std_add);
+        std_add.name = req.body.name;
+
+        await std_add.save();
+        await this_user.save()
+        req.session.acc_pass = 'อัพเดทสำเร็จ';
+        res.redirect('/account');
+    } catch (error) {
+        // Handle validation errors and log the error
+        console.error(error);
+        req.session.acc_pass = 'อัพเดทไม่สำเร็จ';
+        res.redirect('/account');
+    }
+});
+
+router.post('/account/delete/:id',async (req,res) => {
+    
+    const this_id = req.params.id;
+    const this_user = users.findOne({'_id':this_id});
+
+    try {
+        const std_add = await student_info.findOne({'_id':this_user.student_info});
+        if(std_add){console.log(std_add);}
+        const result = await student_info.deleteOne(std_add);
+        const result2 = await request_ser.findOne({'student_info':std_add._id})
+        const result3 = await users.deleteOne(this_user);
+        const result4 = await request_ser.deleteOne(result2);
+        req.session.acc_pass = 'ลบผู้ใช้สำเร็จ';
+        res.redirect('/account');
+    } catch (error) {
+        // Handle validation errors and log the error
+        console.error(error);
+        req.session.acc_pass = 'ลบผู้ใช้ไม่สำเร็จ';
+        res.redirect('/account');
     }
 });
 // API

@@ -578,7 +578,7 @@ main {
     margin: 1rem 0;
     font-size: medium;
     font-family: 'Poppins' , sans-serif;
-    min-width: 70vw;
+    min-width: 60vw;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -758,7 +758,7 @@ form{
     height: 60%;
     background-color: var(--color-white);
     box-shadow: var(--box-shadow);
-    z-index: 90;
+    z-index: 93;
     left: 25%;  
     top: 15%;
     border-radius: 8px;
@@ -805,14 +805,12 @@ form{
 }
 
 .request-doc {
-    background-color: var(--color-white);
     width: 90%;
     height: 101rem;
     display: flex;
     margin: 2rem auto 1rem auto;
     flex-direction: column;
     border-radius: 8px;
-    box-shadow: var(--box-shadow2);
 }
 
 .topic {
@@ -1129,7 +1127,7 @@ form{
     margin-bottom: 2rem;
     margin-top: 2.5rem;
 }
-
+.submit a,
 .submit button{
     border-radius: 8px;
     padding: 0.6rem 2.5rem;
@@ -1146,7 +1144,7 @@ form{
     padding-left: 0;
     margin: 2rem 1rem 1rem 1rem;
 }
-
+.submit a:hover,
 .submit button:hover{
     background: #0d45a5;
 }

@@ -12,27 +12,21 @@ const StudentInfoSchema = new Schema({
     },
     education:{
         type: Number,
-        require:true
     },
     factory:{
         type: String,
-        require:true
     },
     grade:{
         type: Number,
-        require:true
     },
     email:{
         type: String,
-        require:true
     },
     phone:{
         type: String,
-        require:true
     },
     health_coverage:{
         type: String,
-        require:true
     },
     image:{
         type: String
