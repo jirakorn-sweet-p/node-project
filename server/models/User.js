@@ -14,6 +14,9 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'StudentInfo'
     },
+    student_code:{
+        type: String
+    },
     role:{
         type: String
     },

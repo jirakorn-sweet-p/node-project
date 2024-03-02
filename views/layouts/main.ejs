@@ -20,7 +20,7 @@
          <div class="container show-bar" id="left-bar">
         <% if (locals.user=="student" ) { %>
             <%- include("../partials/sidebar-student.ejs") %>
-                <% } else if (locals.user=="teacher" ) { %>
+                <% } else if (locals.user=="teacher" || locals.user=="admin") { %>
                     <%- include("../partials/sidebar-teacher.ejs") %>
                         <% } %>
 

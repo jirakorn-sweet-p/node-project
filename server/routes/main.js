@@ -301,8 +301,24 @@ const EditCal = async (req,res,next) => {
 }
 
 const UploadDocuments = async (req,res,next) => {
-
-    const std_info = new student_info({
+    const u = await users.findOne({ '_id': loggedIn });
+    var std_this = (await student_info.find({'student_code':u.student_code})).at(0);
+    var std_info = new Object();
+    var std_found = true;
+    console.log(std_this);
+    if(std_this){
+        std_this.name = req.body.fullname;
+        std_this.student_code = req.body.std_id;
+        std_this.education = req.body.lv;
+        std_this.grade = req.body.gpa;
+        std_this.factory = req.body.factory;
+        std_this.email = req.body.email;
+        std_this.phone = req.body.tel;
+        std_this.health_coverage = req.body.medical_rights;
+        std_this.image = req.files[0].filename;
+        std_found = true;
+    }else{
+        std_info = new student_info({
         name: req.body.fullname,
         student_code: req.body.std_id,
         education: req.body.lv,
@@ -313,6 +329,10 @@ const UploadDocuments = async (req,res,next) => {
         health_coverage: req.body.medical_rights,
         image: req.files[0].filename,
     });
+    std_found = false;
+    }
+    
+   
     const reqInfo = new request_info({
         student_code: req.body.std_id,
         doc_request_intern: req.files[1].filename,
@@ -363,8 +383,14 @@ const UploadDocuments = async (req,res,next) => {
         provinceID: req.body.code,
     });
     const cer_info = new certificate({});
-
-    const saved_std_info = await std_info.save();
+    var saved_std_info = new Object();;
+    if(std_found){
+        console.log(std_this);
+        saved_std_info = await std_this.save();
+    }else{
+        saved_std_info = await std_info.save();
+    }
+    
     const saved_reqInfo= await reqInfo.save();
     const saved_com_info= await com_info.save();
     const saved_cer_info= await cer_info.save();
@@ -865,7 +891,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = dat.student_code;
     if(user){
         image = user.image
         name = user.name
@@ -2048,7 +2074,7 @@ router.get('/requests-all-teacher', async (req,res) => {
         user: "teacher",
         search:"/js/searching_all.js",
         content:"../layouts/teacher/requests-all-teacher.ejs",
-        bar8: "active",
+        bar6: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -2203,7 +2229,7 @@ router.get('/pass-status-requests', async (req,res) => {
         user: "teacher",
         search:"/js/searching_all.js",
         content:"../layouts/teacher/pass-status-requests.ejs",
-        bar9: "active",
+        bar7: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -2680,7 +2706,7 @@ router.get('/all-companys',async (req,res) => {
         user: "teacher",
         search:"/js/searching_company.js",
         content:"../layouts/teacher/all-companys.ejs"   , 
-        bar6: "active",
+        bar8: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -2905,7 +2931,7 @@ router.get('/all-companys/:id',async (req,res) => {
         user: "teacher",
         search:"/js/searching_company.js",
         content:"../layouts/teacher/company-details.ejs"   , 
-        bar6: "active",
+        bar8: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -3063,7 +3089,7 @@ router.post('/all-companys/add', async (req, res) => {
         js: "/js/company.js",
         user: "teacher",
         content: "../layouts/teacher/all-companys.ejs",
-        bar6: "active",
+        bar8: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -3153,7 +3179,7 @@ router.get('/upload-calendar', async (req,res) => {
         js: "/js/base.js",
         user: "teacher",
         content:"../layouts/teacher/upload-calendar.ejs"   , 
-        bar7: "active",
+        bar9: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -4014,7 +4040,7 @@ router.get('/docs-accepted', async (req,res) => {
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
-        user: "teacher",
+        user: "admin",
         content:"../layouts/teacher/docs-accepted.ejs", 
         search:"/js/searching.js",
         bar3: "active",
@@ -4081,7 +4107,7 @@ router.get('/docs-accepted', async (req,res) => {
         modal_bg2 = "close";
         alert = "close";
     }
-
+users
     var count=[];
     var all_pages=[];
     var nextPage=[];
@@ -5208,7 +5234,7 @@ router.get('/uploads/:file', async (req,res) => {
         user: "teacher",
         filename: file,
         content:"../layouts/file-pdf.ejs"   , 
-        bar7: "active",
+        bar9: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -5256,11 +5282,128 @@ router.get('/uploads/:file', async (req,res) => {
     res.render('index', {locals});
 });
 
+//ADMIN
+router.get('/account',async (req,res) => {
+    const locals = {
+        title : "approval document",
+        description:"Internship request",
+        styles: "/css/account.css",
+        js: "/js/admin.js",
+        user: "admin",
+        content:"../layouts/admin/account.ejs", 
+        search:"/js/searching.js",
+        bar12: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+
+    const perPage = 20;
+    const page = req.query.page || 1;
+    var com_add =[];
+    const data = await users.aggregate([
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] }
+            }
+        },
+    ]).exec();
+    const count = await users.countDocuments({});
+    let all_pages = Math.ceil(count/perPage);
+    const nextPage = parseInt(page)+1;
+    const hasNextPage = nextPage <= all_pages;
+    res.render('index', { locals ,users:data});
+});
+
+router.post('/account/add',async (req,res) => {
+    var role = '';
+    if (req.body.role == '1') {
+        role = 'student'
+    }else if (req.body.role == '2') {
+        role = 'teacher'
+    }else{
+        role = 'student'
+    }
+    const std_add = new student_info({student_code: req.body.std_id,student_code: req.body.name});
+    console.log(std_add);
+
+
+    try {
+        // Save the student_info instance to the database
+        await std_add.save();
+
+        // Create the user
+        await users.create({
+            username: req.body.username,
+            password: req.body.password,
+            role: role,
+            student_code: req.body.std_id
+        });
+
+        console.log("User and Student Info Registered Successfully!");
+        res.redirect('/account');
+    } catch (error) {
+        // Handle validation errors and log the error
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 // API
 router.get('/getAll-company',async (req,res) => {
     const responseObject = await companies.find({'status':'1'});
     res.json(responseObject);
 });
+
+
 
 
 module.exports = router;

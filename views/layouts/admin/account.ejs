@@ -1,0 +1,113 @@
+<div class="modal-back close" id="modal-back">
+</div>
+
+<form action="/account/add" method="post" name="request">
+
+    <div class="modal close" id="modal">
+        <div class="modal-box">
+            <div class="datas">
+                <h1>สร้างรหัสผู้ใช้</h1>
+            </div>
+            <div class="datas">
+                <h2>อีเมล</h2>
+                <input type="text" placeholder="อีเมล" name="username" required>
+            </div>
+            <div class="datas">
+                <h2>รหัสผ่าน</h2>
+                <input type="password" placeholder="รหัสผ่าน" name="password" required>
+            </div>
+            <div class="datas selection-user">
+                <div class="sort">
+                <select id="sort" name="role">
+                    <option disabled value="0">ผู้ใช้</option>
+                    <option selected value="1">นักศึกษา</option>
+                    <option value="2">เจ้าหน้าที่</option>
+                </select>
+            </div>
+            
+            </div>
+            <div class="datas">
+                <h2>ชื่อนาม-สกุล</h2>
+                <input type="text" placeholder="ชื่อนาม-สกุล" name="name" required>
+            </div>
+            <div class="datas close" id="stdid">
+                <h2>รหัสนักศึกษา</h2>
+                <input type="text" placeholder="รหัสนักศึกษา" name="std_id" required>
+            </div>
+            
+            <div class="submit">
+                <button type="submit">สร้าง</button>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<main>
+    <div class="main">
+        <div class="header-main">
+            <h2>การจัดการรหัสผู้ใช้งาน</h2>
+            <div class="sort">
+                <select>
+                    <option selected value="0">จัดเรียงตาม</option>
+                    <option value="1">ชื่อ</option>
+                    <option value="2">สถานที่ฝึกงาน</option>
+                    <option value="3">จังหวัด</option>
+                </select>
+            </div>
+            
+            <div class="search">
+                <input type="text" placeholder="ค้นหา">
+            </div>
+
+            <div class="add-btn" id="add-user">
+                <a>เพิ่มผู้ใช้</a>
+                <span class="material-icons-sharp">
+                        post_add
+                </span>
+            </div>
+        </div>
+        <div class="table">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th class="on-left">รหัสนักศึกษา</th>
+                        <th class="on-left">รหัสผู้ใช้</th>
+                        <th class="on-left">ชื่อ</th>
+                        <th>สถานะการใช้งาน</th>
+                        <th class="last"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                      <tr>
+                        <% if (!user.student_code) { %>
+                         <td class="on-left"><%= user.student_info.student_code%></td>
+                           <td class="on-left"><%= user.username %></td>
+                           <!-- <td>บัญชี / ผู้ตรวจบัญชี</td> -->
+                           <td class="on-left"><%= user.student_info.name %></td>
+                           <td class="position">
+                               <div class="backend danger">
+                                test
+                                </div>
+                           </td>
+                           <td class="last">
+                            <a href="/all-companys">
+                                <div class="more-details">
+                                <p>เพิ่มเติม</p>
+                            </div>
+                            </a>
+                            
+                        </td>
+                        <% } %>
+                           
+                       </tr>
+                
+                    <% }) %>
+                </tbody>       
+            </table>
+        </div>
+
+
+    </div>
+</main>
