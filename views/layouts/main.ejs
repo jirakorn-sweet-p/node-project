@@ -39,31 +39,9 @@
     <script src="<%= locals.js  %>"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
     <script>
-        var quill = new Quill('#editor', {
-            theme: 'snow',
-    modules: {
-        toolbar: [
-            [{ 'header': [1, 2, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            ['image', 'code-block'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],
-            ['clean']
-        ],
-        imageResize: {
-            displaySize: true,  // Show the display size of the image
-            handleStyles: {
-                backgroundColor: 'black',
-                border: 'none',
-                color: 'white',
-                position: 'absolute',
-                right: '0',
-                bottom: '0',
-                boxSizing: 'border-box',
-            },
-        },
-    },
-});
+        const quill = new Quill('#editor', {
+    theme: 'snow'
+  });
       </script>
 </body>
 </html>

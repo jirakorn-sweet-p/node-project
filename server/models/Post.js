@@ -10,6 +10,9 @@ const PostSchema = new Schema({
         type:String,
         require:true
     },
+    downloadDoc:{
+        type:String,
+    },
     createdAt:{
         type: Date,
         default: Date.now

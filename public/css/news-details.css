@@ -708,12 +708,17 @@ article:has(:hover, :focus) {
 .request-doc {
     background-color: var(--color-white);
     width: 90%;
-    height: 50rem;
+    height: 65rem;
     display: flex;
     margin: 2rem auto 1rem auto;
-    flex-direction: row;
+    flex-direction: column;
     border-radius: 8px;
     box-shadow: var(--box-shadow2);
+}
+
+.request-doc h2 {
+    text-wrap: nowrap;
+    margin-right: 1rem;
 }
 
 .request-doc .position div{
@@ -828,7 +833,7 @@ embed{
     height: 100%;
     width: 100%;
 }
-
+a.btn,
 .footer button{
     border-radius: 8px;
     padding: 0.6rem 2.5rem;
@@ -838,9 +843,220 @@ embed{
     color: #fff;
 }
 
+a.btn:hover,
 .footer button:hover{
     background: #0d45a5;
 }
-button.danger{
+
+.datas {
+    display: flex;
+    margin: 0 auto;
+    justify-content: left;
+    align-items: center;
+    /* background-color: #FF0060; */
+    height: 8%;
+    width: 80%;
+    padding: 2px 0;
+    margin-top: 3%;
+}
+
+.datas input:not(:first-child) {
+    padding-left: 1rem;
+    margin: 0;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow2);
+}
+
+.datas input, .datas textarea, .datas a {
+    height: 100%;
+}
+
+input, textarea {
+    width: 100%;
+}
+
+.long {
+    height: 30%;
+}
+
+.editor {
+    width: 100%;
+    height: 100%;
+}
+
+.datas.last {
+    margin-top: 6rem;
+}
+
+.close {
+    display: none;
+}
+
+.submit {
+    gap: 2rem;
+    width: 100%;
+    height: 15%;
+    /* background-color: red; */
+    padding-left: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.submit button {
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem;
+    font-size: medium;
+    font-weight: 700;
+    background: #084cdf;
+    color: #fff;
+}
+
+.border-uploads {
+    background-color: var(--color-white);
+    box-shadow: var(--box-shadow2);
+    width: 100%;
+    border-radius: 10px;
+    display: flex;
+}
+
+.submit button{
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem;
+    font-size: medium;
+    font-weight: 700;
+    background: #084cdf;
+    color: #fff;
+
+}
+
+a.btn.danger,
+.submit button.danger{
     background: var(--color-danger);
+}
+
+
+.submit button:hover{
+    background: #0d45a5;
+}
+
+input[type=file]::file-selector-button {
+    margin-right: 20px;
+    border: none;
+    background: #084cdf;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #0d45a5;
+}
+
+h2 p {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+form {
+    width: 100%;
+    height: 100%;
+}
+
+
+.modal{
+    position: fixed;
+    width: 50%;
+    height: 60%;
+    background-color: var(--color-white);
+    box-shadow: var(--box-shadow);
+    z-index: 90;
+    left: 25%;  
+    top: 15%;
+    border-radius: 8px;
+}
+
+.modal:first-child{
+    height: 50%;
+    top: 25%;
+}
+
+.modal-back{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #000b12d6;
+    z-index: 88;
+}
+
+.close{
+    display: none;
+}
+
+.modal .modal-box{
+    margin: 1rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.modal#alert .border-input {
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 5%;
+}
+
+.modal#alert .border-input input {
+    text-align: center;
+}
+
+.modal#alert .border-input input.pass {
+    box-shadow: var(--box-shadow4);
+    color: var(--color-success);
+    font-weight: 700;
+}
+
+.modal#alert .border-input input.fail {
+    box-shadow: var(--box-shadow5);
+    color: var(--color-danger);
+    font-weight: 700;
+}
+
+.modal#alert .submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0;
+    margin: 1rem 0 0 0;
+}
+
+.modal-back#modal-alert {
+    z-index: 98;
+}
+
+.modal#alert {
+    background-color: none;
+    z-index: 99;
+    left: 37.5%;
+    top: 45%;
+    height: 15%;
+    width: 25%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.modal#alert .request-doc {
+    height: 100%;
+    box-shadow: none;
+    margin: 0 auto;
+}
+
+.modal#alert .modal-box {
+    width: 100%;
+    height: 100%;
+    margin: 0;
 }

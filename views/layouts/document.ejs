@@ -9,7 +9,7 @@
                 
                 <% data.forEach((docs,index)=> { %>
                  <div class="card-document">
-                        <h2>เอกสารที่เกี่ยวข้อง</h2>
+                        <h2><%= docs.title %></h2>
                         
                     <h3>
                         <%= docs.details %>
@@ -25,7 +25,7 @@
                 </div>
                 <% }) %>
         
-                <div class="card-document">
+                <!-- <div class="card-document">
                     <div class="card-document-header">
                         <h2>ผลระเมินการฝึกงาน</h2>
                         <div class="edit-ic">
@@ -44,7 +44,7 @@
 
                     </div>
                     <div class="date-upload">10-10-2566</div>
-                </div>
+                </div> -->
             </div>
 
         </div>

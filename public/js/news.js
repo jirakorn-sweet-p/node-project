@@ -13,6 +13,18 @@ const edit_document= document.getElementsByClassName('edit-btn');
 const documents = Array.from(edit_document);  
 const details = document.getElementById('details');
 
+const deleteLink = document.getElementById('deleteLink');
+const deleteForm = document.getElementById('deleteForm');
+
+if(deleteLink){
+deleteLink.addEventListener('click', function (event) {
+  console.log('asdadasdasdasd');
+  event.preventDefault();
+  deleteForm.submit();
+});
+}
+
+
 editor.addEventListener('focusout',()=>{
   const editor = document.getElementById('editor');
   const allHtmlContent = editor.innerHTML;
@@ -32,6 +44,7 @@ if(add_document){
   add_document.addEventListener('click',()=>{
   modal_bg.classList.remove('close');
   modal.classList.remove('close');
+  console.log('ass');
 });
 }
 

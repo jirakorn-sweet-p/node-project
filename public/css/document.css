@@ -598,11 +598,11 @@ main {
     font-size: medium;
 }
 
-.card-document:last-child{
+/* .card-document:last-child{
     background-color: #fde6a0;
     color: #4b3800;
     box-shadow: var(--box-shadow6);
-}
+} */
 
 .card-document-header{
     display: flex;

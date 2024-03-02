@@ -2,16 +2,26 @@
 <html>
 <head>
  <title>Login Page</title>
+ <link rel="stylesheet" href="/public/css/login.css">
 </head>
 <body>
- <h1>Login</h1>
- 
- <form action="/user/login" method="post">
- <label>Username:</label>
- <input type="username" name="username"><br>
- <label>Password:</label>
- <input type="password" name="password"><br>
- <button type="submit">Login</button>
- </form>
+        <section>
+            <img src="/img/bg.png" alt="" class="bg">
+            <form action="/user/login" method="post">
+                <div class="login">
+                <h2>เข้าสู่ระบบ</h2>
+                <div class="inputBox">
+                    <input name="username" type="text" placeholder="รหัสนักศึกษา">
+                </div>
+                <div class="inputBox">
+                    <input name="password" type="password" placeholder="รหัสผ่าน">
+                </div>
+                <div class="inputBox">
+                    <input type="submit" value="Login" id="btn">
+                </div>
+            </div>
+            </form>
+            
+        </section>
 </body>
 </html>

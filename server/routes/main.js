@@ -467,7 +467,7 @@ router.get('/login',redirectIfAuth, (req, res) => {
     const locals = {
         title : "login",
         description:"Internship request",
-        styles: "/css/style.css",
+        styles: "/css/login.css",
         js: "/js/req.js",
         user: "student",
         content:"../layouts/login.ejs",
@@ -1147,7 +1147,189 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         first:req.session.firstlogin
     }
     
-    res.render('index', {locals});
+    let page = req.query.page || 1;
+        let perPage = 10;
+
+        const data = await position.aggregate([ { $sort: {name: 1 }}])
+        .skip(perPage*page-perPage)
+        .limit(perPage)
+        .exec();
+
+        const count = await position.countDocuments({});
+        let allPage = Math.ceil(count/perPage);
+        const nextPage = parseInt(page)+1;
+        const hasNextPage = nextPage <= allPage;
+
+        // reset Alert
+        var a = alert;
+        alert = "close";
+
+        let page2 = req.query.page2 || 1;
+        let perPage2 = 15;
+        // const all_companies = await companies.find({'status':'1'});
+        const all_companies = await companies.aggregate([
+            { $match: { status: { $in: ['0', '1' ,'2'] } } },
+            { $skip: perPage2 * page2 - perPage2 },
+            { $limit: perPage2 },
+        ]).exec();
+        const count2 = await companies.countDocuments({});
+        let allPage2= Math.ceil(count2/perPage2);
+        const nextPage2 = parseInt(page2)+1;
+        const hasNextPage2 = nextPage2 <= allPage2;
+        
+        const data2 =  await request_ser.aggregate([
+            { $sort: { update_at: 1 } },
+            { $match: { status: '1' } },
+            { $match: { approval_document_status: '1' } },
+            { $match: { accepted_company_status: '1' } },
+            { $match: { sended_company_status: '1' } },
+            { $skip: perPage * page - perPage },
+            { $limit: perPage },
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
+            }
+        ]).exec();
+        
+
+        var all_position = [];
+        var this_position = [];
+        for (let i = 0; i < all_companies.length; i++) {
+            const element = all_companies[i];
+            this_position = [];
+
+            data2.forEach((e,index) => {
+                if(e.company_info.company.name == all_companies[i].name){
+                    this_position.push(e.company_info.position);
+                    all_position[i] = this_position;
+                }
+                
+            });
+
+        }
+        all_position.forEach((element,index) => {
+            var myList = all_position[index];
+            element.forEach((element2,index2) => {
+                myList = myList.filter((item, index3) => item !== element2 || myList.indexOf(element2) === index3);
+            });
+            all_position[index] = myList;
+        });
+        
+        const intern = await request_ser.aggregate([
+            { $sort: { update_at: 1 } },
+            { $match: { status: '1' } },
+            { $match: { approval_document_status: '1' } },
+            { $match: { accepted_company_status: '1' } },
+            { $match: { sended_company_status: '1' } },
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
+            },
+        ]).exec();
+        const found_data = [];
+        intern.forEach((element,index) => {
+            found_data.push(element.company_info.company._id.toString());
+        });
+        console.log(found_data);
+    res.render('index', {locals,all_companies,all_position,all_pages2:allPage2,current2:page2,intern:found_data});
 });
 
 router.get('/calendar',redirectNotAuth,async (req,res) => {
@@ -1259,11 +1441,13 @@ router.get('/request-teacher',async (req,res) => {
     if(error){
         modal_bg2 = "";
         alert = "";
+        bg1 = "close"
+        mod1 = "close";
     }else{
         modal_bg2 = "close";
         alert = "close";
     }
-    const perPage = 2;
+    const perPage = 20;
     const page = req.query.page || 1;
     var com_add =[];
     const data = await request_ser.aggregate([
@@ -2359,7 +2543,7 @@ router.get('/news/:id', async (req,res) => {
         title : "news",
         description:"Internship request",
         styles: "/css/news-details.css",
-        js: "/js/base.js",
+        js: "/js/news.js",
         user: "teacher",
         content:"../layouts/teacher/more-news.ejs",
         bar11: "active",
@@ -2411,17 +2595,81 @@ router.get('/news/:id', async (req,res) => {
         const shouldEdit = 'false';
         const new_post = await Post.findOne({'_id':req.params.id});
         var test = new_post.body.replace('<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">','');
-        console.log(new_post);
+        
+       
+        var err = "";
+        var alert_new = 'close';
+
+        if(req.session.pass_news){
+            err = req.session.pass_news;
+            req.session.destroy();
+        }else if(req.session.err_news){
+            err = req.session.err_news;
+            req.session.destroy();
+        }else{
+            req.session.destroy();
+            alert_new = 'close';
+        }
+
+        if(err != ""){
+            alert_new = "";
+        }
+        
         res.render('index', {
-            locals,news:new_post,shouldEdit,test
+            locals,news:new_post,shouldEdit,test,err,alert:alert_new
         });
     }catch(error){  
         console.log(error);
+        const shouldEdit = 'false';
+        const new_post = new Post();
+        var test = '';
+        var err = 'ข้อมูลถูกลบไปแล้ว';
+        var alert_new = "";
+        res.render('index', {
+        locals,news:new_post,shouldEdit,test,err,alert:alert_new
+    });
     }
-
+    
     
 });
 
+router.post('/news/update/:id', async (req,res) => {
+    const path = '/news/'+ req.params.id;
+    const this_news = await Post.findOne({'_id':req.params.id});
+
+    try{
+        this_news.title = req.body.title;
+        this_news.body = req.body.details;
+        this_news.downloadDoc = req.body.file;
+        await this_news.save();
+        req.session.pass_news = 'แก้ไขสำเร็จ';
+
+    }catch(err){
+        req.session.err_news = 'แก้ไขไม่สำเร็จ';
+    }
+    res.redirect(path)
+});
+router.post('/news/delete/:id', async (req,res) => {
+    const path = '/news/'+ req.params.id;
+    const this_news = await Post.findOne({'_id':req.params.id});
+    
+    try{
+        const url = 'public/uploads/'+this_news.downloadDoc.toString();
+        await Post.deleteOne(this_news);
+        fs.unlink(url, (err) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+        })
+        req.session.pass_news = 'ลบสำเร็จ';
+    }catch(err){
+        console.log(err);
+        req.session.err_news = 'ลบไม่สำเร็จ';
+    }
+    
+    res.redirect(path);
+});
 
 router.get('/all-companys',async (req,res) => {
     const locals = {
@@ -2525,7 +2773,7 @@ router.get('/all-companys',async (req,res) => {
         }
 
         let page = req.query.page || 1;
-        let perPage = 10;
+        let perPage = 15;
 
         const data = await position.aggregate([ { $sort: {name: 1 }}])
         .skip(perPage*page-perPage)
@@ -2640,8 +2888,7 @@ router.get('/all-companys',async (req,res) => {
             });
             all_position[index] = myList;
         });
-        
-        console.log(all_position);
+
         res.render('index', {locals,error:err,status,alert:a,modal_bg1,modal_bg2,modal1,modal2,modal3,data,current: page,all_pages:allPage,all_position,all_companies,
         nextPage: hasNextPage ? nextPage : null,hasNextPage2,nextPage2,all_pages2:allPage2,count2,current2:page2,});
     }catch(error){  
