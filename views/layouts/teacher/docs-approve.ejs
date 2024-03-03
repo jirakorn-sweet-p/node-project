@@ -1,7 +1,7 @@
 <!-- MODAL -->
-<div class="modal-back <%= modal_bg1 %>" id="modal-back">
+<div class="modal-back close" id="modal-back">
 </div>
-<div class="modal-back <%= modal_bg2 %>" id="modal-alert">
+<div class="modal-back <%= alert %>" id="modal-alert">
 </div>
 <div class="modal-back close" id="modal-back2">
 </div>
@@ -126,7 +126,10 @@
                                                 <% }) %>
                                                 
                                                     <div class="submit">
-                                                        <button id="generate" class="generate" type="submit">ตกลง</button>
+                                                        <a href="/docs-approve">
+                                                            <button id="generate" class="generate" type="submit">ตกลง</button>
+                                                        </a>
+                                                        
                                                     </div>
                 </form>
                 <% }else{ %>
@@ -209,7 +212,9 @@
                         </table>
                     <% }) %>
                     <div class="submit">
-                        <button id="generate" class="generate" type="submit">ตกลง</button>
+                        <a href="/docs-approve">
+                            <button id="generate" class="generate" type="submit">ตกลง</button>
+                        </a>
                     </div>
                 </form>
                 
@@ -261,8 +266,8 @@
                         </div>
                     </div>            
                 <% requests.forEach((element,index)=> { %>
-                    <div class="modal <%= modal1 %>" id="modal<%= index %>">
-                        <form action="/request-teacher/update3" method="post" name="request" enctype="/submit-table">
+                    <div class="modal close" id="modal<%= index %>">
+                        <form action="/request-teacher/update5" method="post" name="request" enctype="/submit-table">
                             <div class="modal-box">
 
                                 <% if (element.student_info.status == '1' || element.student_info.status == '2') { %>

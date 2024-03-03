@@ -534,7 +534,7 @@ main {
 
 .main .header-main {
     height: 3.5rem;
-    margin-left: 10rem;
+    margin-left: 8rem;
     margin-top: 1rem;
     display: flex;
     justify-content: start;
@@ -617,6 +617,7 @@ main {
 
 .main .header-main h2 {
     width: fit-content;
+    margin-left: 2rem;
 }
 
 .header-main .sort {
@@ -626,6 +627,7 @@ main {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin-left: 10rem;
 }
 
 .header-main .search {
@@ -1919,7 +1921,7 @@ textarea.auto {
 
 main .header-main.part2 {
     margin: 0.5rem 0 0 5rem;
-    height: auto;
+    min-height: 2.5rem;
     width: auto;
 }
 

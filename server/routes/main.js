@@ -524,7 +524,7 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
             if (match) {
                 req.session.userId = user._id;
                 req.session.userType = user.role;
-                if (user.role == 'teacher') {
+                if (user.role == 'teacher' || 'admin') {
                     res.redirect('/request-teacher');
                 }else{
                     res.redirect('/request');
@@ -1676,7 +1676,6 @@ router.post('/request-teacher/update',redirectNotAuth, async (req,res) => {
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
         req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
-        res.redirect('/request-teacher');
     }
 
     try{
@@ -1701,10 +1700,10 @@ router.post('/request-teacher/update',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.error = "Update Request Successfuly !";
+        req.session.error = "อัพเดทสำเร็จ";
     }catch(error){
         console.log(error);
-        req.session.error = "Error To Update This Request";
+        req.session.error = "อัพเดทไม่สำเร็จ";
     }
 
 
@@ -1793,7 +1792,6 @@ router.post('/request-teacher/update2',redirectNotAuth, async (req,res) => {
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
         req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
-        res.redirect('/docs-waiting');
     }
 
     try{
@@ -1818,11 +1816,11 @@ router.post('/request-teacher/update2',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.error = "Update Request Successfuly !";
+        req.session.error = "อัพเดทสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.error = "Error To Update This Request";
+        req.session.error = "อัพเดทไม่สำเร็จ";
     }
 
     res.redirect('/docs-waiting');
@@ -1923,7 +1921,6 @@ router.post('/request-teacher/update3',redirectNotAuth, async (req,res) => {
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
         req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
-        res.redirect('/docs-approve');
     }
 
     try{
@@ -1945,13 +1942,13 @@ router.post('/request-teacher/update3',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.error = "Update Request Successfuly !";
+        req.session.app3_pass = "อัพเดทสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.error = "Error To Update This Request";
+        req.session.app3_err = "อัพเดทไม่สำเร็จ";
     }
-    res.redirect('/docs-approve');
+    res.redirect('/docs-accepted');
 });
 
 router.post('/request-teacher/update4',redirectNotAuth, async (req,res) => {
@@ -2058,7 +2055,6 @@ router.post('/request-teacher/update4',redirectNotAuth, async (req,res) => {
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
         req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
-        res.redirect('/docs-certificate');
     }
 
     try{
@@ -2081,14 +2077,141 @@ router.post('/request-teacher/update4',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.error = "Update Request Successfuly !";
+        req.session.error = "อัพเดทสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.error = "Error To Update This Request";
+        req.session.error = "อัพเดทไม่สำเร็จ";
     }
     res.redirect('/docs-certificate');
 });
+
+router.post('/request-teacher/update5',redirectNotAuth, async (req,res) => {
+    
+    var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
+    var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
+    var req_info = (await request_info.find({'student_code':req.body.student_code})).at(0);
+    var this_request = new Object();
+    this_request = (await request_ser.find({'student_info':std_info._id})).at(0);
+    req.session.req_id = this_request._id;
+    var status1 = req.body.status1;
+    var status2 = req.body.status2;
+    var status3 = req.body.status3;
+    var status4 = req.body.status4;
+    var status5 = req.body.status5;
+
+    if(!req.body.status1){
+        status1  = "0";
+    }
+    if(!req.body.status2){
+        status2  = "0";
+    }
+    if(!req.body.status3){
+        status3  = "0";
+    }
+
+    if(req.body.name != std_info.name){ std_info.name=req.body.name;}
+    if(req.body.student_code != std_info.student_code){std_info.student_code=req.body.student_code;}
+    if(req.body.education != std_info.education){std_info.education=req.body.education;}
+    if(req.body.factory != std_info.factory){std_info.factory=req.body.factory;}
+    if(req.body.grade != std_info.grade){std_info.grade=req.body.grade;}
+    if(req.body.email != std_info.email){std_info.email=req.body.email;}
+    if(req.body.tel != std_info.tel){std_info.tel=req.body.tel ;}
+    if(req.body.start_intern != com_info.start_intern){std_info.com_info=new Date(req.body.start_intern);}
+    if(req.body.end_intern != com_info.end_intern){std_info.com_info.end_intern=new Date(req.body.end_intern);}
+    if(req.body.comment1 != std_info.comment){std_info.comment=req.body.comment1;}
+    if(req.body.comment2 != com_info.comment){com_info.comment=req.body.comment2;}
+    if(req.body.comment3 != req_info.comment){req_info.comment=req.body.comment3;}
+    if(req.body.comment4 != this_request.approval_document_comment){this_request.approval_document_comment=req.body.comment4;}
+    if(req.body.comment5 != this_request.accepted_company_comment){this_request.accepted_company_comment=req.body.comment5;}
+    
+    if(req.body.status1 != std_info.status){
+        std_info.status=status1;
+
+        if(status1 == 0 || status1 == 1){
+            this_request.status = process.env.STATUS_PENDING;
+        }else if(status1 == 2 ){
+            this_request.status = process.env.STATUS_FAIL;
+        }
+
+    }
+    if(req.body.status2 != com_info.status){
+        com_info.status=status2;
+
+        if(status2 == 0 || status2 == 1){
+            this_request.status = process.env.STATUS_PENDING;
+        }else if(status2 == 2 ){
+            this_request.status = process.env.STATUS_FAIL;
+        }
+    }
+
+    if(req.body.status3 != req_info.status){
+        req_info.status=status3;
+
+        if(status3 == 0 || status3 == 1){
+            this_request.status = process.env.STATUS_PENDING;
+        }else if(status3 == 2 ){
+            this_request.status = process.env.STATUS_FAIL;
+        }
+    }
+    if(req.body.status4 != this_request.approval_document_status){
+        this_request.approval_document_status=status4;
+
+        if(status4 == '1' ||  this_request.approval_document_status=='1'){///**** */
+            this_request.approval_document_status = process.env.STATUS_PASS;
+        }else if(status4 == '2' ||  this_request.approval_document_status=='2'){
+            this_request.approval_document_status = process.env.STATUS_FAIL;
+        }else if(status4 == '0' || status4 == '1'){
+            this_request.approval_document_status = process.env.STATUS_PENDING;
+        }
+    }
+
+    if(req.body.status5 != this_request.accepted_company_status){
+        this_request.accepted_company_status=status5;
+
+        if(status5 == '1' ||  this_request.accepted_company_status=='1'){
+            this_request.accepted_company_status = process.env.STATUS_PASS;
+        }else if(status5 == '2' ||  this_request.accepted_company_status=='2'){
+            this_request.accepted_company_status = process.env.STATUS_FAIL;
+        }else if(status5 == '0' || status5 == '1'){
+            this_request.accepted_company_status = process.env.STATUS_PENDING;
+        }
+    }
+
+    const com = (await companies.find({'_id':com_info.company})).at(0);
+    if(com.status != process.env.STATUS_PASS){
+        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+    }
+
+    try{
+        await std_info.save();
+        await com_info.save();
+        await req_info.save();
+
+        req.session.req_id = this_request._id;
+        if(this_request){
+            if(std_info.status == com_info.status && com_info.status == req_info.status && req_info.status == '1'){
+                this_request.status = '1';
+            }else if(std_info.status == '2' || com_info.status == '2' ||req_info.status == '2'){
+                this_request.status = '2';
+                req.session.req_id = null;
+            }else{
+                this_request.status = process.env.STATUS_PENDING;
+            }
+            
+            await this_request.save();
+
+        }
+        req.session.app5_pass = "อัพเดทสำเร็จ";
+        
+    }catch(error){
+        console.log(error);
+        req.session.app5_err = "อัพเดทไม่สำเร็จ";
+    }
+    res.redirect('/docs-approve');
+});
+
+
 
 router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
@@ -4003,25 +4126,24 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
           )).length,
     }
     var sort = req.query.sort || 1;
-    var error = req.session.error;
-    var current_req = req.session.req_id;
-    req.session.req_id =null;
-    req.session.error =null;
 
-    if(current_req != undefined && current_req != null){
-        bg1 = "";
-        mod1 = "";
+    var err = "";
+    var alert_cal = 'close';
+
+    if(req.session.app5_pass){
+        err = req.session.app5_pass;
+        req.session.app5_pass =null;
+    }else if(req.session.app5_err){
+        err = req.session.app5_err;
+        req.session.app5_err =null;
     }else{
-        bg1 = "close";
-        mod1 = "close";
+        req.session.app5_err =null;
+        req.session.app5_pass =null;
+        alert_cal = 'close';
     }
-    if(error){
-        modal_bg2 = "";
-        alert = "";
 
-    }else{
-        modal_bg2 = "close";
-        alert = "close";
+    if(err != ""){
+        alert_cal = "";
     }
 
     var count=[];
@@ -4333,7 +4455,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
     }
     
     res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
-        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
+        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert:alert_cal,error:err,date });
 
 });
 
@@ -4406,27 +4528,47 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
           )).length,
     }
     var sort = req.query.sort || 1;
-    var error = req.session.error;
-    var current_req = req.session.req_id;
-    req.session.req_id = null;
-    req.session.error = null;
 
-    if(current_req != undefined && current_req != null){
-        bg1 = "";
-        mod1 = "";
-    }else{
-        bg1 = "close";
-        mod1 = "close";
-    }
-    if(error){
-        modal_bg2 = "";
-        alert = "";
+    // var error = req.session.error;
+    // var current_req = req.session.req_id;
+    // req.session.req_id = null;
+    // req.session.error = null;
 
+    // if(current_req != undefined && current_req != null){
+    //     bg1 = "";
+    //     mod1 = "";
+    // }else{
+    //     bg1 = "close";
+    //     mod1 = "close";
+    // }
+    // if(error){
+    //     modal_bg2 = "";
+    //     alert = "";
+
+    // }else{
+    //     modal_bg2 = "close";
+    //     alert = "close";
+    // }
+
+    var err = "";
+    var alert_cal = 'close';
+
+    if(req.session.app3_pass){
+        err = req.session.app3_pass;
+        req.session.app3_pass =null;
+    }else if(req.session.app3_err){
+        err = req.session.app3_err;
+        req.session.app3_err =null;
     }else{
-        modal_bg2 = "close";
-        alert = "close";
+        req.session.app3_err =null;
+        req.session.app3_pass =null;
+        alert_cal = 'close';
     }
-users
+
+    if(err != ""){
+        alert_cal = "";
+    }
+// users
     var count=[];
     var all_pages=[];
     var nextPage=[];
@@ -4732,7 +4874,7 @@ users
     }
     
     res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
-        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
+        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert:alert_cal,date,error:err });
 });
 
 router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
@@ -5463,29 +5605,37 @@ router.post('/docs-approval-pop2',redirectNotAuth, async (req, res) => {
 });
 
 router.post('/docs-approval-pop3', async (req, res) => {
-    req.session.approval = JSON.parse(JSON.stringify(req.body));
-    const approval = req.session.approval;
 
-    for (const key in req.session.approval) {
-        const reqItem = await request_ser.findOne({ '_id': key });
-        const onValue = approval[key];
+    try{
+        req.session.approval = JSON.parse(JSON.stringify(req.body));
+        const approval = req.session.approval;
 
-        if(onValue == 'on'){
-            reqItem.approval_document_status = '1';
-            await reqItem.save();
+
+        for (const key in req.session.approval) {
+            const reqItem = await request_ser.findOne({ '_id': key });
+            const onValue = approval[key];
+
+            if(onValue == 'on'){
+                reqItem.approval_document_status = '1';
+                await reqItem.save();
+            }
         }
+
+        if (approval) {
+            for (const key in approval) {
+                const ser = await request_ser.findOne({ '_id': key });
+                ser.approval_document_status = '1';
+                ser.accepted_company_status = '1';
+                await ser.save();
+            }
+        }
+        req.session.app3_pass = "อัพเดทสำเร็จ"
+    }catch(err){
+        console.log(err);
+        req.session.app3_err = "อัพเดทไม่สำเร็จ"
     }
 
-    if (approval) {
-        for (const key in approval) {
-            const ser = await request_ser.findOne({ '_id': key });
-            ser.approval_document_status = '1';
-            ser.accepted_company_status = '1';
-            await ser.save();
-        }
-    }
-    res.redirect('/docs-approve');
-    
+    res.redirect('/docs-accepted');
 });
 
 router.post('/docs-approval-pop4', async (req, res) => {

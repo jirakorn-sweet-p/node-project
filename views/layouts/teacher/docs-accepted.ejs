@@ -1,7 +1,7 @@
 <!-- MODAL -->
-<div class="modal-back <%= modal_bg1 %>" id="modal-back">
+<div class="modal-back close" id="modal-back">
 </div>
-<div class="modal-back <%= modal_bg2 %>" id="modal-alert">
+<div class="modal-back <%= alert %>" id="modal-alert">
 </div>
 <div class="modal-back close" id="modal-back2">
 </div>
@@ -43,7 +43,8 @@
 
         </div>
         <div class="header-main part2">
-            <div class="checkbox-wrapper-10">
+            <% if (sort == '1') { %>
+                <div class="checkbox-wrapper-10">
                 <input class="tgl tgl-flip" id="cb5" type="checkbox" checked />
                 <label class="tgl-btn" id="cbx" data-tg-off="ยกเลิก" data-tg-on="เลือก" for="cb5"></label>
             </div>
@@ -54,16 +55,13 @@
                     upload_file
                 </span>
             </div>
+                <% } %>
+            
         </div>
         <div class="modal close" id="approval-docs-modal">
             <% if (requests.length>0) { %>
-                <% if (sort == '2') { %>
-                <h1>สร้างเอกสารมอบตัวนักศึกษา</h1>
-                <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
-                <% } else if (sort == '1') { %>
                 <h1>รับเอกสารตอบกลับจากสถานประกอบการ</h1>
                 <form action="/docs-approval-pop3" method="post" name="approvalDocs" enctype="/submit-table">
-                <% } %>
                 
                     <% var cm=[] %>
                         <% requests.forEach((element,index)=> { %>
@@ -130,7 +128,7 @@
                 </form>
                 <% }else{ %>
                     <div class="submit">
-                        <a href="/docs-approve">
+                        <a href="/docs-accepted">
                             <button id="generate" class="generate" type="submit">ตกลง</button>
                         </a>
                     </div>
@@ -138,89 +136,6 @@
 
         </div>
 
-        <div class="modal close" id="approval-docs-modal2">
-            <% if (requests.length>0) { %>
-                <div class="uploads-content">
-                    <a>เลือกช่วงเวลา</a>
-                    <div class="border-input2">
-                        <input type="date" name="generate_start" id="generateStartDate" value="<%= date.toISOString().split('T')[0] %>">
-                        <h3>ถึง</h3>
-                        <input type="date" name="generate_end" id="generateEndDate" value="<%= new Date().toISOString().split('T')[0] %>">
-                    </div>
-                </div>
-                <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
-                    <% var cm=[] %>
-                    <% requests.forEach((element,index)=> { %>  
-                        <% if (!cm.includes(element.company_info.company.name)) { %>
-                            <% cm.push(element.company_info.company.name) %>
-                        <% } %>
-                    <% }) %>
-                
-                    <% cm.forEach((element,index)=> { %>
-                        <table class="styled-table table-gen">
-                            <thead>
-                                <tr>
-                                    <th colspan="4" style="text-align: center;">
-                                        <%= element %>
-                                    </th>
-                                </tr>
-                                <tr class="active-row">
-                                    <th>เลือก</th>
-                                    <th>ชื่อนักศึกษา</th>
-                                    <th>วันที่ยื่น</th>
-                                    <th>รหัสนักศึกษา</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% requests.forEach((element2,index2)=> { %>
-                                    <% if (element2.company_info.company.name===element) { %>
-                                        <tr class="data-generate" id="<%= index %>-d-<%= element2.update_at.toLocaleDateString() %>-<%= index2  %>">
-                                            <td>
-                                                <div class="checkbox-wrapper-4">
-                                                    <input class="inp-cbx3" id="checkboxs-<%= element2._id %>"
-                                                        name="<%= element2._id %>" type="checkbox" checked/>
-                                                    <label class="cbx" for="checkboxs-<%= element2._id %>">
-                                                        <span>
-                                                            <svg width="12px" height="10px">
-                                                                <use xlink:href="#check-4"></use>
-                                                            </svg>
-                                                        </span>
-                                                        <span></span>
-                                                    </label>
-                                                    <svg class="inline-svg">
-                                                        <symbol id="check-4" viewbox="0 0 12 10">
-                                                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                                                        </symbol>
-                                                    </svg>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <%= element2.student_info.name %>
-                                            </td>
-                                            <td><%= element2.update_at.toLocaleDateString() %></td>
-                                            <td>
-                                                <%= element2.student_info.student_code %>
-                                            </td>
-                                        </tr>
-                                    <% } %>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    <% }) %>
-                    <div class="submit">
-                        <button id="generate" class="generate" type="submit">ตกลง</button>
-                    </div>
-                </form>
-                
-                <% }else{ %>
-                    <div class="submit">
-                        <a href="/docs-approve">
-                            <button id="generate" class="generate" class="generate" type="submit">ตกลง</button>
-                        </a>
-                    </div>
-                    <% } %>
-
-        </div>
         <div class="table">
             <table class="styled-table" id="styled-table">
             <thead>
@@ -252,7 +167,7 @@
                                         readonly>
                                 </div>
                                 <div class="submit">
-                                    <a href="/docs-approve">
+                                    <a href="/docs-accepted">
                                         <button id="ok" type="submit">ตกลง</button>
                                     </a>
                                 </div>
@@ -260,7 +175,7 @@
                         </div>
                     </div>            
                 <% requests.forEach((element,index)=> { %>
-                    <div class="modal <%= modal1 %>" id="modal<%= index %>">
+                    <div class="modal close" id="modal<%= index %>">
                         <form action="/request-teacher/update3" method="post" name="request" enctype="/submit-table">
                             <div class="modal-box">
 
