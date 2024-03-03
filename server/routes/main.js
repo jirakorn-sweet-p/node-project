@@ -5798,7 +5798,7 @@ router.get('/generate-official-document', (req, res) => {
     res.download(outputContent);
   });
 
-router.get('/uploads/:file', async (req,res) => {
+router.get('/uploads/:file',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
@@ -5872,7 +5872,7 @@ router.get('/uploads/:file', async (req,res) => {
 });
 
 //ADMIN
-router.get('/account',async (req,res) => {
+router.get('/account',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
@@ -6023,7 +6023,7 @@ router.get('/account',async (req,res) => {
     res.render('index', { locals ,users:ttt,alert:alert_docs,err,hasNextPage,nextPage,all_pages,count,current:page,sort });
 });
 
-router.get('/account/:id',async (req,res) => {
+router.get('/account/:id',redirectNotAuth,async (req,res) => {
     const locals = {
         title : "approval document",
         description:"Internship request",
@@ -6078,7 +6078,7 @@ router.get('/account/:id',async (req,res) => {
     }
     res.render('index', { locals });
 });
-router.post('/account/add',async (req,res) => {
+router.post('/account/add',redirectNotAuth,async (req,res) => {
     
 
     try {
@@ -6128,7 +6128,7 @@ router.post('/account/add',async (req,res) => {
         res.redirect('/account');
     }
 });
-router.post('/account/update/:id',async (req,res) => {
+router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
     
 
     try {
@@ -6159,7 +6159,7 @@ router.post('/account/update/:id',async (req,res) => {
     }
 });
 
-router.post('/account/delete/:id',async (req,res) => {
+router.post('/account/delete/:id',redirectNotAuth,async (req,res) => {
     
     const this_id = req.params.id;
     const this_user = users.findOne({'_id':this_id});

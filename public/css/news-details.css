@@ -759,6 +759,7 @@ article:has(:hover, :focus) {
 .request-doc h2 {
     text-wrap: nowrap;
     margin-right: 1rem;
+    width: 15%;
 }
 
 .request-doc .position div{
@@ -898,7 +899,7 @@ a.btn:hover,
     height: 8%;
     width: 80%;
     padding: 2px 0;
-    margin-top: 3%;
+    margin-top: 2%;
 }
 
 .datas input:not(:first-child) {
@@ -906,6 +907,7 @@ a.btn:hover,
     margin: 0;
     border-radius: 5px;
     box-shadow: var(--box-shadow2);
+    height: 3rem;
 }
 
 .datas input, .datas textarea, .datas a {
@@ -917,7 +919,7 @@ input, textarea {
 }
 
 .long {
-    height: 30%;
+    height: 33%;
 }
 
 .editor {
