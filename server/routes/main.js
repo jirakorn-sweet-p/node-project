@@ -524,9 +524,10 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
             if (match) {
                 req.session.userId = user._id;
                 req.session.userType = user.role;
-                if (user.role == 'teacher' || 'admin') {
+                console.log(user);
+                if (user.role == 'teacher' || user.role == 'admin') {
                     res.redirect('/request-teacher');
-                }else{
+                }else if(user.role == 'student'){
                     res.redirect('/request');
                 }
                 
