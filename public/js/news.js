@@ -16,6 +16,20 @@ const details = document.getElementById('details');
 const deleteLink = document.getElementById('deleteLink');
 const deleteForm = document.getElementById('deleteForm');
 
+const expand_reqInfo = document.getElementById('request-doc');
+const expand_more = document.getElementById('expand_more');
+console.log(expand_more);
+expand_more.addEventListener('click',()=>{
+  console.log('asdasd');
+  if(expand_reqInfo.classList.contains('active')){
+      console.log('hiding to show');
+      expand_reqInfo.classList.remove('active');
+  }else{
+      console.log('show to hiding');
+      expand_reqInfo.classList.add('active');
+  }   
+});
+
 if(deleteLink){
 deleteLink.addEventListener('click', function (event) {
   console.log('asdadasdasdasd');

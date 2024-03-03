@@ -1,6 +1,20 @@
-<div class="modal-back close" id="modal-back">
+<div class="modal-back <%= alert %>" id="modal-back">
 </div>
-
+<div class="modal <%= alert %>" id="alert">
+    <div class="modal-box">
+        <div class="request-doc" id="request-doc">
+            <div class="border-input">
+                <input class="success" name="position_name" type="text" value="<%= err %>"
+                    readonly>
+            </div>
+            <div class="submit">
+                <a href="/upload-news">
+                    <button id="ok" type="submit">ตกลง</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>  
 <form action="/add-new" method="post" name="request" enctype="multipart/form-data">
 
     <div class="modal close" id="modal">

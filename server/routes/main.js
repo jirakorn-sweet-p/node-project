@@ -2627,15 +2627,15 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
 
         var alert_docs = 'close';
         var err = "";
-        if(req.session.pass_docs){
-            err = req.session.pass_docs;
-            req.session.pass_docs =null;
-        }else if(req.session.err_docs){
-            err = req.session.err_docs;
-            req.session.err_docs =null;
+        if(req.session.pass_news){
+            err = req.session.pass_news;
+            req.session.pass_news =null;
+        }else if(req.session.err_news){
+            err = req.session.err_news;
+            req.session.err_news =null;
         }else{
-            req.session.err_docs =null;
-            req.session.pass_docs =null;
+            req.session.err_news =null;
+            req.session.pass_news =null;
             alert_docs = 'close';
         }
 
@@ -2644,7 +2644,7 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
         }
 
         res.render('index', {
-            locals,
+            locals,alert:alert_docs,err,
             data,
             tt: count,
             current: page,
@@ -2682,6 +2682,117 @@ router.get('/news/:id',redirectNotAuth, async (req,res) => {
         js: "/js/news.js",
         user: dat.role,
         content:"../layouts/teacher/more-news.ejs",
+        bar11: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    
+    try{
+        const shouldEdit = 'false';
+        const new_post = await Post.findOne({'_id':req.params.id});
+        var test = new_post.body.replace('<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">','');
+        
+       
+        var err = "";
+        var alert_new = 'close';
+
+        if(req.session.pass_news){
+            err = req.session.pass_news;
+            req.session.pass_news=null;
+        }else if(req.session.err_news){
+            err = req.session.err_news;
+            req.session.err_news=null;
+        }else{
+            req.session.err_news=null;
+            req.session.pass_news=null;
+            alert_new = 'close';
+        }
+
+        if(err != ""){
+            alert_new = "";
+        }
+        
+        res.render('index', {
+            locals,news:new_post,shouldEdit,test,err,alert:alert_new
+        });
+    }catch(error){  
+        console.log(error);
+        const shouldEdit = 'false';
+        const new_post = new Post();
+        var test = '';
+        var err = 'ข้อมูลถูกลบไปแล้ว';
+        var alert_new = "";
+        res.render('index', {
+        locals,news:new_post,shouldEdit,test,err,alert:alert_new
+    });
+    }
+    
+    
+});
+
+router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "student"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
+    const locals = {
+        title : "news",
+        description:"Internship request",
+        styles: "/css/news-details.css",
+        js: "/js/news.js",
+        user: dat.role,
+        content:"../layouts/more-news.ejs",
         bar11: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
@@ -4227,12 +4338,27 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
 });
 
 router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "approval document",
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
-        user: "admin",
+        user: dat.role,
         content:"../layouts/teacher/docs-accepted.ejs", 
         search:"/js/searching.js",
         bar3: "active",

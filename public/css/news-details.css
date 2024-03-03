@@ -716,6 +716,46 @@ article:has(:hover, :focus) {
     box-shadow: var(--box-shadow2);
 }
 
+.request-doc .xbar{
+    height: 3rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.xbar h3{
+    margin-left: 2rem;
+    width: 95%;
+}
+
+.xbar span{
+    width: 5%;
+}
+.content-sec{
+    background-color: var(--color-white);
+    width: 70%;
+    height: 15rem;
+    display: flex;
+    margin: 2rem auto 1rem auto;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow2);
+}
+
+.content-sec .title{
+    margin-top: 1rem;
+    width: 100%;
+    height: 15%;
+    
+}
+
+.content-sec .body-details{
+    height: 80%;
+    margin: 0.5rem 1rem;
+    border: solid 1px #000;
+    border-radius: 8px;
+    padding: 10px;
+}
+
 .request-doc h2 {
     text-wrap: nowrap;
     margin-right: 1rem;
@@ -804,6 +844,7 @@ article:has(:hover, :focus) {
     justify-content: center;
     align-items: center;
 }
+
 
 .body-right .footer{
     width: 100%;
@@ -1059,4 +1100,37 @@ form {
     width: 100%;
     height: 100%;
     margin: 0;
+}
+
+.request-doc.active {
+    height: auto;
+    width: 10rem;
+    margin: 2rem 0 1rem 15%;
+}
+
+.request-doc.active .xbar{
+    justify-content: space-evenly;
+}
+
+.request-doc.active .xbar h3,
+.request-doc.active .xbar span{
+    width: 50%;
+}
+
+.request-doc.active embed{
+    display: none;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title h2{
+    margin-left: 2rem;
+}
+
+.title p{
+    margin-right: 2rem;
 }

@@ -53,10 +53,6 @@ app.use('/logout',(req,res,next) => {
   next();
 });
 
-app.use('/request-teacher',(req,res,next) => {
-  loggedIn = req.session.userId;
-  next();
-});
 
 app.use(express.static('public'));
 
