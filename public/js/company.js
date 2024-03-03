@@ -6,7 +6,7 @@ const dark_mode = document.getElementById('dark-mode');
 const modal_bg = document.getElementById('modal-back');
 const modal_bg2 = document.getElementById('modal-back2');
 const modal_bg_alert = document.getElementById('modal-alert');
-const bg = document.getElementById('bg');
+
 
 const modal = document.getElementById('modal');
 const modal2 = document.getElementById('modal2');
@@ -30,7 +30,8 @@ if (ok) { // Check if the element is found
 }
 if(add_company){
   add_company.addEventListener('click',()=>{
-  bg.classList.remove('close');
+    console.log('qweqweq');
+    modal_bg.classList.remove('close');
   modal_bg.classList.remove('close');
   modal.classList.remove('close');
 });
@@ -45,7 +46,7 @@ if(add_position){
 
 if(pop_position){
   pop_position.addEventListener('click',()=>{
-  bg.classList.remove('close');
+  modal_bg.classList.remove('close');
   modal_bg.classList.remove('close');
   modal2.classList.remove('close');
   

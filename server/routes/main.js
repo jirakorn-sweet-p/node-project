@@ -26,7 +26,6 @@ const companies = require('../models/Company');
 const users = require('../models/User');
 
 const redirectIfAuth = require('../middleware/redirectIfAuth');
-const redirectIfAuth2 = require('../middleware/redirectIfAuth2');
 const redirectNotAuth = require('../middleware/redirectNotAuth');
 
 // generate doc
@@ -396,7 +395,7 @@ const UploadDocuments = async (req,res,next) => {
     const saved_com_info= await com_info.save();
     const saved_cer_info= await cer_info.save();
 
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     dat.student_info = saved_std_info._id;
     await dat.save();
 
@@ -490,7 +489,7 @@ router.post('/user/register', redirectIfAuth, (req, res) => {
 });
 
 router.get('/login',redirectIfAuth, (req, res) => {
-
+    console.log(res.locals.loggedIn);
     const locals = {
         title : "login",
         description:"Internship request",
@@ -516,7 +515,6 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
     };
 
     const { username, password } = req.body;
-    console.log(username);
     try {
         const user = await users.findOne({ username: username });
 
@@ -525,6 +523,7 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
 
             if (match) {
                 req.session.userId = user._id;
+                req.session.userType = user.role;
                 if (user.role == 'teacher') {
                     res.redirect('/request-teacher');
                 }else{
@@ -762,7 +761,7 @@ router.get('/delete-cal/:id',async (req,res) => {
 
 router.get('/request',redirectNotAuth, async (req,res) => {
 
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         var userId = new ObjectId(dat.student_info);
@@ -891,7 +890,7 @@ router.get('/about',redirectNotAuth, (req,res) => {
 
 router.get('/request/form',redirectNotAuth, async (req,res) => {
 
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
@@ -938,7 +937,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
 });
 
 router.get('/request-status',redirectNotAuth,async (req,res) => {
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
@@ -1042,7 +1041,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
 });
 
 router.get('/document',redirectNotAuth,async (req,res) => {
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
@@ -1096,7 +1095,7 @@ router.get('/document',redirectNotAuth,async (req,res) => {
 });
 
 router.get('/news',redirectNotAuth, async (req,res) => {
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
@@ -1153,7 +1152,7 @@ router.get('/news',redirectNotAuth, async (req,res) => {
 });
 
 router.get('/company',redirectNotAuth,async (req,res) => {
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
@@ -1365,7 +1364,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
 });
 
 router.get('/calendar',redirectNotAuth,async (req,res) => {
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
@@ -1407,20 +1406,21 @@ router.get('/request-teacher/req',async (req,res) => {
 });
 
 router.get('/request-teacher',redirectNotAuth,async (req,res) => {
-    const dat = await users.findOne({ '_id': loggedIn });
+    const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
+    
     if(dat.role == "teacher"){
-        var userId = new ObjectId(dat.student_info);
         user = await student_info.findOne({ '_id': dat.student_info });
+
     }
     var image = 'profile-1.jpg';
-    // var name = dat.username;
+    var name = dat.username;
     if(user){
-        req.session.firstlogin = false;
+        // image = user.image
+        name = user.name
     }else{
         req.session.firstlogin = true;
     }
-    console.log(dat);
     const locals = {
         title : "request",
         description:"Internship request",
@@ -1476,8 +1476,10 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
     }
     var error = req.session.error;
     var current_req = req.session.req_id;
-    req.session.destroy();
-    console.log(error);
+
+    req.session.error =null;
+    req.session.req_id = null;
+
     if(current_req != undefined && current_req != null){
         bg1 = "";
         mod1 = "";
@@ -1569,12 +1571,14 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
             com_add.push('not-match');
         }
     }
+    
     res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
 
 });
 
-router.get('/request-teacher/company-add', async (req,res) => {
+router.get('/request-teacher/company-add',redirectNotAuth, async (req,res) => {
+    
     req.session.req_id = req.query.req;
     try{
         const this_request = (await request_ser.find({'_id':req.session.req_id})).at(0);
@@ -1589,7 +1593,7 @@ router.get('/request-teacher/company-add', async (req,res) => {
     res.redirect('/request-teacher');
 });
 
-router.post('/request-teacher/update', async (req,res) => {
+router.post('/request-teacher/update',redirectNotAuth, async (req,res) => {
     
     var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
     var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
@@ -1707,7 +1711,7 @@ router.post('/request-teacher/update', async (req,res) => {
     res.redirect('/request-teacher');
 });
 
-router.post('/request-teacher/update2', async (req,res) => {
+router.post('/request-teacher/update2',redirectNotAuth, async (req,res) => {
     
     var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
     var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
@@ -1824,7 +1828,7 @@ router.post('/request-teacher/update2', async (req,res) => {
     res.redirect('/docs-waiting');
 });
 
-router.post('/request-teacher/update3', async (req,res) => {
+router.post('/request-teacher/update3',redirectNotAuth, async (req,res) => {
     
     var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
     var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
@@ -1950,7 +1954,7 @@ router.post('/request-teacher/update3', async (req,res) => {
     res.redirect('/docs-approve');
 });
 
-router.post('/request-teacher/update4', async (req,res) => {
+router.post('/request-teacher/update4',redirectNotAuth, async (req,res) => {
     
     var std_info = (await student_info.findOne({'student_code':req.body.student_code}));
     var com_info = (await company_info.findOne({'student_code':req.body.student_code}));
@@ -2086,13 +2090,28 @@ router.post('/request-teacher/update4', async (req,res) => {
     res.redirect('/docs-certificate');
 });
 
-router.get('/requests-all-teacher', async (req,res) => {
+router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "request",
         description:"Internship request",
         styles: "/css/request-teacher.css",
         js: "/js/all-request.js",
-        user: "teacher",
+        user: dat.role,
         search:"/js/searching_all.js",
         content:"../layouts/teacher/requests-all-teacher.ejs",
         bar6: "active",
@@ -2141,7 +2160,10 @@ router.get('/requests-all-teacher', async (req,res) => {
     }
         var error = req.session.error;
         var current_req = req.session.req_id;
-        req.session.destroy();
+        req.session.error = null;
+        req.session.req_id = null;
+        // req.session.();
+
         if(current_req != undefined && current_req != null){
             bg1 = "";
             mod1 = "";
@@ -2241,13 +2263,28 @@ router.get('/requests-all-teacher', async (req,res) => {
 
 });
 
-router.get('/pass-status-requests', async (req,res) => {
+router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "request",
         description:"Internship request",
         styles: "/css/request-teacher.css",
         js: "/js/all-request.js",
-        user: "teacher",
+        user: dat.role,
         search:"/js/searching_all.js",
         content:"../layouts/teacher/pass-status-requests.ejs",
         bar7: "active",
@@ -2296,7 +2333,10 @@ router.get('/pass-status-requests', async (req,res) => {
     }
         var error = req.session.error;
         var current_req = req.session.req_id;
-        req.session.destroy();
+        
+        req.session.req_id = null;
+        req.session.error = null;
+
         if(current_req != undefined && current_req != null){
             bg1 = "";
             mod1 = "";
@@ -2388,13 +2428,28 @@ router.get('/pass-status-requests', async (req,res) => {
             com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
 });
 
-router.get('/upload-docs',async (req,res) => {
+router.get('/upload-docs',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "document",
         description:"Internship request",
         styles: "/css/document.css",
         js: "/js/doc.js",
-        user: "teacher",
+        user: dat.role,
         username: "teacher01",
         content:"../layouts/teacher/upload-docs.ejs",
         bar10: "active",
@@ -2458,12 +2513,15 @@ router.get('/upload-docs',async (req,res) => {
         var err = "";
         if(req.session.pass_docs){
             err = req.session.pass_docs;
-            req.session.destroy();
+
+            eq.session.pass_docs =null;
+
         }else if(req.session.err_docs){
             err = req.session.err_docs;
-            req.session.destroy();
+            req.session.err_docs = null;
         }else{
-            req.session.destroy();
+            req.session.err_docs = null;
+            req.session.pass_docs =null;
             alert_docs = 'close';
         }
 
@@ -2485,13 +2543,28 @@ router.get('/upload-docs',async (req,res) => {
     }
 });
 
-router.get('/upload-news', async (req,res) => {
+router.get('/upload-news',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "news",
         description:"Internship request",
         styles: "/css/news.css",
         js: "/js/news.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/upload-news.ejs",
         bar11: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -2556,12 +2629,13 @@ router.get('/upload-news', async (req,res) => {
         var err = "";
         if(req.session.pass_docs){
             err = req.session.pass_docs;
-            req.session.destroy();
+            req.session.pass_docs =null;
         }else if(req.session.err_docs){
             err = req.session.err_docs;
-            req.session.destroy();
+            req.session.err_docs =null;
         }else{
-            req.session.destroy();
+            req.session.err_docs =null;
+            req.session.pass_docs =null;
             alert_docs = 'close';
         }
 
@@ -2585,13 +2659,28 @@ router.get('/upload-news', async (req,res) => {
     
 });
 
-router.get('/news/:id', async (req,res) => {
+router.get('/news/:id',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "news",
         description:"Internship request",
         styles: "/css/news-details.css",
         js: "/js/news.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/more-news.ejs",
         bar11: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -2649,12 +2738,13 @@ router.get('/news/:id', async (req,res) => {
 
         if(req.session.pass_news){
             err = req.session.pass_news;
-            req.session.destroy();
+            req.session.pass_news=null;
         }else if(req.session.err_news){
             err = req.session.err_news;
-            req.session.destroy();
+            req.session.err_news=null;
         }else{
-            req.session.destroy();
+            req.session.err_news=null;
+            req.session.pass_news=null;
             alert_new = 'close';
         }
 
@@ -2680,7 +2770,7 @@ router.get('/news/:id', async (req,res) => {
     
 });
 
-router.post('/news/update/:id', async (req,res) => {
+router.post('/news/update/:id',redirectNotAuth, async (req,res) => {
     const path = '/news/'+ req.params.id;
     const this_news = await Post.findOne({'_id':req.params.id});
 
@@ -2696,7 +2786,7 @@ router.post('/news/update/:id', async (req,res) => {
     }
     res.redirect(path)
 });
-router.post('/news/delete/:id', async (req,res) => {
+router.post('/news/delete/:id',redirectNotAuth, async (req,res) => {
     const path = '/news/'+ req.params.id;
     const this_news = await Post.findOne({'_id':req.params.id});
     
@@ -2718,13 +2808,28 @@ router.post('/news/delete/:id', async (req,res) => {
     res.redirect(path);
 });
 
-router.get('/all-companys',async (req,res) => {
+router.get('/all-companys',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "company",
         description:"Internship request",
         styles: "/css/company.css",
         js: "/js/company.js",
-        user: "teacher",
+        user: dat.role,
         search:"/js/searching_company.js",
         content:"../layouts/teacher/all-companys.ejs"   , 
         bar8: "active",
@@ -2773,11 +2878,12 @@ router.get('/all-companys',async (req,res) => {
     }
     var err = "";
     var status = "";
+
     try{
 
         if(modal_bg1 = "" && modal2 == "" && modal_bg2 == "close" && modal2 == "close"){
         }
-        if(req.query.page === undefined && req.session.page === undefined){
+        if(req.query.page === undefined && !req.session.page){
             modal_bg2 = "close";
             modal_bg1 = "close";
             modal2 = "close";
@@ -2785,7 +2891,7 @@ router.get('/all-companys',async (req,res) => {
             if(req.session.page !== undefined || req.query.page !== undefined){
                 modal_bg1 = "";
                 modal2 = "";
-                req.session.page = undefined;
+                req.session.page = null;
             }
         }else{
             modal_bg2 = "close";
@@ -2793,7 +2899,7 @@ router.get('/all-companys',async (req,res) => {
             modal2 = "close";
         }
 
-        if(req.session.error !== undefined && req.session.error !== ""){
+        if(req.session.error !== null){
             if(req.session.error == "pass"){
                 status = "pass";
                 err = "This Position Add Success !";
@@ -2804,9 +2910,10 @@ router.get('/all-companys',async (req,res) => {
                 err = "This Position Has Used !";
                 alert = "";
             }
+            req.session.error = null;
         }
         
-        if(req.session.del !== undefined && req.session.del !== ""){
+        if(req.session.del != null){
             if(req.session.del == "success"){
                 status = "pass";
                 err = "This Position Delete Success !";
@@ -2817,6 +2924,7 @@ router.get('/all-companys',async (req,res) => {
                 err = "Deleted ERROR !";
                 alert = "";
             }
+            req.session.del = null;
         }
 
         let page = req.query.page || 1;
@@ -2943,13 +3051,28 @@ router.get('/all-companys',async (req,res) => {
     }
 });
 
-router.get('/all-companys/:id',async (req,res) => {
+router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "company",
         description:"Internship request",
         styles: "/css/company-details.css",
         js: "/js/company.js",
-        user: "teacher",
+        user: dat.role,
         search:"/js/searching_company.js",
         content:"../layouts/teacher/company-details.ejs"   , 
         bar8: "active",
@@ -3080,12 +3203,10 @@ router.get('/all-companys/:id',async (req,res) => {
     res.render('index', {locals,requests:found_data,count_request:found_data.length,hasNextPage,nextPage,all_pages,count,current:page,company:data2});
 });
 
-router.post('/all-companys/update',async (req,res) => {
-    console.log(req.body);
+router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
     const redir ='/all-companys/'+req.session.company_details;
     const data = await companies.findOne({'_id':req.session.company_details});
-    console.log(data);
-    req.session.destroy();
+    req.session.company_details = null;
     
     try{
         data.status = req.body.status1;
@@ -3099,7 +3220,7 @@ router.post('/all-companys/update',async (req,res) => {
     res.redirect(redir);
 });
 
-router.post('/all-companys/add', async (req, res) => {
+router.post('/all-companys/add',redirectNotAuth, async (req, res) => {
     var name = req.body.position_name;
     var job = new position({ name: name });
     var error = "";
@@ -3108,7 +3229,7 @@ router.post('/all-companys/add', async (req, res) => {
         description: "Internship request",
         styles: "/css/company.css",
         js: "/js/company.js",
-        user: "teacher",
+        user: dat.role,
         content: "../layouts/teacher/all-companys.ejs",
         bar8: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -3178,7 +3299,8 @@ router.post('/all-companys/add', async (req, res) => {
     }
 });
 
-router.get('/all-companys/delete/:id', async (req,res) => {
+router.get('/all-companys/delete/:id',redirectNotAuth, async (req,res) => {
+    
     var page = "1";
     try{
         del = "success";
@@ -3192,13 +3314,28 @@ router.get('/all-companys/delete/:id', async (req,res) => {
 });
 
 
-router.get('/upload-calendar', async (req,res) => {
+router.get('/upload-calendar',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "calendar",
         description:"Internship request",
         styles: "/css/calendar.css",
         js: "/js/base.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/upload-calendar.ejs"   , 
         bar9: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -3253,12 +3390,13 @@ router.get('/upload-calendar', async (req,res) => {
 
         if(req.session.pass_cal){
             err = req.session.pass_cal;
-            req.session.destroy();
+            req.session.pass_cal =null;
         }else if(req.session.err_cal){
             err = req.session.err_cal;
-            req.session.destroy();
+            req.session.err_cal =null;
         }else{
-            req.session.destroy();
+            req.session.err_cal =null;
+            req.session.pass_cal =null;
             alert_cal = 'close';
         }
 
@@ -3289,14 +3427,29 @@ router.get('/upload-calendar', async (req,res) => {
     }
 });
 
-router.get('/docs-waiting',async (req,res) => {
+router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "docs-waiting",
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
         search:"/js/searching.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/docs-waiting.ejs",
         bar2: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -3345,7 +3498,9 @@ router.get('/docs-waiting',async (req,res) => {
     var sort = req.query.sort || 1;
     var error = req.session.error;
     var current_req = req.session.req_id;
-    req.session.destroy();
+
+    req.session.req_id = null;
+    req.session.error = null;
 
     if(current_req != undefined && current_req != null){
         bg1 = "";
@@ -3668,13 +3823,28 @@ router.get('/docs-waiting',async (req,res) => {
 
 });
 
-router.get('/docs-approve', async (req,res) => {
+router.get('/docs-approve',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "approval document",
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/docs-approve.ejs", 
         search:"/js/searching.js",
         bar4: "active",
@@ -3724,7 +3894,8 @@ router.get('/docs-approve', async (req,res) => {
     var sort = req.query.sort || 1;
     var error = req.session.error;
     var current_req = req.session.req_id;
-    req.session.destroy();
+    req.session.req_id =null;
+    req.session.error =null;
 
     if(current_req != undefined && current_req != null){
         bg1 = "";
@@ -4055,7 +4226,7 @@ router.get('/docs-approve', async (req,res) => {
 
 });
 
-router.get('/docs-accepted', async (req,res) => {
+router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
     const locals = {
         title : "approval document",
         description:"Internship request",
@@ -4111,7 +4282,8 @@ router.get('/docs-accepted', async (req,res) => {
     var sort = req.query.sort || 1;
     var error = req.session.error;
     var current_req = req.session.req_id;
-    req.session.destroy();
+    req.session.req_id = null;
+    req.session.error = null;
 
     if(current_req != undefined && current_req != null){
         bg1 = "";
@@ -4437,13 +4609,28 @@ users
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
 });
 
-router.get('/docs-certificate', async (req,res) => {
+router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "approval document",
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
-        user: "teacher",
+        user: dat.role,
         content:"../layouts/teacher/certificate.ejs", 
         search:"/js/searching.js",
         bar5: "active",
@@ -4493,7 +4680,8 @@ router.get('/docs-certificate', async (req,res) => {
     var sort = req.query.sort || 1;
     var error = req.session.error;
     var current_req = req.session.req_id;
-    req.session.destroy();
+    req.session.req_id = null;
+    req.session.error = null;
     if(current_req != undefined && current_req != null){
         bg1 = "";
         mod1 = "";
@@ -4838,7 +5026,7 @@ router.get('/docs-certificate', async (req,res) => {
 
 });
 
-router.post('/docs-approval-pop', async (req, res) => {
+router.post('/docs-approval-pop',redirectNotAuth, async (req, res) => {
     req.session.approval = JSON.parse(JSON.stringify(req.body));
     const approval = req.session.approval;
 
@@ -4986,7 +5174,7 @@ router.post('/docs-approval-pop', async (req, res) => {
     
 });
 
-router.post('/docs-approval-pop2', async (req, res) => {
+router.post('/docs-approval-pop2',redirectNotAuth, async (req, res) => {
     req.session.approval = JSON.parse(JSON.stringify(req.body));
     const approval = req.session.approval;
 
@@ -5246,13 +5434,28 @@ router.get('/generate-official-document', (req, res) => {
   });
 
 router.get('/uploads/:file', async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const file = req.params.file;
     const locals = {
         title : "calendar",
         description:"Internship request",
         styles: "/css/pdf.css",
         js: "/js/base.js",
-        user: "teacher",
+        user: dat.role,
         filename: file,
         content:"../layouts/file-pdf.ejs"   , 
         bar9: "active",
@@ -5305,6 +5508,21 @@ router.get('/uploads/:file', async (req,res) => {
 
 //ADMIN
 router.get('/account',async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "teacher"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "approval document",
         description:"Internship request",
@@ -5418,13 +5636,14 @@ router.get('/account',async (req,res) => {
     var err = "";
     if(req.session.acc_pass){
             err = req.session.acc_pass;
-            req.session.destroy();
+            req.session.acc_pass = null;
     }else if(req.session.acc_err){
             err = req.session.acc_err;
-            req.session.destroy();
+            req.session.acc_err = null;
     }else{
-            req.session.destroy();
-            alert_docs = 'close';
+        req.session.acc_err = null;
+        req.session.acc_pass = null;
+        alert_docs = 'close';
     }
 
     if(err != ""){

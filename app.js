@@ -36,10 +36,11 @@ app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
+  cookie: { maxAge: 3600000 } 
   // store: MongoStore.create({
   //   mongoUrl: process.env.MONGODB_URI
   // }),
-  //cookie: { maxAge: new Date ( Date.now() + (3600000) ) } 
+  // cookie: { maxAge: new Date ( Date.now() + (3600000) ) } 
 }));
 
 //Midleware
@@ -47,11 +48,15 @@ app.use('*',(req,res,next) => {
   loggedIn = req.session.userId;
   next();
 });
+
 app.use('/logout',(req,res,next) => {
   next();
 });
 
-
+app.use('/request-teacher',(req,res,next) => {
+  loggedIn = req.session.userId;
+  next();
+});
 
 app.use(express.static('public'));
 
