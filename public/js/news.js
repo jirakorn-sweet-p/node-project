@@ -18,8 +18,9 @@ const deleteForm = document.getElementById('deleteForm');
 
 const expand_reqInfo = document.getElementById('request-doc');
 const expand_more = document.getElementById('expand_more');
-console.log(expand_more);
-expand_more.addEventListener('click',()=>{
+
+if(expand_more){
+  expand_more.addEventListener('click',()=>{
   console.log('asdasd');
   if(expand_reqInfo.classList.contains('active')){
       console.log('hiding to show');
@@ -29,6 +30,8 @@ expand_more.addEventListener('click',()=>{
       expand_reqInfo.classList.add('active');
   }   
 });
+
+}
 
 if(deleteLink){
 deleteLink.addEventListener('click', function (event) {

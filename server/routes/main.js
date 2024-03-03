@@ -2638,7 +2638,7 @@ router.get('/upload-docs',redirectNotAuth,async (req,res) => {
         if(req.session.pass_docs){
             err = req.session.pass_docs;
 
-            eq.session.pass_docs =null;
+            req.session.pass_docs =null;
 
         }else if(req.session.err_docs){
             err = req.session.err_docs;
@@ -3040,7 +3040,7 @@ router.post('/news/delete/:id',redirectNotAuth, async (req,res) => {
         req.session.err_news = 'ลบไม่สำเร็จ';
     }
     
-    res.redirect(path);
+    res.redirect('/upload-news');
 });
 
 router.get('/all-companys',redirectNotAuth,async (req,res) => {
