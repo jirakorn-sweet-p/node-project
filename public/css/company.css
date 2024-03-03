@@ -594,6 +594,7 @@ main {
     overflow-x: clip;
     text-overflow: ellipsis;
     overflow-y: auto;
+    max-width: 20vw;
 }
 
 .request-doc .table{
@@ -775,8 +776,8 @@ form{
 }
 
 .modal:first-child{
-    height: 50%;
-    top: 25%;
+    /* height: 50%;
+    top: 25%; */
 }
 
 .modal-back{

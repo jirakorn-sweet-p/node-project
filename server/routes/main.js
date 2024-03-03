@@ -3133,34 +3133,68 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
             modal_bg1 = "close";
             modal2 = "close";
         }
-
-        if(req.session.error !== null){
-            if(req.session.error == "pass"){
-                status = "pass";
-                err = "This Position Add Success !";
-                alert = "";
-                req.session.error = "";
-            }else{
-                status = "fail";
-                err = "This Position Has Used !";
-                alert = "";
-            }
-            req.session.error = null;
-        }
         
-        if(req.session.del != null){
-            if(req.session.del == "success"){
-                status = "pass";
-                err = "This Position Delete Success !";
-                alert = "";
-                req.session.del = "";
-            }else{
-                status = "fail";
-                err = "Deleted ERROR !";
-                alert = "";
-            }
-            req.session.del = null;
+        var alert_docs = 'close';
+        var err = "";
+        var c_err = 0;
+        if(req.session.allcom_pass){
+            err = req.session.allcom_pass;
+
+            req.session.allcom_pass =null;
+
+        }else if(req.session.allcom_err){
+            err = req.session.allcom_err;
+            req.session.allcom_err = null;
+        }else{
+            req.session.allcom_err = null;
+            req.session.allcom_pass =null;
+            alert_docs = 'close';
         }
+
+        if(err != ""){
+            alert_docs = "";
+            c_err +=1;
+        }
+        var alert_add = 'close';
+        if(req.session.allcom_add_pass){
+            err = req.session.allcom_add_pass;
+
+            req.session.allcom_add_pass =null;
+
+        }else if(req.session.allcom_add_err){
+            err = req.session.allcom_add_err;
+            req.session.allcom_add_err = null;
+        }else{
+            req.session.allcom_add_err = null;
+            req.session.allcom_add_pass =null;
+            alert_add = 'close';
+        }
+
+        if(err != ""){
+            alert_add = "";
+            c_err +=1;
+        }
+
+        var alert_del = 'close';
+        if(req.session.allcom_del_pass){
+            err = req.session.allcom_del_pass;
+
+            req.session.allcom_del_pass =null;
+
+        }else if(req.session.allcom_del_err){
+            err = req.session.allcom_del_err;
+            req.session.allcom_del_err = null;
+        }else{
+            req.session.allcom_del_err = null;
+            req.session.allcom_del_pass =null;
+            alert_del = 'close';
+        }
+        if(err != ""){
+            alert_del = "";
+            c_err +=1;
+        }
+        var alert = "close";
+        if(c_err != 0){alert= "";}
 
         let page = req.query.page || 1;
         let perPage = 15;
@@ -3175,13 +3209,8 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         const nextPage = parseInt(page)+1;
         const hasNextPage = nextPage <= allPage;
 
-        // reset Alert
-        var a = alert;
-        alert = "close";
-
         let page2 = req.query.page2 || 1;
         let perPage2 = 4;
-        // const all_companies = await companies.find({'status':'1'});
         const all_companies = await companies.aggregate([
             { $match: { status: { $in: ['0', '1' ,'2'] } } },
             { $skip: perPage2 * page2 - perPage2 },
@@ -3279,7 +3308,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
             all_position[index] = myList;
         });
 
-        res.render('index', {locals,error:err,status,alert:a,modal_bg1,modal_bg2,modal1,modal2,modal3,data,current: page,all_pages:allPage,all_position,all_companies,
+        res.render('index', {locals,error:err,status,alert,modal_bg1,modal_bg2,modal1,modal2,modal3,data,current: page,all_pages:allPage,all_position,all_companies,
         nextPage: hasNextPage ? nextPage : null,hasNextPage2,nextPage2,all_pages2:allPage2,count2,current2:page2,});
     }catch(error){  
         console.log(error);
@@ -3358,8 +3387,79 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
     const page = req.query.page || 1;
     var com_add =[];
 
+    const data_all = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'student_info',
+                foreignField: '_id',
+                as: 'student_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requestinfos',
+                localField: 'request_info',
+                foreignField: '_id',
+                as: 'request_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'companyinfos',
+                localField: 'company_info',
+                foreignField: '_id',
+                as: 'company_info'
+            }
+        },
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                student_info: { $arrayElemAt: ['$student_info', 0] },
+                request_info: { $arrayElemAt: ['$request_info', 0] },
+                company_info: { $arrayElemAt: ['$company_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $lookup: {
+                from: 'companies',
+                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                foreignField: '_id',
+                as: 'company_info.company'
+            }
+        },
+        {
+            $addFields: {
+                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+            }
+        },
+    ]).exec();
+    const found_data = [];
+    const f = [];
+    data_all.forEach((element,index) => {
+        console.log(element.company_info.company.name);
+        if(element.company_info.company._id.toString()==req.params.id){
+            found_data.push(element);
+            f.push(element._id);
+        }
+    });
+
     const data = await request_ser.aggregate([
         { $sort: { update_at: 1 } },
+        { $match: { _id: { $in: f } } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
         { $match: { accepted_company_status: '1' } },
@@ -3420,13 +3520,26 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
             }
         },
     ]).exec();
-    const found_data = [];
-    data.forEach((element,index) => {
-        console.log(element.company_info.company.name);
-        if(element.company_info.company._id.toString()==req.params.id){
-            found_data.push(element);
-        }
-    });
+
+    var alert_docs = 'close';
+    var err = "";
+    if(req.session.com_up_pass){
+        err = req.session.com_up_pass;
+
+        req.session.com_up_pass =null;
+
+    }else if(req.session.com_up_err){
+        err = req.session.com_up_err;
+        req.session.com_up_err = null;
+    }else{
+        req.session.com_up_err = null;
+        req.session.com_up_pass =null;
+        alert_docs = 'close';
+    }
+
+    if(err != ""){
+        alert_docs = "";
+    }
 
     const count = found_data.length;
     let all_pages = Math.ceil(count/perPage);
@@ -3434,8 +3547,12 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
     const hasNextPage = nextPage <= all_pages;
 
     const data2 = await companies.findOne({'_id':req.params.id});
+    console.log('==========');
+    console.log(f);
+    console.log('==========');
+    console.log(data);
     req.session.company_details = req.params.id;
-    res.render('index', {locals,requests:found_data,count_request:found_data.length,hasNextPage,nextPage,all_pages,count,current:page,company:data2});
+    res.render('index', {locals,requests:data,count_request:found_data.length,hasNextPage,nextPage,all_pages,count,current:page,company:data2,alert:alert_docs,err});
 });
 
 router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
@@ -3447,8 +3564,10 @@ router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
         data.status = req.body.status1;
         data.comment = req.body.comment1;
         await data.save();
+        req.session.com_up_pass = 'อัพเดทสำเร็จ';
     }catch(err){
         console.log(err);
+        req.session.com_up_err = 'อัพเดทไม่สำเร็จ';
     }
     
 
@@ -3458,93 +3577,62 @@ router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
 router.post('/all-companys/add',redirectNotAuth, async (req, res) => {
     var name = req.body.position_name;
     var job = new position({ name: name });
-    var error = "";
-    const locals = {
-        title: "company",
-        description: "Internship request",
-        styles: "/css/company.css",
-        js: "/js/company.js",
-        user: dat.role,
-        content: "../layouts/teacher/all-companys.ejs",
-        bar8: "active",
-        c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({$and: [
-            { 'approval_document_status': '0' },
-            {'status':'1'}
-          ]})).length,
-        c3:(await request_ser.find({
-            $and: [
-              { 'accepted_company_status': '0' },
-              { 'approval_document_status': '1' }
-            ]
-          })).length,
-          c4:(await request_ser.find({
-            $and: [
-              { 'accepted_company_status': '1' },
-              { 'approval_document_status': '1' },
-              { 'sended_company_status': '0' }
-            ]
-          })).length,
-          c5:(await request_ser.aggregate([
-            { 
-                $match: {
-                    'accepted_company_status': '1',
-                    'approval_document_status': '1',
-                    'sended_company_status': '1',
-                },
-                
-            },
-            {
-                $lookup: {
-                    from: 'certificates',
-                    localField: 'certificate_info',
-                    foreignField: '_id',
-                    as: 'certificate_info'
-                }
-            },
-            {
-                $match: {
-                    'certificate_info.status': '0'
-                }
-            }
-          ]
-          )).length,
-    }
 
     var found = await position.find({ 'name': name });
     var page = "1";
 
     if (found.length === 0 && name.trim().length !== 0) {
         await job.save();
-        error = "pass";
 
         // Store information in session variables
         req.session.page = page;
-        req.session.error = error;
+        req.session.allcom_add_pass = 'สร้างสำเร็จ';
 
-        res.redirect('/all-companys');
     } else {
-        error = "fail";
 
         // Store information in session variables
         req.session.page = page;
-        req.session.error = error;
+        req.session.allcom_add_err = 'สร้างไม่สำเร็จ';
 
-        res.redirect('/all-companys');
+        
     }
+    res.redirect('/all-companys');
 });
+router.post('/all-companys/add/company',redirectNotAuth, async (req, res) => {
 
+    try{
+        const company = new companys({
+            name: req.body.name,
+            tel: req.body.company_tel,
+            address: req.body.address,
+            type_business: req.body.type_business,
+            province: req.body.province,
+            district: req.body.district,
+            subdistrict: req.body.subdistrict,
+            provinceID: req.body.provinceID,
+            status: req.body.status,
+            comment:req.body.comment
+        });
+    await company.save()
+    req.session.allcom_pass = 'สร้างสำเร็จ';
+    }catch(err){
+    req.session.allcom_err = 'สร้างไม่สำเร็จ';
+    }
+    
+    res.redirect('/all-companys');
+
+});
 router.get('/all-companys/delete/:id',redirectNotAuth, async (req,res) => {
     
     var page = "1";
     try{
-        del = "success";
+        const result = await position.findByIdAndDelete(req.params.id);
+        req.session.page = page;
+        req.session.allcom_del_pass = 'ลบสำเร็จ';
     }catch(error){  
-        del = "fail";
+        req.session.allcom_del_err= 'ลบไม่สำเร็จ';
     }
-    req.session.page = page;
-    req.session.del = del;
-    const result = await position.findByIdAndDelete(req.params.id);
+
     res.redirect('/all-companys');
 });
 
