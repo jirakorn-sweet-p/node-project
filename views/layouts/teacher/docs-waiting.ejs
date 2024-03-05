@@ -1,5 +1,5 @@
 <!-- MODAL -->
-<div class="modal-back <%= modal_bg1 %>" id="modal-back">
+<div class="modal-back close" id="modal-back">
 </div>
 <div class="modal-back <%= modal_bg2 %>" id="modal-alert">
 </div>
@@ -123,7 +123,10 @@
                                                 </table>
                                                 <% }) %>
                                                     <div class="submit">
-                                                        <button id="generate" class="generate" type="submit">ตกลง</button>
+                                                        <a href="/docs-waiting">
+                                                             <button id="generate" class="generate" type="submit">ตกลง</button>
+                                                        </a>
+
                                                     </div>
                 </form>
                 <% }else{ %>
@@ -239,6 +242,11 @@
                        </th>
                    </tr>
                    <% } %>
+                   <tr class="no-data close" id="search-not-found">
+                    <th colspan="8">
+                        ไม่มีข้อมูล
+                    </th>
+                </tr>
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -260,7 +268,7 @@
 
                     
 
-                    <div class="modal <%= modal1 %>" id="modal<%= index %>">
+                    <div class="modal close" id="modal<%= index %>">
                         <form action="/request-teacher/update2/<%= element._id %>" method="post" name="request" enctype="/submit-table">
                             <div class="modal-box">
 
@@ -658,7 +666,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                     <div class="topic">
-                                        <h2>อัพโหลดเอกสาร</h2>
+                                        <h2>อัปโหลดดเอกสาร</h2>
                                         <% if (element.request_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.request_info.status == '1') { %>
@@ -672,7 +680,7 @@
                                     </div>
                                     <div class="uploads-section">
                                         <div class="uploads-content">
-                                            <a >เอกสารยื่นใบฝึกงาน</a>
+                                            <a >เอกสารยื่นคำร้องขอฝึกงาน</a>
 
                                             <div class="border-uploads">
                                                 <a class="links border-space"

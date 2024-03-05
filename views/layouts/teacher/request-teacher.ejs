@@ -33,6 +33,12 @@
                        </th>
                    </tr>
                    <% } %>
+                   <tr class="no-data close" id="search-not-found">
+                    <th colspan="8">
+                        ไม่มีข้อมูล
+                    </th>
+                </tr>
+                   
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -181,7 +187,6 @@
                                                                 <input type="text" placeholder="หมายเลขโทรศัพท์"
                                                                     name="tel" oninput="formatTEL(this)" maxlength="11"
                                                                     value="<%= element.student_info.phone %>">
-                                                                <p id="telError"></p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -262,7 +267,7 @@
                                                             <div class="border-input <%= com_add[index] %>">
                                                                 <input type="text" class="<%= com_add[index] %>"
                                                                     value="<%= element.company_info.company.name %>">
-                                                                <a href="/request-teacher/company-add?req=<%= element._id %>" class="add-com" id="new-company">เพิ่ม<span class="material-icons-sharp">add</span></a>
+                                                                <a name="<%= index %>" class="add-com" id="new-company">เพิ่ม<span class="material-icons-sharp">add</span></a>
                                                             </div>
                                                         </div>
                                                         <div class="uploads-content">
@@ -282,7 +287,8 @@
                                                         <div class="uploads-content">
                                                             <a >เบอร์โทรศัพท์</a>
                                                             <div class="border-input">
-                                                                <input type="text"
+                                                                    <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
                                                                     value="<%= element.company_info.company.tel %>">
                                                             </div>
                                                         </div>
@@ -385,7 +391,8 @@
                                                         <div class="uploads-content">
                                                             <a >เบอร์โทรศัพท์</a>
                                                             <div class="border-input">
-                                                                <input type="text"
+                                                                    <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
                                                                     value="<%= element.company_info.tel_mentor %>">
                                                             </div>
                                                         </div>
@@ -452,7 +459,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                                     <div class="topic">
-                                                        <h2>อัพโหลดเอกสาร</h2>
+                                                        <h2>อัปโหลดดเอกสาร</h2>
                                                         <% if (element.request_info.status == '0') { %>
                                                             <span class="material-icons-sharp warnning">pending</span>
                                                         <% } else if (element.request_info.status == '1') { %>
@@ -466,7 +473,7 @@
                                                     </div>
                                                     <div class="uploads-section">
                                                         <div class="uploads-content">
-                                                            <a >เอกสารยื่นใบฝึกงาน</a>
+                                                            <a >เอกสารยื่นคำร้องขอฝึกงาน</a>
 
                                                             <div class="border-uploads">
                                                                 <a class="links border-space"
@@ -617,11 +624,14 @@
                                                     </div>
                                                 </div>
                                                 <div class="submit">
-                                                    <button type="submit">Update</button>
+                                                    <button type="submit">อัพเดต</button>
                                                 </div>
                                             </div>
                                         </form>
+                                        <form id="deleteForm<%= index %>" action="/request-teacher/company-add?req=<%= element._id %>" method="POST" style="display: none;"></form>
+
                                 </div>
+
                                 <tr>
                                     <td>
                                         <%= new Date(element.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>

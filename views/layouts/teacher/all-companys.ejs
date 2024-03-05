@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div class="submit">
-                <button type="submit">Add</button>
+                <button type="submit">เพิ่ม</button>
             </div>
 
         </div>
@@ -168,7 +168,7 @@
                     <input name="position_name" type="text">
                 </div>
                 <div class="submit">
-                    <button type="submit">Add</button>
+                    <button type="submit">เพิ่ม</button>
                 </div>
             </div>
         </form>
@@ -230,6 +230,18 @@
                         <th class="location">ที่อยู่</th>
                         <th>ตำแหน่งที่เคยรับ</th>
                         <th></th>
+                    </tr>
+                    <% if (all_companies.length == 0) { %>
+                        <tr class="no-data">
+                           <th colspan="8">
+                               ไม่มีข้อมูล
+                           </th>
+                       </tr>
+                       <% } %>
+                    <tr class="no-data close" id="search-not-found">
+                        <th colspan="8">
+                            ไม่มีข้อมูล
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

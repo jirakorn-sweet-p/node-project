@@ -1293,3 +1293,9 @@ td.on-left,
 th.on-left{
     text-align: left;
 }
+
+.styled-table thead tr.no-data{
+    text-align: center;
+    background-color: var(--color-white);
+    color: var(--color-dark);
+}

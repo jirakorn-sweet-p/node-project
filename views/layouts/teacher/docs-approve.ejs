@@ -28,11 +28,6 @@
                     <% } else { %>
                         <option value="3">ทั้งหมด</option>
                     <% } %>
-                    <% if (sort == '4') { %>
-                        <option selected value="4">ปฏิเสธการออกหนังสือ</option>
-                    <% } else { %>
-                        <option value="4">ปฏิเสธการออกหนังสือ</option>
-                    <% } %>
                 </select>
             </div>
 
@@ -247,7 +242,12 @@
                        </th>
                    </tr>
                    <% } %>
-                
+                   <tr class="no-data close" id="search-not-found">
+                    <th colspan="8">
+                        ไม่มีข้อมูล
+                    </th>
+                </tr>
+
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -393,7 +393,6 @@
                                                 <input type="text" placeholder="หมายเลขโทรศัพท์"
                                                     name="tel" oninput="formatTEL(this)" maxlength="11"
                                                     value="<%= element.student_info.phone %>">
-                                                <p id="telError"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -494,8 +493,9 @@
                                         <div class="uploads-content">
                                             <a >เบอร์โทรศัพท์</a>
                                             <div class="border-input">
-                                                <input type="text"
-                                                    value="<%= element.company_info.company.tel %>">
+                                                    <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
+                                                                    value="<%= element.company_info.company.tel %>">
                                             </div>
                                         </div>
                                         <div class="uploads-content">
@@ -597,8 +597,9 @@
                                         <div class="uploads-content">
                                             <a >เบอร์โทรศัพท์</a>
                                             <div class="border-input">
-                                                <input type="text"
-                                                    value="<%= element.company_info.tel_mentor %>">
+                                                    <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
+                                                                    value="<%= element.company_info.tel_mentor %>">
                                             </div>
                                         </div>
                                     </div>
@@ -664,7 +665,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                     <div class="topic">
-                                        <h2>อัพโหลดเอกสาร</h2>
+                                        <h2>อัปโหลดดเอกสาร</h2>
                                         <% if (element.request_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
                                         <% } else if (element.request_info.status == '1') { %>
@@ -678,7 +679,7 @@
                                     </div>
                                     <div class="uploads-section">
                                         <div class="uploads-content">
-                                            <a >เอกสารยื่นใบฝึกงาน</a>
+                                            <a >เอกสารยื่นคำร้องขอฝึกงาน</a>
 
                                             <div class="border-uploads">
                                                 <a class="links border-space"

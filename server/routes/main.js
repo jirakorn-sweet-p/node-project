@@ -1703,7 +1703,7 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
     var error = req.session.error;
     var current_req = req.session.req_id;
 
-    req.session.error =null;
+    req.session.error = null;
     req.session.req_id = null;
 
     if(current_req != undefined && current_req != null){
@@ -1716,12 +1716,21 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
     if(error){
         modal_bg2 = "";
         alert = "";
-        bg1 = "close"
-        mod1 = "close";
+        bg1 = ""
+        mod1 = "";
     }else{
         modal_bg2 = "close";
         alert = "close";
     }
+
+    if(req.session.all_pass){
+        modal_bg2 = "";
+        alert = "";
+        bg1 = "close";
+        mod1 = "close";
+        req.session.all_pass = null;
+    }
+
     const perPage = 20;
     const page = req.query.page || 1;
     var com_add =[];
@@ -1801,7 +1810,7 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
 
 });
 
-router.get('/request-teacher/company-add',redirectNotAuth, async (req,res) => {
+router.post('/request-teacher/company-add',redirectNotAuth, async (req,res) => {
     
     req.session.req_id = req.query.req;
     try{
@@ -1905,28 +1914,35 @@ router.post('/request-teacher/update/:id',redirectNotAuth, async (req,res) => {
     }
 
     try{
-        await std_info.save();
-        await com_info.save();
-        await req_info.save();
+        console.log(com.status);
+        if(com.status != '2'){
+            await std_info.save();
+            await com_info.save();
+            await req_info.save();
 
-        req.session.req_id = this_request._id;
-        if(this_request){
-            if(std_info.status == com_info.status && com_info.status == req_info.status && req_info.status == '1'){
-                console.log('---------1');
-                this_request.status = '1';
-            }else if(std_info.status == '2' || com_info.status == '2' ||req_info.status == '2'){
-                console.log('---------2');
-                this_request.status = '2';
-                req.session.req_id = null;
-            }else{
-                console.log('---------3');
-                this_request.status = process.env.STATUS_PENDING;
+            req.session.req_id = this_request._id;
+            if(this_request){
+                if(std_info.status == com_info.status && com_info.status == req_info.status && req_info.status == '1'){
+                    this_request.status = '1';
+                    req.session.all_pass = true; 
+                }else if(std_info.status == '2' || com_info.status == '2' ||req_info.status == '2'){
+                    this_request.status = '2';
+                    req.session.req_id = null;
+                }else{
+                    this_request.status = process.env.STATUS_PENDING;
+                }
+                
+                await this_request.save();
+
             }
-            
-            await this_request.save();
-
+            req.session.error = "อัปเดตสำเร็จ";
+        }else{
+            req.session.error = "อัปเดตไม่สำเร็จ กรุณาเพิ่มสถานที่ฝึกงาน";
         }
-        req.session.error = "อัปเดตสำเร็จ";
+
+        
+
+        
     }catch(error){
         console.log(error);
         req.session.error = "อัปเดตไม่สำเร็จ";
@@ -5620,12 +5636,11 @@ router.post('/docs-approval-pop',redirectNotAuth, async (req, res) => {
             const content = doc.getZip().generate({ type: 'nodebuffer' });
             zip.file(`document_${i + 1}.docx`, content);
         }
-
-        // ...
         
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', 'attachment; filename=documents.zip');
         res.send(zip.generate({ type: 'nodebuffer' }));
+
     } catch (error) {
         console.error('Error processing request:', error);
         res.status(500).send('Internal Server Error');

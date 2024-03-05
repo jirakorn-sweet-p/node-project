@@ -33,8 +33,10 @@ const ok= document.getElementById('ok');
 const approval_docs_modal = document.getElementById('approval-docs-modal');
 const approval_docs_modal2 = document.getElementById('approval-docs-modal2');
 
-const new_company = document.getElementById('new-company');
+// const new_company = document.getElementById('new-company');
 
+const deleteLink = document.querySelectorAll('#new-company');
+const Link = Array.from(deleteLink);  
 //check box 
 const cbx5 = document.getElementById('cb5');
 const cbx = document.getElementById('cbx');
@@ -215,11 +217,27 @@ if (cbx5) { // Check if the element is found
   });
 }
 
-if (new_company) { // Check if the element is found
-  new_company.addEventListener('click', () => {
-    modal_alert.classList.remove('close');
-    modal_bg_alert.classList.remove('close');
+// if (new_company) { // Check if the element is found
+//   new_company.addEventListener('click', () => {
+//     modal_alert.classList.remove('close');
+//     modal_bg_alert.classList.remove('close');
+//   });
+// }
+
+if(deleteLink){
+  Link.forEach((e,index) => {
+      // modal_alert.classList.remove('close');
+      // modal_bg_alert.classList.remove('close')
+      e.addEventListener('click', function (event) {
+      var modalEditName = 'deleteForm'+ e.getAttribute('name').toString();
+      console.log(modalEditName);
+      const modalEdit = document.getElementById(modalEditName);
+      console.log(modalEdit);
+      event.preventDefault();
+      modalEdit.submit();
+});
   });
+
 }
 
 if (ok) { // Check if the element is found
@@ -404,7 +422,8 @@ menuBtn.addEventListener('click',()=>{
   }
 });
 
-light_mode.addEventListener('click',()=>{
+if(light_mode){
+  light_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
   light_mode.classList.remove('active');
@@ -416,8 +435,10 @@ light_mode.addEventListener('click',()=>{
   document.body.classList.remove('dark-mode-variables');
   }
 });
+}
 
-dark_mode.addEventListener('click',()=>{
+if(dark_mode){
+  dark_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
   light_mode.classList.remove('active');
@@ -429,6 +450,8 @@ dark_mode.addEventListener('click',()=>{
   document.body.classList.remove('dark-mode-variables');
   }
 });
+}
+
 // config status section
 function adjustNextElementPosition(detailsElement) {
   const nextElement = detailsElement.nextElementSibling;

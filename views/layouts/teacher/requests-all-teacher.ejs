@@ -8,7 +8,7 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>คำร้องล่าสุด</h2>
+            <h2>ประวัติการยื่นคำร้อง</h2>
             <div class="search">
                 <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
             </div>
@@ -33,6 +33,11 @@
                        </th>
                    </tr>
                    <% } %>
+                   <tr class="no-data close" id="search-not-found">
+                    <th colspan="8">
+                        ไม่มีข้อมูล
+                    </th>
+                </tr>
             </thead>
             <tbody>
                 <div class="modal <%= alert %>" id="alert">
@@ -181,13 +186,10 @@
                                                                 <input type="text" placeholder="หมายเลขโทรศัพท์"
                                                                     name="tel" oninput="formatTEL(this)" maxlength="11"
                                                                     value="<%= element.student_info.phone %>">
-                                                                <p id="telError"></p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="approved">
-                                                        <div class="comment">
-
                                                         <div class="status">
                                                             <div class="border-status">
                                                                 <select name="status1" required>
@@ -283,7 +285,8 @@
                                                         <div class="uploads-content">
                                                             <a >เบอร์โทรศัพท์</a>
                                                             <div class="border-input">
-                                                                <input type="text"
+                                                                    <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
                                                                     value="<%= element.company_info.company.tel %>">
                                                             </div>
                                                         </div>
@@ -386,14 +389,14 @@
                                                         <div class="uploads-content">
                                                             <a >เบอร์โทรศัพท์</a>
                                                             <div class="border-input">
-                                                                <input type="text"
+                                                                    <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                                    name="tel" oninput="formatTEL(this)" maxlength="11"
                                                                     value="<%= element.company_info.tel_mentor %>">
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class="approved">
-
                                                         <div class="status">
                                                             <div class="border-status">
                                                                 <select name="status2" required>
@@ -453,7 +456,7 @@
                                                     <div class="request-cer" id="request-cer<%= index %>">
                                                 <% } %>
                                                     <div class="topic">
-                                                        <h2>อัพโหลดเอกสาร</h2>
+                                                        <h2>อัปโหลดดเอกสาร</h2>
                                                         <% if (element.request_info.status == '0') { %>
                                                             <span class="material-icons-sharp warnning">pending</span>
                                                         <% } else if (element.request_info.status == '1') { %>
@@ -467,7 +470,7 @@
                                                     </div>
                                                     <div class="uploads-section">
                                                         <div class="uploads-content">
-                                                            <a >เอกสารยื่นใบฝึกงาน</a>
+                                                            <a >เอกสารยื่นคำร้องขอฝึกงาน</a>
                                                             <!-- upload/2024-01-07T05-15-23.435Z-DIP_LAB2.pdf -->
                                                             <div class="border-uploads">
                                                                 <a class="links border-space"
@@ -670,7 +673,7 @@
                                             <div class="dropdown-content">
                                                 <a href="#" class="request-details" id="request-details"
                                                     name="<%= index %>">รายระเอียดคำร้องขอฝึกงาน</a>
-                                                    <a href="/uploads/<%= element.request_info.doc_request_intern %>" target="_blank" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
+                                                    <a href="/uploads/<%= element.request_info.doc_request_intern %>" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
                                                 <!-- <a href="#">เอกสารรับรองการสำเร็จการฝึกงาน</a>
                                 <a href="#">บันทึกการฝึกงานและการประเมิน</a> -->
                                             </div>

@@ -63,8 +63,8 @@ menuBtn.addEventListener('click',()=>{
     sideMenu.classList.add('show-bar');
   }
 });
-
-light_mode.addEventListener('click',()=>{
+if(light_mode){
+  light_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
   light_mode.classList.remove('active');
@@ -76,7 +76,9 @@ light_mode.addEventListener('click',()=>{
   document.body.classList.remove('dark-mode-variables');
   }
 });
+}
 
+if(dark_mode){
 dark_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
@@ -89,6 +91,8 @@ dark_mode.addEventListener('click',()=>{
   document.body.classList.remove('dark-mode-variables');
   }
 });
+}
+
 // config status section
 function adjustNextElementPosition(detailsElement) {
   const nextElement = detailsElement.nextElementSibling;

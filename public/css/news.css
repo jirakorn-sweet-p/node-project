@@ -520,9 +520,18 @@ main {
     margin: auto 0 auto 2rem;
     padding: 8px;
     display: flex;
-    width: 8rem;
+    width: 9.5rem;
     justify-content: space-around;
     align-items: center;
+}
+
+.title-header .add-btn:hover{
+    background: var(--color-cp);
+    color: var(--color-white);
+}
+
+.title-header .add-btn:hover a{
+    color: var(--color-white);
 }
 
 main .main .news {
