@@ -1,7 +1,9 @@
 const modal_bg = document.getElementById('modal-back');
 const modal_bg2 = document.getElementById('modal-back2');
 const modal = document.getElementById('modal');
+const modal3 = document.getElementById('modal3');
 const add_user= document.getElementById('add-user');
+const add_by_doc= document.getElementById('add-approval-docs');
 const all_modal = document.querySelectorAll('.modal');
 const sort = document.getElementById('sort');
 const stdid = document.getElementById('stdid');
@@ -79,6 +81,14 @@ if(modal_bg){
     add_user.addEventListener('click',()=>{
     modal_bg.classList.remove('close');
     modal.classList.remove('close');
+    console.log('ass');
+  });
+  }
+
+  if(add_by_doc){
+    add_by_doc.addEventListener('click',()=>{
+    modal_bg.classList.remove('close');
+    modal3.classList.remove('close');
     console.log('ass');
   });
   }

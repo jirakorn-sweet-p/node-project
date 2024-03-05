@@ -54,7 +54,7 @@
                             <div class="modal close" id="modal<%= index %>">
                         <% } %>
                         
-                                        <form action="/request-teacher/update" method="post" name="request"
+                                        <form action="/request-teacher/update/<%= element._id %>" method="post" name="request"
                                             enctype="/submit-table">
                                             <div class="modal-box">
                                                 <% if (element.student_info.status == '1' || element.student_info.status == '2') { %>
@@ -63,7 +63,7 @@
                                                     <div class="request-info" id="request-info<%= index %>">
                                                 <% } %>
                                                     <div class="topic">
-                                                        <h2>ข้อมูลนักศึกษา</h2><h2>ชื่อ: <%= element.student_info.name %> รหัส: <%= element.student_info.student_code %></h2>
+                                                        <h2>ข้อมูลนักศึกษา</h2><h2><%= element.student_info.name %> <pre> </pre> <%= element.student_info.student_code %></h2>
                                                         <% if (element.student_info.status == '0') { %>
                                                             <span class="material-icons-sharp warnning">pending</span>
                                                         <% } else if (element.student_info.status == '1') { %>
@@ -186,7 +186,7 @@
                                                     </div>
                                                     <div class="approved">
                                                         <div class="comment">
-                                                            <h3>comments</h3>
+                                                            <h3>ความคิดเห็น</h3>
                                                             <textarea name="comment1" id="" cols="30"
                                                                 rows="10"><%= element.student_info.comment %></textarea>
                                                         </div>
@@ -261,7 +261,7 @@
                                                     </div>
                                                     <div class="info-intern">
                                                         <div class="uploads-content">
-                                                            <a >ชื่อสถาที่ฝึกงาน</a>
+                                                            <a >ชื่อสถานที่ฝึกงาน</a>
                                                             <div class="border-input <%= com_add[index] %>">
                                                                 <input type="text" class="<%= com_add[index] %>"
                                                                     value="<%= element.company_info.company.name %>">
@@ -396,7 +396,7 @@
 
                                                     <div class="approved">
                                                         <div class="comment">
-                                                            <h3>comments</h3>
+                                                            <h3>ความคิดเห็น</h3>
                                                             <textarea name="comment2" id="" cols="30"
                                                                 rows="10"><%= element.company_info.comment %></textarea>
                                                         </div>
@@ -569,7 +569,7 @@
                                                     </div>
                                                     <div class="approved">
                                                         <div class="comment">
-                                                            <h3>comments</h3>
+                                                            <h3>ความคิดเห็น</h3>
                                                             <textarea name="comment3" id="" cols="30"
                                                                 rows="10"><%= element.request_info.comment %></textarea>
                                                         </div>
@@ -624,7 +624,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="submit">
-                                                    <button type="submit">Update</button>
+                                                    <button type="submit">อัปเดต</button>
                                                 </div>
                                             </div>
                                         </form>

@@ -1589,6 +1589,7 @@ textarea.auto {
 .request-info.active .topic h2+h2{
     height: 100%;
     width: 54%;
+    display: flex;
     padding: 1rem 0;
 }
 

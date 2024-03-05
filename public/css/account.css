@@ -520,6 +520,10 @@ main {
     align-items: center;
 }
 
+.header-main .add-btn#add-approval-docs{
+    width: 10.2rem;
+}
+
 .add-btn:hover{
     background-color: var(--color-cp);
     box-shadow: var(--box-shadow-cp);
@@ -769,6 +773,17 @@ form{
     left: 27.5%; 
     height: 95%;
     top: 2.5%; 
+}
+
+.modal#modal3{
+    width: 45%;
+    left: 27.5%; 
+    height: 40%;
+    top: 30%; 
+}
+
+.modal#modal3 .datas{
+    height: 15%;
 }
 
 .modal:first-child{
@@ -1480,7 +1495,7 @@ textarea {
     display: block;
 }
 
-.datas a:not(:first-child){
+.modal:not(#modal3) .datas a:not(:first-child){
     padding-left: 1rem;
     margin: 0;
     border-radius: 5px;
@@ -1493,3 +1508,55 @@ textarea {
     display: none;
 }
 
+.no-data th{
+    background: var(--color-white);
+    color: var(--color-dark);
+}
+
+input[type=file]::file-selector-button {
+    margin-right: 20px;
+    border: none;
+    background: #084cdf;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #0d45a5;
+}
+
+.modal#modal3 .datas input:not(:first-child){
+    padding-left: 0rem;
+}
+.modal#modal3 .modal-box{
+    justify-content: space-between;
+}
+
+.modal#modal3 input{
+    width: 70%;
+}
+
+.modal#modal3 h2{
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+}
+
+h2 p{
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.modal#modal3 a{
+    width: 70%;
+    margin: 0;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow2);
+    height: 100%;
+    color: var(--color-dark);
+    background-color: var(--color-white);
+    caret-color: var(--color-dark);
+    padding: 0.5rem;
+}

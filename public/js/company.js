@@ -25,15 +25,15 @@ const ok= document.getElementById('ok');
 if (ok) { // Check if the element is found
   ok.addEventListener('click', () => {
     modal_alert.classList.add('close');
-    modal_bg_alert.classList.add('close');
+    modal_bg.classList.add('close');
   });
 }
 if(add_company){
   add_company.addEventListener('click',()=>{
     console.log('qweqweq');
     modal_bg.classList.remove('close');
-  modal_bg.classList.remove('close');
-  modal.classList.remove('close');
+    modal_bg.classList.remove('close');
+    modal.classList.remove('close');
 });
 }
 

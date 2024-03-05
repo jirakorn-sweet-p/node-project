@@ -17,6 +17,28 @@
         </div>
     </div>
 </div>  
+<form method="POST" action="/account/add_by_excel" enctype="multipart/form-data">
+<div class="modal close" id="modal3">
+    <div class="modal-box">
+        
+        <div class="datas">
+            <h2>ไฟล์ตัวอย่าง<p>(xlsx)  </p></h2>
+            <a href="/uploads/official/add_user.xlsx" class="links border-space" target="_blank">
+                เอกสารตัวอย่าง.xlsx
+            </a>
+        </div>
+        <div class="datas close" id="stdid">
+            <h2>ไฟล์ (xlsx)</h2>
+            <input type="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+        </div>
+        
+        <div class="submit">
+            <button type="submit">สร้าง</button>
+        </div>
+
+    </div>
+</div>
+</form>
 
 <form action="/account/add" method="post" name="request">
 
@@ -90,6 +112,13 @@
                         post_add
                 </span>
             </div>
+
+            <div class="add-btn success" id="add-approval-docs">
+                <a>สร้างผู้ใช้จากไฟล์</a>
+                <span class="material-icons-sharp">
+                    upload_file
+                </span>
+            </div>
         </div>
         <div class="table">
             <table class="styled-table" id="styled-table">
@@ -98,9 +127,17 @@
                         <th class="on-left">รหัสนักศึกษา</th>
                         <th class="on-left">รหัสผู้ใช้</th>
                         <th class="on-left">ชื่อ</th>
-                        <!-- <th>สถานะการใช้งาน</th> -->
                         <th class="last"></th>
+                        
                     </tr>
+
+                    <% if (users.length == 0) { %>
+                        <tr class="no-data">
+                           <th colspan="8">
+                               ไม่มีข้อมูล
+                           </th>
+                       </tr>
+                       <% } %>
                 </thead>
                 <tbody>
 
@@ -147,7 +184,7 @@
                                 
                                 
                                 <div class="submit">
-                                    <button type="submit">อัพเดท</button>
+                                    <button type="submit">อัปเดต</button>
                                     <a id="deleteLink" name="<%= index %>" class="btn danger">ลบ</a>
 
                                 </div>

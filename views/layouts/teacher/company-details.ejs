@@ -1,6 +1,6 @@
 <div class="modal-back <%= alert %>" id="modal-back">
 </div>
-<div class="modal <%= alert %>" id="alert">
+<div class="modal <%= alert %> " id="alert">
     <div class="modal-box">
         <div class="request-doc" id="request-doc">
             <div class="border-input">
@@ -8,9 +8,7 @@
                     readonly>
             </div>
             <div class="submit">
-                <a href="/upload-calendar">
                     <button id="ok" type="submit">ตกลง</button>
-                </a>
             </div>
         </div>
     </div>
@@ -24,21 +22,21 @@
             <div class="request-doc">
                 <div class="info-intern">
                     <div class="uploads-content">
-                        <a href="">ชื่อสถาที่ฝึกงาน</a>
+                        <a href="">ชื่อสถานที่ฝึกงาน</a>
                         <div class="border-input">
-                            <input type="text" name="company_name" value="<%= company.name %>" readonly>
+                            <input type="text" name="company_name" value="<%= company.name %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">เบอร์โทรศัพท์</a>
                         <div class="border-input">
-                            <input type="text" name="tel" value="<%= company.tel %>" readonly>
+                            <input type="text" name="tel" value="<%= company.tel %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
                         <div class="border-input">
-                            <input type="text" name="type_business" value="<%= company.type_business %>" readonly>
+                            <input type="text" name="type_business" value="<%= company.type_business %>" >
                         </div>
                     </div>
                 </div>
@@ -46,37 +44,37 @@
                     <div class="uploads-content">
                         <a href="">ที่อยู่</a>
                         <div class="border-input">
-                            <input type="text" name="address" value="<%= company.address %>" readonly>
+                            <input type="text" name="address" value="<%= company.address %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">บริษัท/หน่วยงาน</a>
                         <div class="border-input">
-                            <input type="text" name="name" value="<%= company.name %>" readonly>
+                            <input type="text" name="name" value="<%= company.name %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">ตำบล</a>
                         <div class="border-input">
-                            <input type="text" name="subdistrict" value="<%= company.subdistrict %>" readonly>
+                            <input type="text" name="subdistrict" value="<%= company.subdistrict %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">อำเภอ</a>
                         <div class="border-input">
-                            <input type="text" name="district" value="<%= company.district %>" readonly>
+                            <input type="text" name="district" value="<%= company.district %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">จังหวัด</a>
                         <div class="border-input">
-                            <input type="text" name="province" value="<%= company.province %>" readonly>
+                            <input type="text" name="province" value="<%= company.province %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">รหัสไปรษณีย์</a>
                         <div class="border-input">
-                            <input type="text" name="provinceID" value="<%= company.provinceID %>" readonly>
+                            <input type="text" name="provinceID" value="<%= company.provinceID %>" >
                         </div>
                     </div>
                 </div>
@@ -160,7 +158,7 @@
                 </div>
                 <div class="approved">
                     <div class="comment">
-                        <h3>comments</h3>
+                        <h3>ความคิดเห็น</h3>
                         <textarea name="comment1" id="" cols="30" rows="10"><%= company.comment %></textarea>
                     </div>
                     <div class="status">
@@ -195,7 +193,7 @@
                     </div>
                 </div>
                 <div class="submit">
-                    <button type="submit">Update</button>
+                    <button type="submit">อัปเดต</button>
                 </div>
             </div>
         </form>

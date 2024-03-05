@@ -6,6 +6,7 @@ const Post = require('../models/Post');
 const { parse } = require('dotenv');
 const bcrypt = require('bcrypt');
 const fs = require("fs");
+const XLSX = require('xlsx');
 const path = require('path');
 const ObjectId = require('mongoose').Types.ObjectId;
 
@@ -69,10 +70,30 @@ var storage = multer.diskStorage({
 var storage2 = multer.diskStorage({
     
     destination: function (req, file, cb) {
+        cb(null, 'public/uploads/docs')
+    },
+    filename: function (req, file, cb) {
+        cb(null, 'general_docs' + '-' + new Date().toISOString().replace(/:/g, '-').split('T')[0]  + '.' + file.originalname.split('.').pop());
+    }
+})
+
+var storage3 = multer.diskStorage({
+    
+    destination: function (req, file, cb) {
         cb(null, 'public/uploads')
     },
     filename: function (req, file, cb) {
-        cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+        cb(null, 'news' + '-' + new Date().toISOString().replace(/:/g, '-').split('T')[0]  + '.' + file.originalname.split('.').pop());
+    }
+})
+
+var storage4 = multer.diskStorage({
+    
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
+        cb(null, 'add_user_by_use_excel'+ '.'+file.originalname.split('.').pop());
     }
 })
 
@@ -86,8 +107,21 @@ const filefilter = (req, file, cb) => {
         }
 }
 
+const filefilter4 = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' 
+        || file.mimetype === 'image/jpeg' || file.mimetype === 'application/pdf'
+        || file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            cb(null, true);
+    } else {
+        console.log(file.mimetype + ' not supported !!!');
+        cb(null, false);
+    }
+};
+
 var upload = multer({storage: storage, fileFilter: filefilter});
 var upload2 = multer({storage: storage2, fileFilter: filefilter});
+var upload3 = multer({storage: storage3, fileFilter: filefilter});
+var upload4 = multer({storage: storage4, fileFilter: filefilter4});
 // END SET STORAGE
 
 const fileSizeFormatter = (bytes,decimal) => {
@@ -186,13 +220,11 @@ const AddNews = async (req,res,next) => {
             fileType: req.file.mimetype,
             fileSize: fileSizeFormatter(req.file.size,2),
         });
-        console.log(obj);
         new_document = new Post({
             title: req.body.title,
             body: req.body.details,
             downloadDoc: files.fileName,
         });
-        console.log(new_document);
         await new_document.save();
         req.session.pass_news = 'สร้างสำเร็จ'
         res.redirect('/upload-news');
@@ -202,6 +234,87 @@ const AddNews = async (req,res,next) => {
         res.redirect('/upload-news');
     }
 }
+
+const AddUserByDocs = async (req, res, next) => {
+    try {
+        // ... (previous code remains unchanged)
+        const obj = JSON.parse(JSON.stringify(req.body));
+        var files = new uploadFile ({
+            fileName: req.file.filename,
+            filePath: req.file.path,
+            fileType: req.file.mimetype,
+            fileSize: fileSizeFormatter(req.file.size,2),
+        });
+        // DO
+        
+        const excelFilePath = 'public/uploads/add_user_by_use_excel.xlsx';
+        const workbook = XLSX.readFile(excelFilePath);
+    
+        // Choose the sheet you want to read
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        role = 'student'
+        var has_err = [];
+        // Use for...of loop to handle async/await properly
+        for (const [index, element] of data.entries()) {
+
+
+            if (index !== 0) {
+                if (await student_info.findOne({ 'student_code': element[0] })) {
+                    has_err[index] = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
+                } else if (await users.findOne({ 'username': element[2] })) {
+                    has_err[index] = 'อีเมลถูกใช้ไปแล้ว';
+                } else {
+                    const std_add = new student_info({ student_code: req.body.std_id, name: element[1] });
+                    const std_account = {
+                        username: element[2],
+                        password: element[0].replace('-', ''),
+                        role: role,
+                        student_info: std_add,
+                        student_code: element[0]
+                    } 
+                    has_err[index] = 'เพิ่มสำเร็จ';
+                    await std_add.save(); 
+                        // Create the user test
+                    await users.create(std_account);
+                }
+            } else {
+                has_err[index] = 'header';
+            }
+        }
+
+        console.log(has_err);
+
+        // Add the 'has_err' column to the existing worksheet
+        data[0].push('การเพิ่มผู้ใช้');
+        has_err.forEach((status, index) => {
+            if (index !== 0) {
+                data[index].push(status);
+            }
+        });
+
+        // Update the existing worksheet with the new data
+        const updatedWorksheet = XLSX.utils.aoa_to_sheet(data);
+        workbook.Sheets[sheetName] = updatedWorksheet;
+
+        // Write the modified workbook back to the same file
+        XLSX.writeFile(workbook, excelFilePath);
+
+        // Set the response headers for downloading the modified file
+        res.setHeader('Content-Disposition', 'attachment; filename=report-add-user.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Send the modified file as the response
+        const fileStream = fs.createReadStream(excelFilePath);
+        fileStream.pipe(res);
+    } catch (error) {
+        console.error(`Unexpected error: ${error}`);
+        // req.session.err_news = 'สร้างไม่สำเร็จ'
+        res.redirect('/account');
+    }
+};
 
 const EditDoc = async (req,res,next) => {
     try{
@@ -305,7 +418,6 @@ const UploadDocuments = async (req,res,next) => {
     var std_this = (await student_info.find({'student_code':u.student_code})).at(0);
     var std_info = new Object();
     var std_found = true;
-    console.log(std_this);
     if(std_this){
         std_this.name = req.body.fullname;
         std_this.student_code = req.body.std_id;
@@ -385,7 +497,6 @@ const UploadDocuments = async (req,res,next) => {
     const cer_info = new certificate({});
     var saved_std_info = new Object();;
     if(std_found){
-        console.log(std_this);
         saved_std_info = await std_this.save();
     }else{
         saved_std_info = await std_info.save();
@@ -461,9 +572,7 @@ router.get('/register',redirectIfAuth, (req, res) => {
         password = data.password;
     }
 
-    console.log('**************');
-    console.log(username);
-    console.log(password);
+
     res.render('index', { locals, errors: validationErrors,username,password});
 });
 
@@ -474,7 +583,6 @@ router.post('/user/register', redirectIfAuth, (req, res) => {
         password: req.body.password,
         role: "student",
     }).then(() => {
-        console.log("User Registered Successfully!");
         res.redirect('/request');
     }).catch((error) => {
         if (error) {
@@ -489,7 +597,7 @@ router.post('/user/register', redirectIfAuth, (req, res) => {
 });
 
 router.get('/login',redirectIfAuth, (req, res) => {
-    console.log(res.locals.loggedIn);
+
     const locals = {
         title : "login",
         description:"Internship request",
@@ -499,7 +607,6 @@ router.get('/login',redirectIfAuth, (req, res) => {
         content:"../layouts/login.ejs",
         bar1: "active"
     }
-
     res.render('index', {locals,login:true});
 });
 
@@ -524,7 +631,7 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
             if (match) {
                 req.session.userId = user._id;
                 req.session.userType = user.role;
-                console.log(user);
+
                 if (user.role == 'teacher' || user.role == 'admin') {
                     res.redirect('/request-teacher');
                 }else if(user.role == 'student'){
@@ -714,10 +821,12 @@ router.get('/generate-pdf', async (req, res) => {
 router.post('/uploadImgProfile',upload2.single('file'),UploadImgProfile);
 router.post('/uploadRequest',redirectNotAuth,upload.array('file',5),UploadDocuments);
 router.post('/update-add',upload2.single('file'),AddDoc);
-router.post('/update-add2',upload2.single('file'),AddCal);
-router.post('/add-new',upload2.single('file'),AddNews);
+router.post('/update-add2',upload3.single('file'),AddCal);
+router.post('/add-new',upload3.single('file'),AddNews);
+router.post('/account/add_by_excel',upload4.single('file'),AddUserByDocs);
 router.post('/edit-doc', upload.single('file'),EditDoc);
 router.post('/edit-cal', upload.single('file'),EditCal);
+
 router.get('/delete-doc/:id',async (req,res) => {
     try{
     const id = req.params.id;
@@ -770,9 +879,9 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        image = user.image;
-        name = user.name;
+    if(user.image){
+        image = user.image
+        name = user.name
         req.session.firstlogin = false;
     }else{
         req.session.firstlogin = true;
@@ -793,7 +902,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     try{
         const data = await request_ser.aggregate([
         { $match: { student_info: user._id } },
-        { $sort: { update_at: 1 } },
+        { $sort: { status: -1 } },
         {
             $lookup: {
                 from: 'studentinfos',
@@ -859,7 +968,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
             temp.push(element.sended_company_status);
             temp.push(element.certificate_info.status);
         });
-        console.log(temp);
+
         for (let index = 0; index < temp.length; index++) {
             const element = temp[index];
              if(element == '1'){
@@ -875,7 +984,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
                 status=[];
             }
         }
-        console.log(status);
+        console.log(data.length);
         res.render('index', {locals,data,status:all_status});
     }catch(error){
         console.log(error);
@@ -945,7 +1054,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
+    if(user.image){
         image = user.image
         name = user.name
     }else{
@@ -1049,7 +1158,7 @@ router.get('/document',redirectNotAuth,async (req,res) => {
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
+    if(user.image){
         image = user.image
         name = user.name
     }else{
@@ -1103,7 +1212,7 @@ router.get('/news',redirectNotAuth, async (req,res) => {
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
+    if(user.image){
         image = user.image
         name = user.name
     }else{
@@ -1160,7 +1269,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
+    if(user.image){
         image = user.image
         name = user.name
     }else{
@@ -1360,7 +1469,6 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         intern.forEach((element,index) => {
             found_data.push(element.company_info.company._id.toString());
         });
-        console.log(found_data);
     res.render('index', {locals,all_companies,all_position,all_pages2:allPage2,current2:page2,intern:found_data});
 });
 
@@ -1372,7 +1480,7 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
+    if(user.image){
         image = user.image
         name = user.name
     }else{
@@ -1395,6 +1503,118 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
     res.render('index', {locals});
 });
 
+router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "student"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user.image){
+        image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
+    const locals = {
+        title : "news",
+        description:"Internship request",
+        styles: "/css/news-details.css",
+        js: "/js/news.js",
+        user: dat.role,
+        profile:image,
+        name:user.name,
+        content:"../layouts/more-news.ejs",
+        bar11: "active",
+        c:(await request_ser.find({'status':'0'})).length,
+        c2:(await request_ser.find({$and: [
+            { 'approval_document_status': '0' },
+            {'status':'1'}
+          ]})).length,
+        c3:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '0' },
+              { 'approval_document_status': '1' }
+            ]
+          })).length,
+          c4:(await request_ser.find({
+            $and: [
+              { 'accepted_company_status': '1' },
+              { 'approval_document_status': '1' },
+              { 'sended_company_status': '0' }
+            ]
+          })).length,
+          c5:(await request_ser.aggregate([
+            { 
+                $match: {
+                    'accepted_company_status': '1',
+                    'approval_document_status': '1',
+                    'sended_company_status': '1',
+                },
+                
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $match: {
+                    'certificate_info.status': '0'
+                }
+            }
+          ]
+          )).length,
+    }
+    
+    try{
+        const shouldEdit = 'false';
+        const new_post = await Post.findOne({'_id':req.params.id});
+        var test = new_post.body.replace('<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">','');
+        
+       
+        var err = "";
+        var alert_new = 'close';
+
+        if(req.session.pass_news){
+            err = req.session.pass_news;
+            req.session.pass_news=null;
+        }else if(req.session.err_news){
+            err = req.session.err_news;
+            req.session.err_news=null;
+        }else{
+            req.session.err_news=null;
+            req.session.pass_news=null;
+            alert_new = 'close';
+        }
+
+        if(err != ""){
+            alert_new = "";
+        }
+        
+        res.render('index', {
+            locals,news:new_post,shouldEdit,test,err,alert:alert_new
+        });
+    }catch(error){  
+        console.log(error);
+        const shouldEdit = 'false';
+        const new_post = new Post();
+        var test = '';
+        var err = 'ข้อมูลถูกลบไปแล้ว';
+        var alert_new = "";
+        res.render('index', {
+        locals,news:new_post,shouldEdit,test,err,alert:alert_new
+    });
+    }
+    
+    
+});
 
 router.get('/about',redirectNotAuth, (req,res) => {
     res.render('about');
@@ -1410,16 +1630,14 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
-
+        
     }
     var image = 'profile-1.jpg';
+    
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
         req.session.firstlogin = true;
     }
     const locals = {
@@ -1428,6 +1646,7 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
         styles: "/css/request-teacher.css",
         js: "/js/all-request.js",
         user: dat.role,
+        name:user.name,
         content:"../layouts/teacher/request-teacher.ejs",
         bar1: "active",
         profile:image,
@@ -1563,7 +1782,6 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
     let all_pages = Math.ceil(count/perPage);
     const nextPage = parseInt(page)+1;
     const hasNextPage = nextPage <= all_pages;
-
     for (const element of data) {
         const found = element.company_info.company.status == '1';
         if (found) {
@@ -1572,7 +1790,6 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
             com_add.push('not-match');
         }
     }
-    
     res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
 
@@ -1586,22 +1803,24 @@ router.get('/request-teacher/company-add',redirectNotAuth, async (req,res) => {
         const com_info = (await company_info.find({'_id':this_request.company_info._id})).at(0);
         const this_com = (await companies.find({'_id':com_info.company})).at(0);
         this_com.status = process.env.STATUS_PASS;
-        req.session.error = "Add NewCompany Successfuly !";
+        req.session.error = "เพิ่มบริษัทสำเร็จ";
         await this_com.save();
     }catch(error){
-        req.session.error = "Add NewCompany Fail !";
+        req.session.error = "เพิ่มบริษัทไม่สำเร็จ";
     }
     res.redirect('/request-teacher');
 });
 
-router.post('/request-teacher/update',redirectNotAuth, async (req,res) => {
+router.post('/request-teacher/update/:id',redirectNotAuth, async (req,res) => {
     
-    var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
-    var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
-    var req_info = (await request_info.find({'student_code':req.body.student_code})).at(0);
     var this_request = new Object();
-    this_request = (await request_ser.find({'student_info':std_info._id})).at(0);
+    this_request = (await request_ser.find({'_id':req.params.id})).at(0);
+    var std_info = (await student_info.find({'_id':this_request.student_info})).at(0);
+    var com_info = (await company_info.find({'_id':this_request.company_info})).at(0);
+    var req_info = (await request_info.find({'_id':this_request.request_info})).at(0);
+
     req.session.req_id = this_request._id;
+    console.log(this_request);
     var status1 = req.body.status1;
     var status2 = req.body.status2;
     var status3 = req.body.status3;
@@ -1687,37 +1906,40 @@ router.post('/request-teacher/update',redirectNotAuth, async (req,res) => {
         req.session.req_id = this_request._id;
         if(this_request){
             if(std_info.status == com_info.status && com_info.status == req_info.status && req_info.status == '1'){
-                // if(Number(this_request.approval_document_status)<1){
-                //     this_request.approval_document_status = process.env.STATUS_PENDING;
-                // }
+                console.log('---------1');
                 this_request.status = '1';
             }else if(std_info.status == '2' || com_info.status == '2' ||req_info.status == '2'){
+                console.log('---------2');
                 this_request.status = '2';
                 req.session.req_id = null;
             }else{
+                console.log('---------3');
                 this_request.status = process.env.STATUS_PENDING;
             }
             
             await this_request.save();
 
         }
-        req.session.error = "อัพเดทสำเร็จ";
+        req.session.error = "อัปเดตสำเร็จ";
     }catch(error){
         console.log(error);
-        req.session.error = "อัพเดทไม่สำเร็จ";
+        req.session.error = "อัปเดตไม่สำเร็จ";
     }
 
 
     res.redirect('/request-teacher');
 });
 
-router.post('/request-teacher/update2',redirectNotAuth, async (req,res) => {
+router.post('/request-teacher/update2/:id',redirectNotAuth, async (req,res) => {
     
-    var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
-    var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
-    var req_info = (await request_info.find({'student_code':req.body.student_code})).at(0);
+    
+    
     var this_request = new Object();
-    this_request = (await request_ser.find({'student_info':std_info._id})).at(0);
+    this_request = (await request_ser.find({'_id':req.params.id})).at(0);
+    var std_info = (await student_info.find({'_id':this_request.student_info})).at(0);
+    var com_info = (await company_info.find({'_id':this_request.company_info})).at(0);
+    var req_info = (await request_info.find({'_id':this_request.request_info})).at(0);
+
     req.session.req_id = this_request._id;
     var status1 = req.body.status1;
     var status2 = req.body.status2;
@@ -1817,23 +2039,23 @@ router.post('/request-teacher/update2',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.error = "อัพเดทสำเร็จ";
+        req.session.error = "อัปเดตสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.error = "อัพเดทไม่สำเร็จ";
+        req.session.error = "อัปเดตไม่สำเร็จ";
     }
 
     res.redirect('/docs-waiting');
 });
 
-router.post('/request-teacher/update3',redirectNotAuth, async (req,res) => {
+router.post('/request-teacher/update3/:id',redirectNotAuth, async (req,res) => {
     
-    var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
-    var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
-    var req_info = (await request_info.find({'student_code':req.body.student_code})).at(0);
     var this_request = new Object();
-    this_request = (await request_ser.find({'student_info':std_info._id})).at(0);
+    this_request = (await request_ser.find({'_id':req.params.id})).at(0);
+    var std_info = (await student_info.find({'_id':this_request.student_info})).at(0);
+    var com_info = (await company_info.find({'_id':this_request.company_info})).at(0);
+    var req_info = (await request_info.find({'_id':this_request.request_info})).at(0);
     req.session.req_id = this_request._id;
     var status1 = req.body.status1;
     var status2 = req.body.status2;
@@ -1943,23 +2165,22 @@ router.post('/request-teacher/update3',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.app3_pass = "อัพเดทสำเร็จ";
+        req.session.app3_pass = "อัปเดตสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.app3_err = "อัพเดทไม่สำเร็จ";
+        req.session.app3_err = "อัปเดตไม่สำเร็จ";
     }
     res.redirect('/docs-accepted');
 });
 
-router.post('/request-teacher/update4',redirectNotAuth, async (req,res) => {
-    
-    var std_info = (await student_info.findOne({'student_code':req.body.student_code}));
-    var com_info = (await company_info.findOne({'student_code':req.body.student_code}));
-    var req_info = (await request_info.findOne({'student_code':req.body.student_code}));
+router.post('/request-teacher/update4/:id',redirectNotAuth, async (req,res) => {
     
     var this_request = new Object();
-    this_request = (await request_ser.findOne({'student_info':std_info._id}));
+    this_request = (await request_ser.find({'_id':req.params.id})).at(0);
+    var std_info = (await student_info.find({'_id':this_request.student_info})).at(0);
+    var com_info = (await company_info.find({'_id':this_request.company_info})).at(0);
+    var req_info = (await request_info.find({'_id':this_request.request_info})).at(0);
     var cer_info = (await certificate.findOne({'_id':this_request.certificate_info}));
     req.session.req_id = this_request._id;
     var status1 = req.body.status1;
@@ -2078,22 +2299,22 @@ router.post('/request-teacher/update4',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.error = "อัพเดทสำเร็จ";
+        req.session.error = "อัปเดตสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.error = "อัพเดทไม่สำเร็จ";
+        req.session.error = "อัปเดตไม่สำเร็จ";
     }
     res.redirect('/docs-certificate');
 });
 
-router.post('/request-teacher/update5',redirectNotAuth, async (req,res) => {
+router.post('/request-teacher/update5/:id',redirectNotAuth, async (req,res) => {
     
-    var std_info = (await student_info.find({'student_code':req.body.student_code})).at(0);
-    var com_info = (await company_info.find({'student_code':req.body.student_code})).at(0);
-    var req_info = (await request_info.find({'student_code':req.body.student_code})).at(0);
     var this_request = new Object();
-    this_request = (await request_ser.find({'student_info':std_info._id})).at(0);
+    this_request = (await request_ser.find({'_id':req.params.id})).at(0);
+    var std_info = (await student_info.find({'_id':this_request.student_info})).at(0);
+    var com_info = (await company_info.find({'_id':this_request.company_info})).at(0);
+    var req_info = (await request_info.find({'_id':this_request.request_info})).at(0);
     req.session.req_id = this_request._id;
     var status1 = req.body.status1;
     var status2 = req.body.status2;
@@ -2203,42 +2424,41 @@ router.post('/request-teacher/update5',redirectNotAuth, async (req,res) => {
             await this_request.save();
 
         }
-        req.session.app5_pass = "อัพเดทสำเร็จ";
+        req.session.app5_pass = "อัปเดตสำเร็จ";
         
     }catch(error){
         console.log(error);
-        req.session.app5_err = "อัพเดทไม่สำเร็จ";
+        req.session.app5_err = "อัปเดตไม่สำเร็จ";
     }
     res.redirect('/docs-approve');
 });
-
-
 
 router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
         req.session.firstlogin = true;
     }
+    
     const locals = {
         title : "request",
         description:"Internship request",
         styles: "/css/request-teacher.css",
         js: "/js/all-request.js",
         user: dat.role,
+        name:user.name,
         search:"/js/searching_all.js",
         content:"../layouts/teacher/requests-all-teacher.ejs",
         bar6: "active",
+        name:user.name,
+        profile:image,
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -2391,16 +2611,14 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -2409,6 +2627,8 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
         styles: "/css/request-teacher.css",
         js: "/js/all-request.js",
         user: dat.role,
+        profile:image,
+        name:user.name,
         search:"/js/searching_all.js",
         content:"../layouts/teacher/pass-status-requests.ejs",
         bar7: "active",
@@ -2556,16 +2776,13 @@ router.get('/upload-docs',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
         req.session.firstlogin = true;
     }
     const locals = {
@@ -2573,6 +2790,8 @@ router.get('/upload-docs',redirectNotAuth,async (req,res) => {
         description:"Internship request",
         styles: "/css/document.css",
         js: "/js/doc.js",
+        name:user.name,
+        profile:image,
         user: dat.role,
         username: "teacher01",
         content:"../layouts/teacher/upload-docs.ejs",
@@ -2671,16 +2890,14 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -2689,6 +2906,8 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
         styles: "/css/news.css",
         js: "/js/news.js",
         user: dat.role,
+        name:user.name,
+        profile:image,
         content:"../layouts/teacher/upload-news.ejs",
         bar11: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -2787,16 +3006,14 @@ router.get('/news/:id',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -2804,119 +3021,10 @@ router.get('/news/:id',redirectNotAuth, async (req,res) => {
         description:"Internship request",
         styles: "/css/news-details.css",
         js: "/js/news.js",
+        profile:image,
+        name:user.name,
         user: dat.role,
         content:"../layouts/teacher/more-news.ejs",
-        bar11: "active",
-        c:(await request_ser.find({'status':'0'})).length,
-        c2:(await request_ser.find({$and: [
-            { 'approval_document_status': '0' },
-            {'status':'1'}
-          ]})).length,
-        c3:(await request_ser.find({
-            $and: [
-              { 'accepted_company_status': '0' },
-              { 'approval_document_status': '1' }
-            ]
-          })).length,
-          c4:(await request_ser.find({
-            $and: [
-              { 'accepted_company_status': '1' },
-              { 'approval_document_status': '1' },
-              { 'sended_company_status': '0' }
-            ]
-          })).length,
-          c5:(await request_ser.aggregate([
-            { 
-                $match: {
-                    'accepted_company_status': '1',
-                    'approval_document_status': '1',
-                    'sended_company_status': '1',
-                },
-                
-            },
-            {
-                $lookup: {
-                    from: 'certificates',
-                    localField: 'certificate_info',
-                    foreignField: '_id',
-                    as: 'certificate_info'
-                }
-            },
-            {
-                $match: {
-                    'certificate_info.status': '0'
-                }
-            }
-          ]
-          )).length,
-    }
-    
-    try{
-        const shouldEdit = 'false';
-        const new_post = await Post.findOne({'_id':req.params.id});
-        var test = new_post.body.replace('<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">','');
-        
-       
-        var err = "";
-        var alert_new = 'close';
-
-        if(req.session.pass_news){
-            err = req.session.pass_news;
-            req.session.pass_news=null;
-        }else if(req.session.err_news){
-            err = req.session.err_news;
-            req.session.err_news=null;
-        }else{
-            req.session.err_news=null;
-            req.session.pass_news=null;
-            alert_new = 'close';
-        }
-
-        if(err != ""){
-            alert_new = "";
-        }
-        
-        res.render('index', {
-            locals,news:new_post,shouldEdit,test,err,alert:alert_new
-        });
-    }catch(error){  
-        console.log(error);
-        const shouldEdit = 'false';
-        const new_post = new Post();
-        var test = '';
-        var err = 'ข้อมูลถูกลบไปแล้ว';
-        var alert_new = "";
-        res.render('index', {
-        locals,news:new_post,shouldEdit,test,err,alert:alert_new
-    });
-    }
-    
-    
-});
-
-router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
-    const dat = await users.findOne({ '_id': req.session.userId });
-    var user = new Object();
-    
-    if(dat.role == "student"){
-        user = await student_info.findOne({ '_id': dat.student_info });
-
-    }
-    var image = 'profile-1.jpg';
-    var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
-        req.session.firstlogin = true;
-    }
-    const locals = {
-        title : "news",
-        description:"Internship request",
-        styles: "/css/news-details.css",
-        js: "/js/news.js",
-        user: dat.role,
-        content:"../layouts/more-news.ejs",
         bar11: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
@@ -3021,6 +3129,7 @@ router.post('/news/update/:id',redirectNotAuth, async (req,res) => {
     }
     res.redirect(path)
 });
+
 router.post('/news/delete/:id',redirectNotAuth, async (req,res) => {
     const path = '/news/'+ req.params.id;
     const this_news = await Post.findOne({'_id':req.params.id});
@@ -3047,16 +3156,14 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
     if(user){
-        // image = user.image
-        name = user.name
-    }else{
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -3065,6 +3172,8 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         styles: "/css/company.css",
         js: "/js/company.js",
         user: dat.role,
+        name:user.name,
+        profile:image,
         search:"/js/searching_company.js",
         content:"../layouts/teacher/all-companys.ejs"   , 
         bar8: "active",
@@ -3210,7 +3319,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         const hasNextPage = nextPage <= allPage;
 
         let page2 = req.query.page2 || 1;
-        let perPage2 = 4;
+        let perPage2 = 15;
         const all_companies = await companies.aggregate([
             { $match: { status: { $in: ['0', '1' ,'2'] } } },
             { $skip: perPage2 * page2 - perPage2 },
@@ -3319,16 +3428,14 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -3337,6 +3444,8 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
         styles: "/css/company-details.css",
         js: "/js/company.js",
         user: dat.role,
+        profile:image,
+        name:user.name,
         search:"/js/searching_company.js",
         content:"../layouts/teacher/company-details.ejs"   , 
         bar8: "active",
@@ -3450,7 +3559,7 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
     const found_data = [];
     const f = [];
     data_all.forEach((element,index) => {
-        console.log(element.company_info.company.name);
+
         if(element.company_info.company._id.toString()==req.params.id){
             found_data.push(element);
             f.push(element._id);
@@ -3547,10 +3656,7 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
     const hasNextPage = nextPage <= all_pages;
 
     const data2 = await companies.findOne({'_id':req.params.id});
-    console.log('==========');
-    console.log(f);
-    console.log('==========');
-    console.log(data);
+
     req.session.company_details = req.params.id;
     res.render('index', {locals,requests:data,count_request:found_data.length,hasNextPage,nextPage,all_pages,count,current:page,company:data2,alert:alert_docs,err});
 });
@@ -3559,15 +3665,25 @@ router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
     const redir ='/all-companys/'+req.session.company_details;
     const data = await companies.findOne({'_id':req.session.company_details});
     req.session.company_details = null;
-    
+    console.log(req.body);
     try{
         data.status = req.body.status1;
         data.comment = req.body.comment1;
+
+        data.tel = req.body.tel;
+        data.type_business = req.body.type_business;
+        data.address = req.body.address;
+        data.name = req.body.name;
+        data.subdistrict = req.body.subdistrict;
+        data.district = req.body.district;
+        data.province = req.body.province;
+        data.provinceID = req.body.provinceID;
+
         await data.save();
-        req.session.com_up_pass = 'อัพเดทสำเร็จ';
+        req.session.com_up_pass = 'อัปเดตสำเร็จ';
     }catch(err){
         console.log(err);
-        req.session.com_up_err = 'อัพเดทไม่สำเร็จ';
+        req.session.com_up_err = 'อัปเดตไม่สำเร็จ';
     }
     
 
@@ -3641,24 +3757,24 @@ router.get('/upload-calendar',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
         title : "calendar",
+        name:user.name,
         description:"Internship request",
         styles: "/css/calendar.css",
         js: "/js/base.js",
         user: dat.role,
+        profile:image,
         content:"../layouts/teacher/upload-calendar.ejs"   , 
         bar9: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -3754,16 +3870,14 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -3771,7 +3885,9 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
+        name:user.name,
         search:"/js/searching.js",
+        profile:image,
         user: dat.role,
         content:"../layouts/teacher/docs-waiting.ejs",
         bar2: "active",
@@ -4141,6 +4257,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
     }else if(sort == '4'){
         ttt = data4;
     }
+
     res.render('index', { locals,requests:ttt,count_request:data.length,sort,hasNextPage,nextPage,all_pages,count,current:page,
         com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,date });
 
@@ -4150,16 +4267,14 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
     if(user){
-        // image = user.image
-        name = user.name
-    }else{
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -4167,6 +4282,8 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
+        name:user.name,
+        profile:image,
         user: dat.role,
         content:"../layouts/teacher/docs-approve.ejs", 
         search:"/js/searching.js",
@@ -4552,16 +4669,14 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -4569,7 +4684,9 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         description:"Internship request",
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
+        name:user.name,
         user: dat.role,
+        profile:image,
         content:"../layouts/teacher/docs-accepted.ejs", 
         search:"/js/searching.js",
         bar3: "active",
@@ -4970,16 +5087,14 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const locals = {
@@ -4988,6 +5103,8 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         styles: "/css/docs-waiting.css",
         js: "/js/all-request.js",
         user: dat.role,
+        name:user.name,
+        profile:image,
         content:"../layouts/teacher/certificate.ejs", 
         search:"/js/searching.js",
         bar5: "active",
@@ -4998,7 +5115,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
           ]})).length,
         c3:(await request_ser.find({
             $and: [
-              { 'accepted_company_status': '1' },
+              { 'accepted_company_status': '0' },
               { 'approval_document_status': '1' }
             ]
           })).length,
@@ -5006,7 +5123,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
             $and: [
               { 'accepted_company_status': '1' },
               { 'approval_document_status': '1' },
-              { 'sended_company_status': '1' }
+              { 'sended_company_status': '0' }
             ]
           })).length,
           c5:(await request_ser.aggregate([
@@ -5718,10 +5835,10 @@ router.post('/docs-approval-pop3', async (req, res) => {
                 await ser.save();
             }
         }
-        req.session.app3_pass = "อัพเดทสำเร็จ"
+        req.session.app3_pass = "อัปเดตสำเร็จ"
     }catch(err){
         console.log(err);
-        req.session.app3_err = "อัพเดทไม่สำเร็จ"
+        req.session.app3_err = "อัปเดตไม่สำเร็จ"
     }
 
     res.redirect('/docs-accepted');
@@ -5802,16 +5919,14 @@ router.get('/uploads/:file',redirectNotAuth, async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "teacher" || dat.role == "admin" ){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
     var image = 'profile-1.jpg';
     var name = dat.username;
-    if(user){
-        // image = user.image
-        name = user.name
-    }else{
+    if(!user){
+
         req.session.firstlogin = true;
     }
     const file = req.params.file;
@@ -5822,6 +5937,8 @@ router.get('/uploads/:file',redirectNotAuth, async (req,res) => {
         js: "/js/base.js",
         user: dat.role,
         filename: file,
+        name:user.name,
+        profile:image,
         content:"../layouts/file-pdf.ejs"   , 
         bar9: "active",
         c:(await request_ser.find({'status':'0'})).length,
@@ -5876,7 +5993,7 @@ router.get('/account',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });
     var user = new Object();
     
-    if(dat.role == "teacher"){
+    if(dat.role == "admin"){
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
@@ -5893,7 +6010,9 @@ router.get('/account',redirectNotAuth,async (req,res) => {
         description:"Internship request",
         styles: "/css/account.css",
         js: "/js/admin.js",
-        user: "admin",
+        user: dat.role ,
+        name:user.name,
+        profile:image,
         content:"../layouts/admin/account.ejs", 
         search:"/js/searching_acc.js",
         bar12: "active",
@@ -6011,6 +6130,18 @@ router.get('/account',redirectNotAuth,async (req,res) => {
         alert_docs = 'close';
     }
 
+    if(req.session.user_has_used){
+        err = req.session.user_has_used;
+        req.session.user_has_used = null;
+    }else if(req.session.email_has_used){
+            err = req.session.email_has_used;
+            req.session.email_has_used = null;
+    }else{
+        req.session.email_has_used = null;
+        req.session.user_has_used = null;
+        alert_docs = 'close';
+    }
+
     if(err != ""){
             alert_docs = "";
     }
@@ -6024,12 +6155,29 @@ router.get('/account',redirectNotAuth,async (req,res) => {
 });
 
 router.get('/account/:id',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    
+    if(dat.role == "admin"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+
+    }
+    var image = 'profile-1.jpg';
+    var name = dat.username;
+    if(user){
+        // image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
     const locals = {
         title : "approval document",
         description:"Internship request",
         styles: "/css/account-details.css",
         js: "/js/admin.js",
-        user: "admin",
+        user: dat.role ,
+        name:user.name,
+        profile:image,
         content:"../layouts/admin/update-account.ejs", 
         search:"/js/searching.js",
         bar12: "active",
@@ -6078,48 +6226,54 @@ router.get('/account/:id',redirectNotAuth,async (req,res) => {
     }
     res.render('index', { locals });
 });
+
 router.post('/account/add',redirectNotAuth,async (req,res) => {
     
 
     try {
 
-        var role = '';
-        if (req.body.role == '1') {
-            role = 'student'
-            const std_add = new student_info({student_code: req.body.std_id,name: req.body.name});
+        
+        
+            
 
-            await std_add.save();
-            console.log(std_add);
-        // Create the user
-            await users.create({
-            username: req.body.username,
-            password: req.body.password,
-            role: role,
-            student_info:std_add,
-            student_code: req.body.std_id
-        });
-        console.log(users);
-        }else if (req.body.role == '2') {
-            role = 'teacher';
-            var code = 'xxxxxxxxx-x'
-            const std_add = new student_info({student_code: code,name: req.body.name});
-            await std_add.save(); 
-            // Create the user
-            console.log(std_add);
-            await users.create({
-            username: req.body.username,
-            password: req.body.password,
-            student_info:std_add,
-            role: role,
-        });
-        console.log(users);
-    }else{
-        role = 'student'
-    }
+            //check has used
+            if(await student_info.findOne({'student_code':req.body.std_id})){
+                req.session.user_has_used = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
+            }else if(await users.findOne({'username':req.body.username})){
+                req.session.email_has_used = 'อีเมลถูกใช้ไปแล้ว';
+            }else{
+                var role = '';
+                if (req.body.role == '1') {
+                    role = 'student'
+                        // Create the user
+                    const std_add = new student_info({student_code: req.body.std_id,name: req.body.name});
+                    await std_add.save();
 
-    
-
-        req.session.acc_pass = 'สร้างผู้ใช้สำเร็จ';
+                    await users.create({
+                        username: req.body.username,
+                        password: req.body.password,
+                        role: role,
+                        student_info:std_add,
+                        student_code: req.body.std_id
+                    });
+                    }else if (req.body.role == '2') {
+                        role = 'teacher';
+                        var code = 'xxxxxxxxx-x'
+                        const std_add = new student_info({student_code: code,name: req.body.name});
+                        await std_add.save(); 
+                        // Create the user
+                        await users.create({
+                        username: req.body.username,
+                        password: req.body.password,
+                        student_info:std_add,
+                        role: role,
+                    });
+                    }else{
+                        role = 'student'
+                    }
+                req.session.acc_pass = 'สร้างผู้ใช้สำเร็จ';
+                
+            }
         res.redirect('/account');
     } catch (error) {
         // Handle validation errors and log the error
@@ -6128,13 +6282,14 @@ router.post('/account/add',redirectNotAuth,async (req,res) => {
         res.redirect('/account');
     }
 });
+
 router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
     
 
     try {
         const this_id = req.params.id;
         const this_user = await users.findOne({'_id':this_id});
-        console.log(this_user);
+
         if (req.body.role == '1'){
             this_user.role = 'student';
         }else if(req.body.role == '2'){
@@ -6144,17 +6299,17 @@ router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
         this_user.password =req.body.password;
         const std_add = await student_info.findOne({ '_id': this_user.student_info });
 
-        console.log(std_add);
+
         std_add.name = req.body.name;
 
         await std_add.save();
         await this_user.save()
-        req.session.acc_pass = 'อัพเดทสำเร็จ';
+        req.session.acc_pass = 'อัปเดตสำเร็จ';
         res.redirect('/account');
     } catch (error) {
         // Handle validation errors and log the error
         console.error(error);
-        req.session.acc_pass = 'อัพเดทไม่สำเร็จ';
+        req.session.acc_pass = 'อัปเดตไม่สำเร็จ';
         res.redirect('/account');
     }
 });
@@ -6162,13 +6317,16 @@ router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
 router.post('/account/delete/:id',redirectNotAuth,async (req,res) => {
     
     const this_id = req.params.id;
-    const this_user = users.findOne({'_id':this_id});
-
+    const this_user = await users.findOne({'_id':this_id});
+    const ID = this_user.student_info;
     try {
-        const std_add = await student_info.findOne({'_id':this_user.student_info});
-        if(std_add){console.log(std_add);}
+
+        const std_add = await student_info.findOne({'_id':ID});
+
+        const ID2 = std_add._id;
         const result = await student_info.deleteOne(std_add);
-        const result2 = await request_ser.findOne({'student_info':std_add._id})
+
+        const result2 = await request_ser.findOne({'student_info':ID2})
         const result3 = await users.deleteOne(this_user);
         const result4 = await request_ser.deleteOne(result2);
         req.session.acc_pass = 'ลบผู้ใช้สำเร็จ';
@@ -6180,6 +6338,7 @@ router.post('/account/delete/:id',redirectNotAuth,async (req,res) => {
         res.redirect('/account');
     }
 });
+
 // API
 router.get('/getAll-company',async (req,res) => {
     const responseObject = await companies.find({'status':'1'});
