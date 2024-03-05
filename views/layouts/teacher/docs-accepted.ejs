@@ -307,11 +307,7 @@
                                         </div>
                                     </div>
                                     <div class="approved">
-                                        <div class="comment">
-                                            <h3>ความคิดเห็น</h3>
-                                            <textarea name="comment1" id="" cols="30"
-                                                rows="10"><%= element.student_info.comment %></textarea>
-                                        </div>
+
                                         <div class="status">
                                             <div class="border-status">
                                                 <select name="status1" required>
@@ -517,11 +513,7 @@
                                     </div>
 
                                     <div class="approved">
-                                        <div class="comment">
-                                            <h3>ความคิดเห็น</h3>
-                                            <textarea name="comment2" id="" cols="30"
-                                                rows="10"><%= element.company_info.comment %></textarea>
-                                        </div>
+
                                         <div class="status">
                                             <div class="border-status">
                                                 <select name="status2" required>
@@ -944,7 +936,7 @@
                                 <div class="dropdown-content">
                                     <a href="#" class="request-details" id="request-details"
                                         name="<%= index %>">รายระเอียดคำร้องขอฝึกงาน</a>
-                                    <a href="#" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
+                                        <a href="/uploads/<%= element.request_info.doc_request_intern %>" target="_blank" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
                                     <!-- <a href="#">เอกสารรับรองการสำเร็จการฝึกงาน</a>
                                 <a href="#">บันทึกการฝึกงานและการประเมิน</a> -->
                                 </div>

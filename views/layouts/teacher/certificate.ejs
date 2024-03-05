@@ -1,5 +1,5 @@
 <!-- MODAL -->
-<div class="modal-back <%= modal_bg1 %>" id="modal-back">
+<div class="modal-back close" id="modal-back">
 </div>
 <div class="modal-back <%= modal_bg2 %>" id="modal-alert">
 </div>
@@ -251,7 +251,7 @@
                         </div>
                     </div>            
                 <% requests.forEach((element,index)=> { %>
-                    <div class="modal <%= modal1 %>" id="modal<%= index %>">
+                    <div class="modal close" id="modal<%= index %>">
                         <form action="/request-teacher/update4/<%= element._id %>" method="post" name="request" enctype="/submit-table">
                             <div class="modal-box">
 
@@ -1086,7 +1086,7 @@
                                 <div class="dropdown-content">
                                     <a href="#" class="request-details" id="request-details"
                                         name="<%= index %>">รายระเอียดคำร้องขอฝึกงาน</a>
-                                    <a href="#" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
+                                        <a href="/uploads/<%= element.request_info.doc_request_intern %>" target="_blank" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
                                     <!-- <a href="#">เอกสารรับรองการสำเร็จการฝึกงาน</a>
                                 <a href="#">บันทึกการฝึกงานและการประเมิน</a> -->
                                 </div>

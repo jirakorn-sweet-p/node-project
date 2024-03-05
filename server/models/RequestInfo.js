@@ -39,7 +39,7 @@ const RequestInfoSchema = new Schema({
     },
     status:{
         type: String,
-        default:"1"
+        default:"0"
     },
     editor:{
         type: String,

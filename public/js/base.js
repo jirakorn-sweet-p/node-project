@@ -280,18 +280,18 @@ function checkInput(inputField) {
       errorParagraph.textContent = "*"; // Reset to default
   }
 }
-
 function formatID(inputField) {
+  
   var inputValue = inputField.value.replace(/\D/g, ''); // Remove non-numeric characters
 
   // Add hyphen after the seventh digit
-  if (inputValue.length > 9) {
-      inputValue = inputValue.substring(0, 9) + '-' + inputValue.substring(9);
+  if (inputValue.length >= 10) {
+      inputValue = inputValue.substring(0, 10) + '-' + inputValue.substring(10);
   }
 
   // Remove the hyphen if the user deletes characters
-  if (inputField.value.length < 10) {
-    inputValue = inputValue.substring(0, 9);
+  if (inputField.value.length < 11) {
+    inputValue = inputValue.substring(0, 10);
   }
   inputField.value = inputValue;
 }

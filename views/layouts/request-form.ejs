@@ -91,14 +91,14 @@
                 <div class="infomation">
                     <div class="datas">
                         <a>ชื่อ-นามสกุล</a>
-                        <input type="text" placeholder="ชื่อ-นามสกุล" name="fullname" oninput="checkInput(this)"
+                        <input type="text" placeholder="ชื่อ-นามสกุล" value="<%= info.name %>" name="fullname" oninput="checkInput(this)"
                             required>
                         <p id="fullnameError"></p>
                     </div>
                     <div class="datas">
                         <a>รหัสประจำตัว</a>
-                        <input type="text" value="" placeholder="รหัสประจำตัว" name="std_id" oninput="formatID(this)"
-                            maxlength="10" required>
+                        <input type="text" placeholder="รหัสประจำตัว" value="<%= info.student_code %>"  name="std_id" oninput="formatID(this)"
+                            maxlength="11" required>
                         <p id="std_idError"></p>
                     </div>
                     <div class="datas">

@@ -226,7 +226,6 @@ if (ok) { // Check if the element is found
   ok.addEventListener('click', () => {
     modal_alert.classList.add('close');
     modal_bg_alert.classList.add('close');
-    // modal_bg.classList.add('close');
     modal_bg2.classList.add('close');
   });
 }

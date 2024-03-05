@@ -10,14 +10,14 @@
                     readonly>
             </div>
             <div class="submit">
-                <a href="/account">
+                <a href="/account?sort=<%= sort %>">
                     <button id="ok" type="submit">ตกลง</button>
                 </a>
             </div>
         </div>
     </div>
 </div>  
-<form method="POST" action="/account/add_by_excel" enctype="multipart/form-data">
+<form method="POST" action="/account/add_by_excel?sort=<%= sort %>" enctype="multipart/form-data">
 <div class="modal close" id="modal3">
     <div class="modal-box">
         
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                         </form>
-                        <form id="deleteForm<%= index %>" action="/account/delete/<%= user._id %>" method="POST" style="display: none;">
+                        <form id="deleteForm<%= index %>" action="/account/delete/<%= user._id %>?sort=<%= sort %>" method="POST" style="display: none;">
                         </form>
                       <tr>
 

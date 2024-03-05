@@ -1106,7 +1106,7 @@ form {
 
 .request-doc.active {
     height: auto;
-    width: 10rem;
+    width: 70%;
     margin: 2rem 0 1rem 15%;
 }
 
@@ -1114,10 +1114,10 @@ form {
     justify-content: space-evenly;
 }
 
-.request-doc.active .xbar h3,
+/* .request-doc.active .xbar h3,
 .request-doc.active .xbar span{
     width: 50%;
-}
+} */
 
 .request-doc.active embed{
     display: none;

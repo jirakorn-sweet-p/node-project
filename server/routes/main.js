@@ -253,9 +253,16 @@ const AddUserByDocs = async (req, res, next) => {
         // Choose the sheet you want to read
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        
+        var role = '';
         const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        role = 'student'
+        var sort = req.query.sort || 1;
+
+        if(sort == 1){
+            role = 'student'
+        }else if(sort == 2){
+            role = 'teacher'
+        }
+
         var has_err = [];
         // Use for...of loop to handle async/await properly
         for (const [index, element] of data.entries()) {
@@ -267,7 +274,7 @@ const AddUserByDocs = async (req, res, next) => {
                 } else if (await users.findOne({ 'username': element[2] })) {
                     has_err[index] = 'อีเมลถูกใช้ไปแล้ว';
                 } else {
-                    const std_add = new student_info({ student_code: req.body.std_id, name: element[1] });
+                    const std_add = new student_info({ student_code: req.body.std_id, name: element[1] , student_code: element[0] });
                     const std_account = {
                         username: element[2],
                         password: element[0].replace('-', ''),
@@ -284,8 +291,6 @@ const AddUserByDocs = async (req, res, next) => {
                 has_err[index] = 'header';
             }
         }
-
-        console.log(has_err);
 
         // Add the 'has_err' column to the existing worksheet
         data[0].push('การเพิ่มผู้ใช้');
@@ -1027,7 +1032,8 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     const hasNextPage = nextPage <= allPage;
 
     const posit = await position.aggregate([ { $sort: {name: 1 }}]).exec();
-
+    const data2 = await student_info.findOne({'_id':dat.student_info});
+    console.log(data2);
     const locals = {
         title : "request-form",
         description:"Internship request",
@@ -1042,7 +1048,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     }
     res.render('index', { locals,data,count,
         current: page,std_code:name,posit,
-        all_pages:allPage,
+        all_pages:allPage,info:data2,
         nextPage: hasNextPage ? nextPage : null});
 });
 
@@ -1895,7 +1901,7 @@ router.post('/request-teacher/update/:id',redirectNotAuth, async (req,res) => {
 
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
-        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+        //req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
     }
 
     try{
@@ -2014,7 +2020,7 @@ router.post('/request-teacher/update2/:id',redirectNotAuth, async (req,res) => {
 
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
-        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+        //req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
     }
 
     try{
@@ -2143,7 +2149,7 @@ router.post('/request-teacher/update3/:id',redirectNotAuth, async (req,res) => {
 
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
-        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+        //req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
     }
 
     try{
@@ -2276,7 +2282,7 @@ router.post('/request-teacher/update4/:id',redirectNotAuth, async (req,res) => {
     }
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
-        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+        //req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
     }
 
     try{
@@ -2402,7 +2408,7 @@ router.post('/request-teacher/update5/:id',redirectNotAuth, async (req,res) => {
 
     const com = (await companies.find({'_id':com_info.company})).at(0);
     if(com.status != process.env.STATUS_PASS){
-        req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
+        //req.session.error = "ไม่พบขอมูลสถานฝึกงานในระบบ !";
     }
 
     try{
@@ -4735,27 +4741,6 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
     }
     var sort = req.query.sort || 1;
 
-    // var error = req.session.error;
-    // var current_req = req.session.req_id;
-    // req.session.req_id = null;
-    // req.session.error = null;
-
-    // if(current_req != undefined && current_req != null){
-    //     bg1 = "";
-    //     mod1 = "";
-    // }else{
-    //     bg1 = "close";
-    //     mod1 = "close";
-    // }
-    // if(error){
-    //     modal_bg2 = "";
-    //     alert = "";
-
-    // }else{
-    //     modal_bg2 = "close";
-    //     alert = "close";
-    // }
-
     var err = "";
     var alert_cal = 'close';
 
@@ -6284,8 +6269,7 @@ router.post('/account/add',redirectNotAuth,async (req,res) => {
 });
 
 router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
-    
-
+    var dir = '/account';
     try {
         const this_id = req.params.id;
         const this_user = await users.findOne({'_id':this_id});
@@ -6305,17 +6289,26 @@ router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
         await std_add.save();
         await this_user.save()
         req.session.acc_pass = 'อัปเดตสำเร็จ';
-        res.redirect('/account');
+        res.redirect(dir);
     } catch (error) {
         // Handle validation errors and log the error
         console.error(error);
         req.session.acc_pass = 'อัปเดตไม่สำเร็จ';
-        res.redirect('/account');
+        res.redirect(dir);
     }
 });
 
 router.post('/account/delete/:id',redirectNotAuth,async (req,res) => {
-    
+    var dir = '/account';
+
+        // Check if the 'sort' parameter exists in the query string
+        if (req.query.sort === '2') {
+            dir = dir + '?sort=2';
+        }
+        console.log('sort', req.query.sort); // Log the 'sort' parameter
+
+        // Log the entire query object for additional debugging
+        console.log('req.query', req.query);
     const this_id = req.params.id;
     const this_user = await users.findOne({'_id':this_id});
     const ID = this_user.student_info;
@@ -6330,12 +6323,12 @@ router.post('/account/delete/:id',redirectNotAuth,async (req,res) => {
         const result3 = await users.deleteOne(this_user);
         const result4 = await request_ser.deleteOne(result2);
         req.session.acc_pass = 'ลบผู้ใช้สำเร็จ';
-        res.redirect('/account');
+        res.redirect(dir);
     } catch (error) {
         // Handle validation errors and log the error
         console.error(error);
         req.session.acc_pass = 'ลบผู้ใช้ไม่สำเร็จ';
-        res.redirect('/account');
+        res.redirect(dir);
     }
 });
 
