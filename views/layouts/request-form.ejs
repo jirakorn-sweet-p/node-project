@@ -84,7 +84,8 @@
                 <div class="images-content">
                     <div class="images-area">
                         <div class="images-add">
-                            <input type="file" name="file" accept="image/" title="เพิ่มรูปภาพ" required>
+                            <input type="file" name="file" accept=".png, .jpeg, .jpg" title="เพิ่มรูปภาพ" required>
+
                         </div>
                     </div>
                 </div>
@@ -264,7 +265,7 @@
                 <div class="uploads-content">
                     <a>รหัสไปรษณีย์ <span></span></a>
                     <div class="border-input">
-                        <input id="provinceID2" type="text" name="code" required>
+                        <input id="provinceID2" type="text" name="code" maxlength="5" oninput="ProvinceCode(this)" required>
                     </div>
                 </div>
             </div>
@@ -331,7 +332,7 @@
                 <div class="uploads-content">
                     <a>transcript <span></span></a>
                     <div class="border-uploads">
-                        <input type="file" name="file">
+                        <input type="file" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">

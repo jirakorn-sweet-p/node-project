@@ -6,7 +6,7 @@ const add_user= document.getElementById('add-user');
 const add_by_doc= document.getElementById('add-approval-docs');
 const all_modal = document.querySelectorAll('.modal');
 const sort = document.getElementById('sort');
-const stdid = document.getElementById('stdid');
+const stdid = document.getElementById('stdid2');
 
 const pop= document.getElementsByClassName('pop');
 const all_pop = Array.from(pop); 
@@ -20,9 +20,7 @@ if(deleteLink){
         e.addEventListener('click', function (event) {
 
         var modalEditName = 'deleteForm'+ e.getAttribute('name').toString();
-        console.log(modalEditName);
         const modalEdit = document.getElementById(modalEditName);
-        console.log(modalEdit);
         event.preventDefault();
         modalEdit.submit();
 });
@@ -57,8 +55,9 @@ if (sort) {
         }else{
             stdid.classList.remove("close");
         }
+        // console.log(stdid.classList);
         sort.addEventListener('change', () => {
-            console.log(sort.value ==  '1');
+
             if (sort.value !=  '1') {
                 stdid.classList.add("close");
             }else{

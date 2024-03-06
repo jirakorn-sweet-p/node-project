@@ -275,17 +275,17 @@ const AddUserByDocs = async (req, res, next) => {
                     has_err[index] = 'อีเมลถูกใช้ไปแล้ว';
                 } else {
                     const std_add = new student_info({ student_code: req.body.std_id, name: element[1] , student_code: element[0] });
-                    const std_account = {
-                        username: element[2],
-                        password: element[0].replace('-', ''),
-                        role: role,
-                        student_info: std_add,
-                        student_code: element[0]
-                    } 
+                    // const std_account = {
+                    //     username: element[2],
+                    //     password: element[0].replace('-', ''),
+                    //     role: role,
+                    //     student_info: std_add,
+                    //     student_code: element[0]
+                    // } 
                     has_err[index] = 'เพิ่มสำเร็จ';
                     await std_add.save(); 
                         // Create the user test
-                    await users.create(std_account);
+                    // await users.create(std_account);
                 }
             } else {
                 has_err[index] = 'header';

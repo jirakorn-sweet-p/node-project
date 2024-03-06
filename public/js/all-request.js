@@ -536,6 +536,11 @@ function formatTEL2(inputField) {
   inputField.value = inputValue;
 }
 
+function ProvinceCode(inputField) {
+  var inputValue = inputField.value.replace(/\D/g, ''); 
+  inputField.value = inputValue;
+}
+
 function formatGPA(inputField) {
   var inputValue = inputField.value.replace(/\D/g, ''); // Remove non-numeric characters
 
