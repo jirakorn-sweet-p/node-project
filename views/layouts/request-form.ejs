@@ -8,6 +8,7 @@
                     <div class="search">
                         <input type="text" placeholder="ค้นหา">
                     </div>
+                    
                     <!-- <div class="add-btn add-position" id="add-position">
                         <a>เพิ่มตำแหน่ง</a>
                         <span class="material-icons-sharp">
@@ -85,8 +86,9 @@
                     <div class="images-area">
                         <div class="images-add">
                             <input type="file" name="file" accept=".png, .jpeg, .jpg" title="เพิ่มรูปภาพ" required>
-
                         </div>
+                        
+                        <p>( png , jpg , jpeg )</p>
                     </div>
                 </div>
                 <div class="infomation">
@@ -107,8 +109,8 @@
                         <!-- <input type="text" placeholder="ระดับการศึกษา" name="lv"> -->
                         <div class="border-uploads">
                             <select name="lv" required>
-                                <option disabled selected value="0">เลือกชั้นปี</option>
-                                <option value="1">ชั้นปีที่ 1</option>
+                                <option disabled value="0">เลือกชั้นปี</option>
+                                <option selected value="1">ชั้นปีที่ 1</option>
                                 <option value="2">ชั้นปีที่ 2</option>
                                 <option value="3">ชั้นปีที่ 3</option>
                                 <option value="4">ชั้นปีที่ 4</option>
@@ -121,7 +123,7 @@
                         <!-- <input type="text" placeholder="คณะ" name="factory"> -->
                         <div class="border-uploads">
                             <select name="factory" required>
-                                <option disabled selected value="0">คณะ</option>
+                                <option disabled value="0">คณะ</option>
                                 <option value="1" selected>วิทยาลัยการคอมพิวเตอร์</option>
                             </select>
                         </div>
@@ -132,9 +134,9 @@
                         <!-- <input type="text" placeholder="สาขาวิชา" name="department"> -->
                         <div class="border-uploads">
                             <select name="department" required>
-                                <option disabled selected value="0">สาขาวิชา</option>
+                                <option disabled  value="0">สาขาวิชา</option>
                                 <option value="1" selected>วิทยาลัยการคอมพิวเตอร์ ภาคปกติ</option>
-                                <option value="2" selected>วิทยาลัยการคอมพิวเตอร์ ภาคพิเศษ</option>
+                                <option value="2" >วิทยาลัยการคอมพิวเตอร์ ภาคพิเศษ</option>
                             </select>
                         </div>
                         <p></p>
@@ -147,7 +149,7 @@
                     </div>
                     <div class="datas">
                         <a>อีเมล</a>
-                        <input type="email" placeholder="อีเมล" name="email" required>
+                        <input type="email" placeholder="อีเมล" value="<%= info.email %>" name="email" required>
                         <p></p>
                     </div>
                     <div class="datas">
@@ -191,9 +193,9 @@
                     <div class="border-input">
                         <!-- <input type="text" name="position" required> -->
                         <select name="position" required>
-                            <option disabled selected value="0">เลือกตำแหน่ง</option>
+                            <option disabled value="0">เลือกตำแหน่ง</option>
                             <% posit.forEach(element => { %>
-                             <option value="<%= element.name %>"><%= element.name %></option>
+                             <option value="<%= element.name.toLowerCase() %>"><%= element.name.toLowerCase() %></option>
                             <% }) %>
                         </select>
                     </div>
@@ -201,12 +203,12 @@
                 <div class="uploads-content">
                     <a>ผู้ประสานงาน (โปรดระบุด้วยว่าหนังสือเรียนถึงใคร) <span></span></a>
                     <div class="border-input">
-                        <input type="text" name="receiver"
+                        <input type="text" name="receiver" class="over-flow"
                             placeholder="(เช่น ผู้อํานวยการ......, ผู้จัดการ..., หัวหน้าส่วน เป็นต้น)" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>เบอร์โทร <span></span></a>
+                    <a>เบอร์โทรศัพท์ <span></span></a>
                     <div class="border-input">
                         <input id="tel2" type="text" name="company_tel" oninput="formatTEL2(this)" maxlength="11" required>
                     </div>
@@ -215,7 +217,7 @@
                 <div class="uploads-content">
                     <a>บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด <span></span></a>
                     <div class="border-input">
-                        <input id="type_business2" type="text" name="aboutcompany" required>
+                        <input id="type_business2" type="text" name="aboutcompany" class="over-flow" required>
                     </div>
                 </div>
                 <div class="uploads-content">
@@ -234,7 +236,7 @@
                 <div class="uploads-content">
                     <a>ที่อยู่ <span></span></a>
                     <div class="border-input">
-                        <input id="address2" type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน..."
+                        <input class="over-flow" id="address2" type="text" name="address" placeholder="บ้านเลขที่... , อาคาร... , ซอย... , ถนน..."
                             required>
                     </div>
                 </div>
@@ -281,7 +283,7 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>เบอร์โทร <span></span></a>
+                    <a>เบอร์โทรศัพท์ <span></span></a>
                     <div class="border-input">
                         <input type="text" name="coordinator_tel" oninput="formatTEL2(this)" maxlength="11" required>
                     </div>
@@ -302,7 +304,7 @@
 
                 <div class="uploads-content">
                     <div class="border-input">
-                        <input type="text" placeholder="ชื่อโรงพยาบาล" name="medical_rights">
+                        <input type="text" placeholder="ชื่อโรงพยาบาล" name="medical_rights" required>
                     </div>
                 </div>
             </div>
@@ -314,33 +316,33 @@
                 <div class="uploads-content">
                     <a>เอกสารยื่นคำร้องขอฝึกงาน <span></span></a>
                     <div class="border-uploads">
-                        <input type="file" name="file" required>
+                        <input type="file" accept=".pdf, .jpg, .jpeg" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a>หนังสือยินยอมผู้ปกครอง <span></span></a>
                     <div class="border-uploads">
-                        <input type="file" name="file" required>
+                        <input type="file" accept=".pdf, .jpg, .jpeg" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a>resume นักศึกษา <span></span></a>
                     <div class="border-uploads">
-                        <input type="file" name="file" required>
+                        <input type="file" accept=".pdf, .jpg, .jpeg" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a>transcript <span></span></a>
                     <div class="border-uploads">
-                        <input type="file" name="file" required>
+                        <input type="file" accept=".pdf, .jpg, .jpeg" name="file" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a>รูปแบบการฝึกงาน <span></span></a>
                     <div class="border-uploads">
                         <select name="working_style" required>
-                            <option disabled selected value="0">รูปแบบการฝึกงาน</option>
-                            <option value="1">Onsite</option>
+                            <option disabled value="0">รูปแบบการฝึกงาน</option>
+                            <option selected value="1">Onsite</option>
                             <option value="2">Work form home</option>
                             <option value="3">Hybrid</option>
                         </select>
@@ -351,8 +353,8 @@
                         <span></span></a>
                     <div class="border-uploads">
                         <select name="acceptance" required>
-                            <option disabled selected value="0">เลือกวิธีส่งเอกสาร</option>
-                            <option value="1">มารับเอง</option>
+                            <option disabled value="0">เลือกวิธีส่งเอกสาร</option>
+                            <option selected value="1">มารับเอง</option>
                             <option value="2">ให้เจ้าหน้าที่ส่งตามที่อยู่</option>
                         </select>
                     </div>

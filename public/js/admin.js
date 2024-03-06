@@ -1,3 +1,9 @@
+const menuBtn = document.getElementById('menu-btn');
+const sideMenu = document.getElementById('left-bar');
+const light_mode = document.getElementById('light-mode');
+const dark_mode = document.getElementById('dark-mode');
+const project = document.getElementById('project');
+
 const modal_bg = document.getElementById('modal-back');
 const modal_bg2 = document.getElementById('modal-back2');
 const modal = document.getElementById('modal');
@@ -14,6 +20,18 @@ const all_pop = Array.from(pop);
 const deleteLink = document.querySelectorAll('#deleteLink');
 const Link = Array.from(deleteLink);  
 
+menuBtn.addEventListener('click',()=>{
+    // sidebar hide or show
+    if(sideMenu.classList.contains('show-bar')){
+      sideMenu.classList.remove('show-bar');
+      sideMenu.classList.add('hide-bar');
+      project.classList.add('close');
+    }else{
+      sideMenu.classList.remove('hide-bar');
+      sideMenu.classList.add('show-bar');
+      project.classList.remove('close');
+    }
+  });
 
 if(deleteLink){
     Link.forEach((e,index) => {

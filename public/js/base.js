@@ -2,6 +2,7 @@ const menuBtn = document.getElementById('menu-btn');
 const sideMenu = document.getElementById('left-bar');
 const light_mode = document.getElementById('light-mode');
 const dark_mode = document.getElementById('dark-mode');
+const project = document.getElementById('project');
 
 const modal_bg = document.getElementById('modal-back');
 const modal = document.getElementById('modal');
@@ -37,7 +38,7 @@ const edit_document= document.getElementsByClassName('edit-btn');
 const documents = Array.from(edit_document); 
 
 const pendding_request= document.getElementsByClassName('request-details');
-const requests_pendding = Array.from(pendding_request); 
+const requests_pendding = Array.from(pendding_request);
 
 const request_details = document.getElementById('request-details');
 const expand_more = document.getElementById('expand_more');
@@ -46,22 +47,36 @@ const expand_more3 = document.getElementById('expand_more3');
 const expand_reqInfo = document.getElementById('request-info');
 const expand_reqDoc = document.getElementById('request-doc');
 const expand_cer = document.getElementById('request-cer');
-// request_details.addEventListener('click',()=>{
-//   console.log('hi');
-//   console.log(request_details.getAttribute('name').toString());
-//   modal_bg.classList.remove('close');
-// });
 
-// expand_more.onclick = function() {
-//     // alert(expand_more.classList.contains('active'))
-//     if(expand_more.classList.contains('active')){
-//       alert(true);
-//       expand_more.classList.add('active');
-//     }else{
-//       alert(false);
-//       expand_more.classList.remove('active');
-//     }
-// };
+const overflowContainer= document.getElementsByClassName('over-flow');
+const overflow = Array.from(overflowContainer);
+
+        // Check if text overflow is occurring
+if(overflowContainer){
+  overflow.forEach(element => {
+    element.addEventListener('input',()=>{
+    
+      if (element.scrollWidth > element.clientWidth) {
+        element.style.direction = 'rtl'; // Apply RTL direction
+        console.log('yes');
+    }else{
+        console.log('no');
+        element.style.direction = 'ltr'; // Apply RTL direction
+    }
+    });
+  });
+  // address2.addEventListener('input',()=>{
+    
+  //   if (address2.scrollWidth > address2.clientWidth) {
+  //     address2.style.direction = 'rtl'; // Apply RTL direction
+  //     console.log('yes');
+  // }else{
+  //     console.log('no');
+  //     address2.style.direction = 'ltr'; // Apply RTL direction
+  // }
+  // });
+  
+}
 
 if(select){
   for (var i = 0; i < select.length; i++) {
@@ -219,13 +234,14 @@ menuBtn.addEventListener('click',()=>{
   if(sideMenu.classList.contains('show-bar')){
     sideMenu.classList.remove('show-bar');
     sideMenu.classList.add('hide-bar');
+    project.classList.add('close');
   }else{
     sideMenu.classList.remove('hide-bar');
     sideMenu.classList.add('show-bar');
+    project.classList.remove('close');
   }
 });
-
-light_mode.addEventListener('click',()=>{
+if(light_mode){light_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
   light_mode.classList.remove('active');
@@ -236,9 +252,9 @@ light_mode.addEventListener('click',()=>{
   light_mode.classList.add('active');
   document.body.classList.remove('dark-mode-variables');
   }
-});
+});}
 
-dark_mode.addEventListener('click',()=>{
+if(dark_mode){dark_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
   light_mode.classList.remove('active');
@@ -249,7 +265,8 @@ dark_mode.addEventListener('click',()=>{
   light_mode.classList.add('active');
   document.body.classList.remove('dark-mode-variables');
   }
-});
+});}
+
 // config status section
 function adjustNextElementPosition(detailsElement) {
   const nextElement = detailsElement.nextElementSibling;
@@ -285,14 +302,16 @@ function formatID(inputField) {
   var inputValue = inputField.value.replace(/\D/g, ''); // Remove non-numeric characters
 
   // Add hyphen after the seventh digit
-  if (inputValue.length >= 10) {
-      inputValue = inputValue.substring(0, 10) + '-' + inputValue.substring(10);
+  if (inputValue.length >= 9 && inputValue.substring(9) != '-') {
+      inputValue = inputValue.substring(0, 9) + '-' + inputValue.substring(9);
   }
 
   // Remove the hyphen if the user deletes characters
-  if (inputField.value.length < 11) {
-    inputValue = inputValue.substring(0, 10);
+  if (inputField.value.length < 10) {
+    inputValue = inputValue.substring(0, 9);
   }
+
+
   inputField.value = inputValue;
 }
 

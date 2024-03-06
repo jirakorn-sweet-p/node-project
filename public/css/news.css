@@ -525,6 +525,22 @@ main {
     align-items: center;
 }
 
+.project {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.project.close{
+    display: none;
+}
+
+.project p{
+    font-weight: 500;
+}
+
 .title-header .add-btn:hover{
     background: var(--color-cp);
     color: var(--color-white);

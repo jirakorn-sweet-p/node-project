@@ -1761,6 +1761,22 @@ textarea.auto {
     stroke-dashoffset: 0;
 }
 
+.project {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.project.close{
+    display: none;
+}
+
+.project p{
+    font-weight: 500;
+}
+
 .checkbox-wrapper-4 .inline-svg {
     position: absolute;
     width: 0;

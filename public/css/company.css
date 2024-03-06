@@ -1299,3 +1299,19 @@ th.on-left{
     background-color: var(--color-white);
     color: var(--color-dark);
 }
+
+.project {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.project.close{
+    display: none;
+}
+
+.project p{
+    font-weight: 500;
+}

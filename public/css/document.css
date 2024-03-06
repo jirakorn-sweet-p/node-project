@@ -701,6 +701,22 @@ main {
     top: 25%;
 }
 
+.project {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.project.close{
+    display: none;
+}
+
+.project p{
+    font-weight: 500;
+}
+
 .modal-back{
     position: fixed;
     width: 100%;

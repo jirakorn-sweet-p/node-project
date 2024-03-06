@@ -497,6 +497,22 @@ main {
     box-shadow: var(--box-shadow2);
 }
 
+.project {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.project.close{
+    display: none;
+}
+
+.project p{
+    font-weight: 500;
+}
+
 .topic {
     width: 100%;
     height: 10%;
@@ -564,6 +580,12 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+}
+.images-area p{
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: var(--color-white);
 }
 
 .images-content .images-area .images-add {
@@ -704,6 +726,14 @@ main {
 
 .uploads-content input[type="text"]{
     padding-left: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    /* text-overflow: ellipsis; */
+    padding-right: 5px;
+}
+
+input.over-line{
+    direction: rtl;
 }
 
 .uploads-content a {

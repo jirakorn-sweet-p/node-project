@@ -1524,6 +1524,7 @@ input[type=file]::file-selector-button {
     transition: background .2s ease-in-out;
 }
 
+
 input[type=file]::file-selector-button:hover {
     background: #0d45a5;
 }
@@ -1542,6 +1543,22 @@ input[type=file]::file-selector-button:hover {
 .modal#modal3 h2{
     font-size: 1.2rem;
     margin-top: 0.2rem;
+}
+
+.project {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.project.close{
+    display: none;
+}
+
+.project p{
+    font-weight: 500;
 }
 
 h2 p{

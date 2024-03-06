@@ -2,6 +2,7 @@ const menuBtn = document.getElementById('menu-btn');
 const sideMenu = document.getElementById('left-bar');
 const light_mode = document.getElementById('light-mode');
 const dark_mode = document.getElementById('dark-mode');
+const project = document.getElementById('project');
 
 //modal
 const modal_bg = document.getElementById('modal-back');
@@ -416,9 +417,11 @@ menuBtn.addEventListener('click',()=>{
   if(sideMenu.classList.contains('show-bar')){
     sideMenu.classList.remove('show-bar');
     sideMenu.classList.add('hide-bar');
+    project.classList.add('close');
   }else{
     sideMenu.classList.remove('hide-bar');
     sideMenu.classList.add('show-bar');
+    project.classList.remove('close');
   }
 });
 
@@ -484,10 +487,11 @@ function checkInput(inputField) {
 }
 
 function formatID(inputField) {
+  
   var inputValue = inputField.value.replace(/\D/g, ''); // Remove non-numeric characters
 
   // Add hyphen after the seventh digit
-  if (inputValue.length > 9) {
+  if (inputValue.length >= 9 && inputValue.substring(9) != '-') {
       inputValue = inputValue.substring(0, 9) + '-' + inputValue.substring(9);
   }
 
@@ -495,6 +499,8 @@ function formatID(inputField) {
   if (inputField.value.length < 10) {
     inputValue = inputValue.substring(0, 9);
   }
+
+
   inputField.value = inputValue;
 }
 

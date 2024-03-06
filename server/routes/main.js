@@ -274,18 +274,18 @@ const AddUserByDocs = async (req, res, next) => {
                 } else if (await users.findOne({ 'username': element[2] })) {
                     has_err[index] = 'อีเมลถูกใช้ไปแล้ว';
                 } else {
-                    const std_add = new student_info({ student_code: req.body.std_id, name: element[1] , student_code: element[0] });
-                    // const std_account = {
-                    //     username: element[2],
-                    //     password: element[0].replace('-', ''),
-                    //     role: role,
-                    //     student_info: std_add,
-                    //     student_code: element[0]
-                    // } 
+                    const std_add = new student_info({ student_code: req.body.std_id, name: element[1] , student_code: element[0],email:element[2] });
+                    const std_account = {
+                        username: element[2],
+                        password: element[0].replace('-', ''),
+                        role: role,
+                        student_info: std_add,
+                        student_code: element[0]
+                    } 
                     has_err[index] = 'เพิ่มสำเร็จ';
                     await std_add.save(); 
                         // Create the user test
-                    // await users.create(std_account);
+                    await users.create(std_account);
                 }
             } else {
                 has_err[index] = 'header';
@@ -883,7 +883,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1059,7 +1059,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1163,7 +1163,7 @@ router.get('/document',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1217,7 +1217,7 @@ router.get('/news',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1274,7 +1274,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1485,7 +1485,7 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1518,7 +1518,7 @@ router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user.image){
         image = user.image
         name = user.name
@@ -1642,7 +1642,7 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
     }
     var image = 'profile-1.jpg';
     
-    var name = dat.username;
+    var name = user.name;
     if(!user){
         req.session.firstlogin = true;
     }
@@ -2464,7 +2464,7 @@ router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
         req.session.firstlogin = true;
     }
@@ -2638,7 +2638,7 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -2803,7 +2803,7 @@ router.get('/upload-docs',redirectNotAuth,async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
         req.session.firstlogin = true;
     }
@@ -2917,7 +2917,7 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -3033,7 +3033,7 @@ router.get('/news/:id',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -3183,7 +3183,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user){
 
         req.session.firstlogin = true;
@@ -3455,7 +3455,7 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -3784,7 +3784,7 @@ router.get('/upload-calendar',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -3897,7 +3897,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -4294,7 +4294,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user){
 
         req.session.firstlogin = true;
@@ -4696,7 +4696,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -5093,7 +5093,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -5924,7 +5924,7 @@ router.get('/uploads/:file',redirectNotAuth, async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(!user){
 
         req.session.firstlogin = true;
@@ -5998,7 +5998,7 @@ router.get('/account',redirectNotAuth,async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user){
         // image = user.image
         name = user.name
@@ -6163,7 +6163,7 @@ router.get('/account/:id',redirectNotAuth,async (req,res) => {
 
     }
     var image = 'profile-1.jpg';
-    var name = dat.username;
+    var name = user.name;
     if(user){
         // image = user.image
         name = user.name
@@ -6231,11 +6231,6 @@ router.post('/account/add',redirectNotAuth,async (req,res) => {
     
 
     try {
-
-        
-        
-            
-
             //check has used
             if(await student_info.findOne({'student_code':req.body.std_id})){
                 req.session.user_has_used = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
@@ -6246,7 +6241,7 @@ router.post('/account/add',redirectNotAuth,async (req,res) => {
                 if (req.body.role == '1') {
                     role = 'student'
                         // Create the user
-                    const std_add = new student_info({student_code: req.body.std_id,name: req.body.name});
+                    const std_add = new student_info({student_code: req.body.std_id,name: req.body.name,email:req.body.username});
                     await std_add.save();
 
                     await users.create({
@@ -6259,7 +6254,7 @@ router.post('/account/add',redirectNotAuth,async (req,res) => {
                     }else if (req.body.role == '2') {
                         role = 'teacher';
                         var code = 'xxxxxxxxx-x'
-                        const std_add = new student_info({student_code: code,name: req.body.name});
+                        const std_add = new student_info({student_code: code,name: req.body.name,email:req.body.username});
                         await std_add.save(); 
                         // Create the user
                         await users.create({
