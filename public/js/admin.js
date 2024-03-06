@@ -7,7 +7,7 @@ const add_by_doc= document.getElementById('add-approval-docs');
 const all_modal = document.querySelectorAll('.modal');
 const sort = document.getElementById('sort');
 const stdid = document.getElementById('stdid2');
-
+const dump = document.getElementById('dump');
 const pop= document.getElementsByClassName('pop');
 const all_pop = Array.from(pop); 
 
@@ -60,8 +60,10 @@ if (sort) {
 
             if (sort.value !=  '1') {
                 stdid.classList.add("close");
+                dump.value = 'hide';
             }else{
                 stdid.classList.remove("close");
+                dump.value = '';
             }
         });
     }
