@@ -39,17 +39,20 @@
             <div class="search">
                 <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
             </div>
-
+            <% if ( requests.length != 0) { %>
             <div class="add-btn success" id="add-approval-docs">
-                <a>ออกหนังสือ</a>
-                <span class="material-icons-sharp">
-                    upload_file
-                </span>
-            </div>
+                            <a>ออกหนังสือ</a>
+                            <span class="material-icons-sharp">
+                                upload_file
+                            </span>
+                        </div>
+                <% } %>
+            
 
         </div>
         <div class="header-main part2">
-            <div class="checkbox-wrapper-10">
+            <% if ( requests.length != 0) { %>
+             <div class="checkbox-wrapper-10">
                 <input class="tgl tgl-flip" id="cb5" type="checkbox" checked />
                 <label class="tgl-btn" id="cbx" data-tg-off="ยกเลิก" data-tg-on="เลือกออกหนังสือ" for="cb5"></label>
             </div>
@@ -60,10 +63,12 @@
                     upload_file
                 </span>
             </div>
+            <% } %>
+            
         </div>
         <div class="modal close" id="approval-docs-modal">
             <% if (requests.length>0) { %>
-                <form action="/docs-approval-pop" target="_blank" method="post" name="approvalDocs" enctype="/submit-table">
+                <form action="/docs-approval-pop" method="post" name="approvalDocs" enctype="/submit-table" onsubmit="redirectToDocsWaiting()">
                     <% var cm=[] %>
                         <% requests.forEach((element,index)=> { %>
                             <% if (!cm.includes(element.company_info.company.name)) { %>

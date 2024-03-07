@@ -3,20 +3,27 @@
         <div class="header-main">
             <h2>สถานประกอบการ-หน่วยงานที่เคยรับนักศึกษาฝึกงาน</h2>
             <div class="sort">
-                <select>
-                    <option selected value="0">จัดเรียงตาม</option>
-                    <option value="1">ชื่อ</option>
-                    <option value="2">สถานที่ฝึกงาน</option>
-                    <option value="3">จังหวัด</option>
+                <select id="sort" onchange="handleSortChange(this)">
+                    <option disabled value="0">จัดเรียงตาม</option>
+                    <% if (sort == '1') { %>
+                        <option selected value="1">ชื่อ</option>
+                    <% } else { %>
+                        <option value="1">ชื่อ</option>
+                    <% } %>
+                    <% if (sort == '2') { %>
+                        <option selected value="2">จังหวัด</option>
+                    <% } else { %>
+                        <option value="2">จังหวัด</option>
+                    <% } %>
                 </select>
             </div>
 
             <div class="search">
-                <input type="text" placeholder="ค้นหา">
+                <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
             </div>
         </div>
         <div class="table">
-            <table class="styled-table">
+            <table class="styled-table" id="styled-table">
                 <thead>
                     <tr>
                         <th>บริษัท/หน่วยงาน</th>
@@ -26,9 +33,14 @@
                         <th>ตำแหน่งที่เคยรับ</th>
                         <th>จำนวนคนที่ฝึก</th>
                     </tr>
+                    
                 </thead>
                 <tbody>
-                    <% all_companies.forEach((element,index) => { %>
+                    <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)) %>
+                    <% if (sort == 2) { %>
+                        <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)) %>
+                    <% } %>
+                    <% ojb.forEach((element,index) => { %>
                         <tr>
                            <td><%= element.name %></td>
                            <td><%= element.tel %></td>

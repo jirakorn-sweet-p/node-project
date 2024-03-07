@@ -11,7 +11,6 @@ const modal3 = document.getElementById('modal3');
 const add_user= document.getElementById('add-user');
 const add_by_doc= document.getElementById('add-approval-docs');
 const all_modal = document.querySelectorAll('.modal');
-const sort = document.getElementById('sort');
 const stdid = document.getElementById('stdid2');
 const dump = document.getElementById('dump');
 const pop= document.getElementsByClassName('pop');
@@ -65,27 +64,6 @@ if(modal_bg2){
   }
 
 
-if (sort) {
-    
-    if (sort) {
-        if (sort.value !=  '1') {
-            stdid.classList.add("close");
-        }else{
-            stdid.classList.remove("close");
-        }
-        // console.log(stdid.classList);
-        sort.addEventListener('change', () => {
-
-            if (sort.value !=  '1') {
-                stdid.classList.add("close");
-                dump.value = 'hide';
-            }else{
-                stdid.classList.remove("close");
-                dump.value = '';
-            }
-        });
-    }
-}
 if(modal_bg){
     modal_bg.addEventListener('click',()=>{
     modal_bg.classList.add('close');

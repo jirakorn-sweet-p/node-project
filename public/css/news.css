@@ -990,3 +990,7 @@ h2 p{
     height: 100%;
     margin: 0;
 }
+
+span.cp {
+    color: var(--color-cp);
+}

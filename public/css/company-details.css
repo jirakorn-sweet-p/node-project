@@ -1355,3 +1355,7 @@ td .danger a {
 .project p{
     font-weight: 500;
 }
+
+span.cp {
+    color: var(--color-cp);
+}

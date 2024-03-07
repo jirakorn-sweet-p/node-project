@@ -3,7 +3,7 @@ const sideMenu = document.getElementById('left-bar');
 const light_mode = document.getElementById('light-mode');
 const dark_mode = document.getElementById('dark-mode');
 const project = document.getElementById('project');
-
+const sort = document.getElementById('sort');
 const modal_bg = document.getElementById('modal-back');
 const modal = document.getElementById('modal');
 const all_modal = document.querySelectorAll('.modal');
@@ -77,7 +77,27 @@ if(overflowContainer){
   // });
   
 }
+if (sort) {
+    
+  if (sort) {
+      if (sort.value !=  '1') {
+          stdid.classList.add("close");
+      }else{
+          stdid.classList.remove("close");
+      }
+      // console.log(stdid.classList);
+      sort.addEventListener('change', () => {
 
+          if (sort.value !=  '1') {
+              stdid.classList.add("close");
+              dump.value = 'hide';
+          }else{
+              stdid.classList.remove("close");
+              dump.value = '';
+          }
+      });
+  }
+}
 if(select){
   for (var i = 0; i < select.length; i++) {
     let comp = company[i].textContent;
@@ -364,4 +384,22 @@ function formatGPA(inputField) {
 
 }
   inputField.value = inputValue;
+}
+
+function handleSortChange(selectElement) {
+  var selectedValue = selectElement.value;
+
+  // Redirect to the desired URL based on the selected value
+  switch (selectedValue) {
+      case '1':
+          window.location.href = '/company';
+          break;
+      case '2':
+          window.location.href = '/company?sort=2';
+          break;
+      default:
+          window.location.href = '/company';
+          break;
+          // Handle the default case or do nothing
+  }
 }

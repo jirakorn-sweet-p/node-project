@@ -1402,6 +1402,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         user: dat.role,
         content:"../layouts/company.ejs"   , 
         bar5: "active",
+        search:"/js/searching_company_student.js",
         profile:image,
         name:name,
         first:req.session.firstlogin
@@ -1414,7 +1415,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         .skip(perPage*page-perPage)
         .limit(perPage)
         .exec();
-
+        var sort = req.query.sort || 1;
         const count = await position.countDocuments({});
         let allPage = Math.ceil(count/perPage);
         const nextPage = parseInt(page)+1;
@@ -1438,7 +1439,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         const hasNextPage2 = nextPage2 <= allPage2;
         
         const data2 =  await request_ser.aggregate([
-            { $sort: { update_at: 1 } },
+            { $sort: { name: 1 } },
             { $match: { status: '1' } },
             { $match: { approval_document_status: '1' } },
             { $match: { accepted_company_status: '1' } },
@@ -1588,7 +1589,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         intern.forEach((element,index) => {
             found_data.push(element.company_info.company._id.toString());
         });
-    res.render('index', {locals,all_companies,all_position,all_pages2:allPage2,current2:page2,intern:found_data});
+    res.render('index', {locals,all_companies,all_position,all_pages2:allPage2,current2:page2,intern:found_data,sort});
 });
 
 router.get('/calendar',redirectNotAuth,async (req,res) => {

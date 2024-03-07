@@ -1315,3 +1315,7 @@ th.on-left{
 .project p{
     font-weight: 500;
 }
+
+span.cp {
+    color: var(--color-cp);
+}

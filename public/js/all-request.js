@@ -667,3 +667,7 @@ function handleSortChange4(selectElement) {
   }
 }
 
+function redirectToDocsWaiting() {
+  window.location.href = "/docs-waiting";
+  return false; // Prevent the form from submitting through the normal route
+}

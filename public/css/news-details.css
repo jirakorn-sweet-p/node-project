@@ -1152,3 +1152,7 @@ form {
 .title p{
     margin-right: 2rem;
 }
+
+span.cp {
+    color: var(--color-cp);
+}

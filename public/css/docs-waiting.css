@@ -2077,3 +2077,7 @@ span.danger {
 .styled-table thead tr.no-data th{
     text-align: center;
 }
+
+span.cp {
+    color: var(--color-cp);
+}
