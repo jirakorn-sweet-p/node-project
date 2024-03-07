@@ -15,9 +15,28 @@ const stdid = document.getElementById('stdid2');
 const dump = document.getElementById('dump');
 const pop= document.getElementsByClassName('pop');
 const all_pop = Array.from(pop); 
+const sort = document.getElementById('sort2');
 
 const deleteLink = document.querySelectorAll('#deleteLink');
 const Link = Array.from(deleteLink);  
+
+  if (sort) {
+      if (sort.value !=  '1') {
+          stdid.classList.add("close");
+      }else{
+          stdid.classList.remove("close");
+      }
+      sort.addEventListener('change', () => {
+
+          if (sort.value !=  '1') {
+              stdid.classList.add("close");
+              dump.value = 'hide';
+          }else{
+              stdid.classList.remove("close");
+              dump.value = '';
+          }
+      });
+  }
 
 menuBtn.addEventListener('click',()=>{
     // sidebar hide or show

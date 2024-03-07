@@ -57,7 +57,7 @@
             </div>
             <div class="datas selection-user">
                 <div class="sort">
-                <select id="sort" name="role">
+                <select id="sort2" name="role">
                     <option disabled value="">ผู้ใช้</option>
                     <option selected value="1">นักศึกษา</option>
                     <option value="2">เจ้าหน้าที่</option>
@@ -69,12 +69,12 @@
                 <h2>ชื่อนาม-สกุล</h2>
                 <input type="text" placeholder="ชื่อนาม-สกุล" name="name" required>
             </div>
-            <% if (sort != 2) { %>
+
              <div class="datas close" id="stdid2">
                 <h2>รหัสนักศึกษา</h2>
                 <input type="text" id="dump" placeholder="รหัสนักศึกษา" oninput="formatID(this)" maxlength="11" name="std_id" required>
             </div>
-            <% } %>
+
             
             
             <div class="submit">
