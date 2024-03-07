@@ -232,7 +232,7 @@
                     <th>ชื่อนักศึกษา</th>
                     <th>หน่วยงาน/บริษัท</th>
                     <th>ช่วงเวลาฝึกงาน</th>
-                    <th>การออกหนังสือ</th>
+                    <th class="midle">การออกหนังสือ</th>
                     <th>เพิ่มเติม</th>
                 </tr>
                 <% if (requests.length == 0) { %>
@@ -995,7 +995,7 @@
                         <td>
                             <%= element.company_info.company.name %>
                         </td>
-                        <td class="midle">
+                        <td>
                             <%= new Date(element.company_info.start_intern).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>
                             ถึง
                             <%= new Date(element.company_info.end_intern).toLocaleString('th-TH', { year: 'numeric', month: 'numeric', day: 'numeric' }); %>

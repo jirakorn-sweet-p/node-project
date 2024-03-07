@@ -11,7 +11,15 @@
             <div class="profile">
                 <div class="info">
                     <p>สวัสดี , <b><%= locals.name %></b></p>
-                    <small class="text-muted"><%= locals.user %></small>
+                    <small class="text-muted">
+                        <% if (locals.user=='student') { %>
+                            นักศึกษา
+                            <% } else if (locals.user=='teacher') { %>
+                                อาจารย์/บุคลากร
+                                <% } else if (locals.user=='admin') { %>
+                                    แอดมิน
+                        <% } %>
+                    </small>
                 </div>
                 <div class="profile-photo">
                     <img src="/uploads/<%= locals.profile  %>">

@@ -557,7 +557,7 @@ main {
     flex-direction: column;
     gap: 1.5rem;
     align-items: center;
-    overflow-y: hidden;
+    overflow-y: visible;
 }
 
 .card-request{

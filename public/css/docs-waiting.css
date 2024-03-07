@@ -891,6 +891,7 @@ main {
 .styled-table th{
     text-align: center;
 }
+.styled-table th ,
 .styled-table td {
     text-align: left;
 }
@@ -2071,4 +2072,8 @@ span.danger {
 .table{
     width: 100%;
     min-height: 40rem;
+}
+
+.styled-table thead tr.no-data th{
+    text-align: center;
 }

@@ -232,7 +232,7 @@
                     <th>ชื่อนักศึกษา</th>
                     <th>หน่วยงาน/บริษัท</th>
                     <th>วิธีส่งเอกสาร</th>
-                    <th>การออกหนังสือ</th>
+                    <th class="midle">การออกหนังสือ</th>
                     <th>เพิ่มเติม</th>
                 </tr>
                 <% if (requests.length == 0) { %>
@@ -934,7 +934,7 @@
                         <td>
                             <%= element.company_info.company.name %>
                         </td>
-                        <td class="midle">
+                        <td>
                             <% if (element.request_info.doc_approve_company==1) { %>
                                 รับไปส่งเอง
                                 <% } else if(element.request_info.doc_approve_company==2) { %>

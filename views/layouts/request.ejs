@@ -15,26 +15,24 @@
 <!-- END MODAL -->
 <main>
     <div class="main">
-        <div class="add-request">
+        <% if (permis) { %>
+         <div class="add-request">
             <a href="/request/form">
                 <button class="boder-add-request">
                     <span class="material-icons-sharp">add_circle</span>
                     <span>ยื่นคำร้อง</span>
                 </button>
             </a>
-                
-            
-
         </div>
-        <!-- <% if (loggedIn!=null) { %>
-            <a href="/user/logout"><%= loggedIn %>true</a>
-        <% } %> -->
+        <% } %>
+        
+
         <h2>คำร้องล่าสุด</h2>
         <div class="request-section">
             <% if (data.length !=0) { %>
 
                 <% data.forEach((element,index)=> { %>
-                    <a href="/request-status">
+                    <a href="/request-status/<%= element._id %>">
                         <div class="card-request">
                             <div class="request-details">
                                 <h2>ยื่นคำร้องขอฝึกงาน</h2>
@@ -43,7 +41,6 @@
                                         <h3>บริษัท</h3>
                                         <h3 class="namecomp">
                                             <%= element.company_info.company.name %>
-                                                <%= element.company_info.company.name %>
                                         </h3>
                                     </div>
                                     <div class="pos">
@@ -72,7 +69,12 @@
                                             <div class="block <%= status[index][0] %>"></div>
                                             <div class="block <%= status[index][1] %>"></div>
                                             <div class="block <%= status[index][2] %>"></div>
-                                            <div class="block <%= status[index][3] %>"></div>
+                                            <% if (status[index][1] == 'status-pass' &&status[index][2] == 'status-pass') { %>
+                                                <div class="block <%= status[index][3] %>"></div>
+                                                <% } else { %>
+                                                 <div class="block"></div>
+                                            <% } %>
+                                            
                                             <div class="block <%= status[index][4] %>"></div>
                                         </div>
                                     </div>
@@ -91,12 +93,12 @@
                                                 <span class="material-icons-sharp">
                                                     hourglass_empty
                                                 </span>
-                                                <% } else if(status[index].includes('2')) { %>
+                                                <% } else if(status[index][0]=='status-fail') { %>
                                                     <div class="request-status fail">
                                                         <span class="material-icons-sharp">
                                                             cancel
                                                         </span>
-                                                        <% } else if(element.certificate_info.status=='2' ) { %>
+                                                        <% } else if(element.certificate_info.status=='status-fail' ) { %>
                                                             <div class="request-status fail">
                                                                 <span class="material-icons-sharp">
                                                                     cancel
@@ -119,7 +121,7 @@
                                                                                         !='2' ) { %>
                                                                                         รอส่งเอกสารสำเร็จฝึกงาน
                                                                                         <% } else
-                                                                                            if(status[index].includes('2'))
+                                                                                            if(status[index][0]=='status-fail')
                                                                                             { %>
                                                                                             คำร้องไม่ผ่าน
                                                                                             <% } else

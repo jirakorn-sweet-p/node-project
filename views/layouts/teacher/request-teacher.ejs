@@ -23,7 +23,7 @@
                     <th>ตำแหน่ง</th>
                     <th>หน่วยงาน/บริษัท</th>
                     <th>ช่วงเวลาฝึกงาน</th>
-                    <th>การอนุมัติ</th>
+                    <th class="on-center">การอนุมัติ</th>
                     <th>เพิ่มเติม</th>
                 </tr>
                 <% if (requests.length == 0) { %>
@@ -569,7 +569,7 @@
                                                     </div>
                                                     <div class="approved">
                                                         <div class="comment">
-                                                            <h3>comments</h3>
+                                                            <h3>ความคิดเห็น</h3>
                                                             <textarea name="comment3" id="" cols="30"
                                                                 rows="10"><%= element.request_info.comment %></textarea>
                                                         </div>
@@ -624,7 +624,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="submit">
-                                                    <button type="submit">อัพเดต</button>
+                                                    <button type="submit">อัปเดต</button>
                                                 </div>
                                             </div>
                                         </form>

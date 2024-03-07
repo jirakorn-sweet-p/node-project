@@ -109,8 +109,8 @@
                         <!-- <input type="text" placeholder="ระดับการศึกษา" name="lv"> -->
                         <div class="border-uploads">
                             <select name="lv" required>
-                                <option disabled value="0">เลือกชั้นปี</option>
-                                <option selected value="1">ชั้นปีที่ 1</option>
+                                <option disabled selected value="">เลือกชั้นปี</option>
+                                <option value="1">ชั้นปีที่ 1</option>
                                 <option value="2">ชั้นปีที่ 2</option>
                                 <option value="3">ชั้นปีที่ 3</option>
                                 <option value="4">ชั้นปีที่ 4</option>
@@ -123,7 +123,7 @@
                         <!-- <input type="text" placeholder="คณะ" name="factory"> -->
                         <div class="border-uploads">
                             <select name="factory" required>
-                                <option disabled value="0">คณะ</option>
+                                <option disabled value="">คณะ</option>
                                 <option value="1" selected>วิทยาลัยการคอมพิวเตอร์</option>
                             </select>
                         </div>
@@ -134,8 +134,8 @@
                         <!-- <input type="text" placeholder="สาขาวิชา" name="department"> -->
                         <div class="border-uploads">
                             <select name="department" required>
-                                <option disabled  value="0">สาขาวิชา</option>
-                                <option value="1" selected>วิทยาลัยการคอมพิวเตอร์ ภาคปกติ</option>
+                                <option disabled selected value="">สาขาวิชา</option>
+                                <option value="1" >วิทยาลัยการคอมพิวเตอร์ ภาคปกติ</option>
                                 <option value="2" >วิทยาลัยการคอมพิวเตอร์ ภาคพิเศษ</option>
                             </select>
                         </div>
@@ -193,7 +193,7 @@
                     <div class="border-input">
                         <!-- <input type="text" name="position" required> -->
                         <select name="position" required>
-                            <option disabled value="0">เลือกตำแหน่ง</option>
+                            <option disabled selected value="">เลือกตำแหน่ง</option>
                             <% posit.forEach(element => { %>
                              <option value="<%= element.name.toLowerCase() %>"><%= element.name.toLowerCase() %></option>
                             <% }) %>
@@ -341,8 +341,8 @@
                     <a>รูปแบบการฝึกงาน <span></span></a>
                     <div class="border-uploads">
                         <select name="working_style" required>
-                            <option disabled value="0">รูปแบบการฝึกงาน</option>
-                            <option selected value="1">Onsite</option>
+                            <option disabled selected value="">รูปแบบการฝึกงาน</option>
+                            <option value="1">Onsite</option>
                             <option value="2">Work form home</option>
                             <option value="3">Hybrid</option>
                         </select>
@@ -353,8 +353,8 @@
                         <span></span></a>
                     <div class="border-uploads">
                         <select name="acceptance" required>
-                            <option disabled value="0">เลือกวิธีส่งเอกสาร</option>
-                            <option selected value="1">มารับเอง</option>
+                            <option disabled selected value="">เลือกวิธีส่งเอกสาร</option>
+                            <option value="1">มารับเอง</option>
                             <option value="2">ให้เจ้าหน้าที่ส่งตามที่อยู่</option>
                         </select>
                     </div>

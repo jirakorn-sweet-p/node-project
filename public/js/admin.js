@@ -129,3 +129,21 @@ if(modal_bg){
             // Handle the default case or do nothing
     }
   }
+
+  function formatID(inputField) {
+  
+    var inputValue = inputField.value.replace(/\D/g, ''); // Remove non-numeric characters
+  
+    // Add hyphen after the seventh digit
+    if (inputValue.length >= 9 && inputValue.substring(9) != '-') {
+        inputValue = inputValue.substring(0, 9) + '-' + inputValue.substring(9);
+    }
+  
+    // Remove the hyphen if the user deletes characters
+    if (inputField.value.length < 10) {
+      inputValue = inputValue.substring(0, 9);
+    }
+  
+  
+    inputField.value = inputValue;
+  }

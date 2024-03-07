@@ -625,7 +625,6 @@ router.post('/user/login',redirectIfAuth, async (req, res) => {
         content: "../layouts/login.ejs",
         bar1: "active"
     };
-
     const { username, password } = req.body;
     try {
         const user = await users.findOne({ username: username });
@@ -907,7 +906,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     try{
         const data = await request_ser.aggregate([
         { $match: { student_info: user._id } },
-        { $sort: { status: -1 } },
+        { $sort: { update_at: -1 } },
         {
             $lookup: {
                 from: 'studentinfos',
@@ -989,12 +988,21 @@ router.get('/request',redirectNotAuth, async (req,res) => {
                 status=[];
             }
         }
-        console.log(data.length);
-        res.render('index', {locals,data,status:all_status});
+        var permis = false;
+        if(data.length == 0){
+            permis = true;
+        }else if(data[data.length - 1].status == '2' ){
+            permis = true;
+        }else{
+            permis = false;
+        }
+
+        res.render('index', {locals,data,status:all_status,permis});
     }catch(error){
         console.log(error);
         const data = null;
         const all_status = null;
+        var permis = false;
         res.render('index', {locals,data,status:all_status});
     }
 });
@@ -1084,6 +1092,111 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
         const dat = (await users.find({'_id':loggedIn})).at(0);
         const data = (await student_info.find({'_id':dat.student_info})).at(0);
         const temp = (await request_ser.find({'student_info':data._id})).at(0);
+
+        const status = await request_ser.aggregate([
+            { $match: { _id: temp._id } },
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
+            }
+        ]).exec();
+        // find by username : student_id
+        const request_doc = (await request_info.find({'student_code':data.student_code})).at(0);
+        const company = (await company_info.find({'student_code':data.student_code})).at(0);
+        const company_details = (await companies.find({'_id':company.company})).at(0);
+        res.render('index', {locals,data,company,request_doc,company_details,status:status.at(0)});
+    }catch(error){
+        console.log(error);
+        const data = null;
+        const company = null;
+        const request_doc = null;
+        const company_details = null;
+        res.render('index', {locals,data,company,request_doc,company_details});
+    }
+});
+
+router.get('/request-status/:id',redirectNotAuth,async (req,res) => {
+    const dat = await users.findOne({ '_id': req.session.userId });
+    var user = new Object();
+    if(dat.role == "student"){
+        user = await student_info.findOne({ '_id': dat.student_info });
+    }
+    var image = 'profile-1.jpg';
+    var name = user.name;
+    if(user.image){
+        image = user.image
+        name = user.name
+    }else{
+        req.session.firstlogin = true;
+    }
+    const locals = {
+        title : "request-status",
+        description:"Internship request",
+        styles: "/css/status.css",
+        js: "/js/base.js",
+        user: dat.role,
+        status: true,
+        content:"../layouts/request-status-history.ejs",
+        bar2: "active",
+        profile:image,
+        name:name,
+        first:req.session.firstlogin
+    }
+    
+    try{
+
+        const dat = (await users.find({'_id':loggedIn})).at(0);
+        const data = (await student_info.find({'_id':dat.student_info})).at(0);
+        const temp = (await request_ser.find({'_id':req.params.id})).at(0);
 
         const status = await request_ser.aggregate([
             { $match: { _id: temp._id } },
@@ -6232,43 +6345,44 @@ router.post('/account/add',redirectNotAuth,async (req,res) => {
 
     try {
             //check has used
-            if(await student_info.findOne({'student_code':req.body.std_id})){
-                req.session.user_has_used = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
-            }else if(await users.findOne({'username':req.body.username})){
-                req.session.email_has_used = 'อีเมลถูกใช้ไปแล้ว';
-            }else{
-                var role = '';
-                if (req.body.role == '1') {
-                    role = 'student'
-                        // Create the user
-                    const std_add = new student_info({student_code: req.body.std_id,name: req.body.name,email:req.body.username});
-                    await std_add.save();
 
-                    await users.create({
-                        username: req.body.username,
-                        password: req.body.password,
-                        role: role,
-                        student_info:std_add,
-                        student_code: req.body.std_id
-                    });
-                    }else if (req.body.role == '2') {
-                        role = 'teacher';
-                        var code = 'xxxxxxxxx-x'
-                        const std_add = new student_info({student_code: code,name: req.body.name,email:req.body.username});
-                        await std_add.save(); 
-                        // Create the user
-                        await users.create({
-                        username: req.body.username,
-                        password: req.body.password,
-                        student_info:std_add,
-                        role: role,
-                    });
-                    }else{
+                if (await student_info.findOne({ 'student_code': req.body.std_id })) {
+                    req.session.acc_pass = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
+                } else if (await users.findOne({ 'username': req.body.username })) {
+                    req.session.acc_pass = 'อีเมลถูกใช้ไปแล้ว';
+                } else {
+                    var role = '';
+                    if (req.body.role == '1') {
                         role = 'student'
-                    }
-                req.session.acc_pass = 'สร้างผู้ใช้สำเร็จ';
-                
-            }
+                            // Create the user
+                        const std_add = new student_info({student_code: req.body.std_id,name: req.body.name,email:req.body.username});
+                        await std_add.save();
+
+                        await users.create({
+                            username: req.body.username,
+                            password: req.body.password,
+                            role: role,
+                            student_info:std_add,
+                            student_code: req.body.std_id
+                        });
+                        }else if (req.body.role == '2') {
+                            role = 'teacher';
+                            var code = 'xxxxxxxxx-x'
+                            const std_add = new student_info({student_code: code,name: req.body.name,email:req.body.username});
+                            await std_add.save(); 
+                            // Create the user
+                            await users.create({
+                            username: req.body.username,
+                            password: req.body.password,
+                            student_info:std_add,
+                            role: role,
+                        });
+                        }else{
+                            role = 'student'
+                        }
+                    req.session.acc_pass = 'สร้างผู้ใช้สำเร็จ';
+                }
+
         res.redirect('/account');
     } catch (error) {
         // Handle validation errors and log the error
@@ -6283,29 +6397,51 @@ router.post('/account/update/:id',redirectNotAuth,async (req,res) => {
     try {
         const this_id = req.params.id;
         const this_user = await users.findOne({'_id':this_id});
-
-        if (req.body.role == '1'){
-            this_user.role = 'student';
-        }else if(req.body.role == '2'){
-            this_user.role = 'teacher';
-        }
-        this_user.username =req.body.username;
-        this_user.password =req.body.password;
         const std_add = await student_info.findOne({ '_id': this_user.student_info });
+       
+        const checkID = await student_info.findOne( { 'student_code': { $in: req.body.std_id, $ne: std_add.student_code } });
+        const checkUsername = await users.findOne({ 'username': { $in: req.body.username, $ne: this_user.username } });
+        
+        if (checkID) {
+            req.session.acc_pass = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
+        } else if (checkUsername) {
+            req.session.acc_pass = 'อีเมลถูกใช้ไปแล้ว';
+        } else {
+            if (req.body.role == '1'){
+                this_user.role = 'student';
+            }else if(req.body.role == '2'){
+                this_user.role = 'teacher';
+            }
+            this_user.username =req.body.username;
+            if(this_user.password != req.body.password){
+                console.log('change !!');
+                this_user.password = req.body.password;
+            }
+            
 
+            if(std_add.name != req.body.name){
+                std_add.name = req.body.name;
+            }
+            if(std_add.student_code != req.body.std_id){
+                std_add.student_code = req.body.std_id;
+            }
+            if(std_add.email != req.body.username){
+                std_add.email = req.body.username;
+            }
+            
 
-        std_add.name = req.body.name;
+            await std_add.save();
+            await this_user.save()
+            req.session.acc_pass = 'อัปเดตสำเร็จ';
+        }
 
-        await std_add.save();
-        await this_user.save()
-        req.session.acc_pass = 'อัปเดตสำเร็จ';
-        res.redirect(dir);
     } catch (error) {
         // Handle validation errors and log the error
         console.error(error);
         req.session.acc_pass = 'อัปเดตไม่สำเร็จ';
-        res.redirect(dir);
+        
     }
+    res.redirect(dir);
 });
 
 router.post('/account/delete/:id',redirectNotAuth,async (req,res) => {
