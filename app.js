@@ -17,7 +17,7 @@ const connectDB = require('./server/config/db');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const hostname = 'request.service';
+// const hostname = 'request.service';
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(flash());
@@ -68,10 +68,10 @@ app.set('view engine', 'ejs');
 app.use('/', require('./server/routes/main'));
 // app.use('/', require('./server/routes/admin'));
 
-// app.listen(PORT, ()=> {
-//   console.log(`App listening on port ${PORT}`);
-// });
-
-app.listen(PORT, hostname, () => {
-  console.log(`Server is running at http://${hostname}:${PORT}`);
+app.listen(PORT, ()=> {
+  console.log(`App listening on port ${PORT}`);
 });
+
+// app.listen(PORT, hostname, () => {
+//   console.log(`Server is running at http://${hostname}:${PORT}`);
+// });

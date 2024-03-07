@@ -1545,6 +1545,10 @@ input[type=file]::file-selector-button:hover {
     margin-top: 0.2rem;
 }
 
+span.cp {
+    color: var(--color-cp);
+}
+
 .project {
     display: flex;
     justify-content: center;
