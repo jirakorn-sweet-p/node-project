@@ -606,6 +606,7 @@ main {
     overflow-wrap: break-word;
     word-break: break-all;
     overflow: hidden;
+    margin-left: 4%;
 }
 
 .details-section div h3.start{

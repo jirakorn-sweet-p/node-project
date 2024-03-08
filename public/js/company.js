@@ -27,6 +27,7 @@ if (ok) { // Check if the element is found
   ok.addEventListener('click', () => {
     modal_alert.classList.add('close');
     modal_bg.classList.add('close');
+    window.location.href = '/all-companys';
   });
 }
 if(add_company){
@@ -87,7 +88,7 @@ menuBtn.addEventListener('click',()=>{
     project.classList.remove('close');
   }
 });
-
+if(light_mode){
 light_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
@@ -100,8 +101,10 @@ light_mode.addEventListener('click',()=>{
   document.body.classList.remove('dark-mode-variables');
   }
 });
+}
 
-dark_mode.addEventListener('click',()=>{
+if(dark_mode){
+  dark_mode.addEventListener('click',()=>{
   console.log('hi');
   if(light_mode.classList.contains('active')){
   light_mode.classList.remove('active');
@@ -113,6 +116,8 @@ dark_mode.addEventListener('click',()=>{
   document.body.classList.remove('dark-mode-variables');
   }
 });
+}
+
 // config status section
 function adjustNextElementPosition(detailsElement) {
   const nextElement = detailsElement.nextElementSibling;
@@ -175,13 +180,6 @@ function formatTEL(inputField) {
   if (inputField.value.length < 4) {
     inputValue = inputValue.substring(0, 3);
   }
-  if(inputField.value.length ==0){
-    telError.textContent = "This field is required!"
-  }else if (inputField.value.length !=11) {
-    telError.textContent = "phone number not corrected!"
-  }else if(inputField.value.length ==11){
-    telError.textContent = ""
-  }
   inputField.value = inputValue;
 }
 
@@ -217,5 +215,10 @@ function formatGPA(inputField) {
     inputValue = '';
 
 }
+  inputField.value = inputValue;
+}
+
+function ProvinceCode(inputField) {
+  var inputValue = inputField.value.replace(/\D/g, ''); 
   inputField.value = inputValue;
 }

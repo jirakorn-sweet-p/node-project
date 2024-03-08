@@ -6,37 +6,38 @@
                 <div class="topic header-main">
                     <h2>รายชื่อตำแหน่ง</h2>
                     <div class="search">
-                        <input type="text" placeholder="ค้นหา">
+                        <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
                     </div>
-                    
-                    <!-- <div class="add-btn add-position" id="add-position">
-                        <a>เพิ่มตำแหน่ง</a>
-                        <span class="material-icons-sharp">
-                            group_add
-                        </span>
-                    </div> -->
-                    <div class="border-uploads sort">
-                        <select name="lv" required>
-                            <option selected value="1">ค้นหาตามชื่อ</option>
-                            <option value="2">ค้นหาตามจังหวัด</option>
-                        </select>
-                    </div>
+
+
                 </div>
                 <div class="table">
-                    <table class="styled-table">
+                    <table class="styled-table" id="styled-table">
                         <thead>
                             <tr>
                                 <th>ลำดับ</th>
-                                <th>ชื่อ</th>
+                                <th class="midle">ชื่อ</th>
                                 <th>จังหวัด</th>
                                 <th></th>
+                            </tr>
+                            <% if (data.length == 0) { %>
+                                <tr class="no-data">
+                                   <th colspan="8">
+                                       ไม่มีข้อมูล
+                                   </th>
+                               </tr>
+                               <% } %>
+                            <tr class="no-data close" id="search-not-found">
+                                <th colspan="8">
+                                    ไม่มีข้อมูล
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <% data.forEach((company,index) => { %>
                             <tr>
                                 <td><%= index+1 %></td>
-                                <td class="position">
+                                <td class="position midle">
                                     <div class="backend">
                                         <h3 class="company-name"><%= company.name %></h3>
                                     </div>
@@ -153,8 +154,8 @@
                         <p></p>
                     </div>
                     <div class="datas">
-                        <a>หมายเลขโทรศัพท์</a>
-                        <input type="text" placeholder="หมายเลขโทรศัพท์" name="tel" oninput="formatTEL(this)"
+                        <a>เบอร์โทรศัพท์</a>
+                        <input type="text" placeholder="เบอร์โทรศัพท์" name="tel" oninput="formatTEL(this)"
                             maxlength="11" required>
                         <p id="telError"></p>
                     </div>
@@ -175,7 +176,7 @@
             </div>
 
             <div class="topic">
-                <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                <h2>รายละเอียดสถานประกอบการ</h2>
             </div>
 
             <div class="info-intern">
@@ -215,7 +216,7 @@
                 </div>
 
                 <div class="uploads-content">
-                    <a>บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด <span></span></a>
+                    <a>สถานประกอบการเกี่ยวข้องกับด้านใด <span></span></a>
                     <div class="border-input">
                         <input id="type_business2" type="text" name="aboutcompany" class="over-flow" required>
                     </div>
@@ -230,7 +231,7 @@
                 </div>
             </div>
             <div class="topic">
-                <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+                <h2 class="sub-txt">ที่อยู่สถานประกอบการ</h2>
             </div>
             <div class="info-address">
                 <div class="uploads-content">
@@ -241,19 +242,19 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>บริษัท/หน่วยงาน <span></span></a>
+                    <a>สถานประกอบการ <span></span></a>
                     <div class="border-input">
                         <input id="company-name2" type="text" name="companyname" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>ตำบล <span></span></a>
+                    <a>ตำบล/แขวง <span></span></a>
                     <div class="border-input">
                         <input id="subdistrict2" type="text" name="subdistrict" required>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a>อำเภอ <span></span></a>
+                    <a>อำเภอ/เขต <span></span></a>
                     <div class="border-input">
                         <input id="district2" type="text" name="district" required>
                     </div>
@@ -291,7 +292,7 @@
             </div>
 
             <div class="topic2">
-                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน <span></span></h2>
+                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางสถานประกอบการ <span></span></h2>
                 <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง <span></span></h2>
             </div>
 

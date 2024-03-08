@@ -47,8 +47,8 @@
                         <input type="text" placeholder="อีเมล" value="<%= data.email %>" readonly>
                     </div>
                     <div class="datas">
-                        <a>หมายเลขโทรศัพท์</a>
-                        <input type="text" placeholder="หมายเลขโทรศัพท์" value="<%= data.phone %>" readonly>
+                        <a>เบอร์โทรศัพท์</a>
+                        <input type="text" placeholder="เบอร์โทรศัพท์" value="<%= data.phone %>" readonly>
                     </div>
                 </div>
             </div>
@@ -67,7 +67,7 @@
             </div>
 
             <div class="topic">
-                <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                <h2>รายละเอียดสถานประกอบการ</h2>
             </div>
 
             <div class="info-intern">
@@ -96,13 +96,13 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                    <a href="">สถานประกอบการเกี่ยวข้องกับด้านใด</a>
                     <div class="border-input">
                         <input type="text" value="<%= company.type_business %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">ช่วงเวลาที่ฝึกงาน <span>*</span></a>
+                    <a href="">ช่วงเวลาที่ฝึกงาน <span></span></a>
                     <div class="border-input2">
                         <input type="date" name="start_intern"
                             value="<%= company.start_intern.toISOString().split('T')[0] %>" readonly>
@@ -114,7 +114,7 @@
 
             </div>
             <div class="topic">
-                <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+                <h2 class="sub-txt">ที่อยู่สถานประกอบการ</h2>
             </div>
             <div class="info-address">
                 <div class="uploads-content">
@@ -124,19 +124,19 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">บริษัท/หน่วยงาน</a>
+                    <a href="">สถานประกอบการ</a>
                     <div class="border-input">
                         <input type="text" value="<%= company_details.name %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">ตำบล</a>
+                    <a href="">ตำบล/แขวง</a>
                     <div class="border-input">
                         <input type="text" value="<%= company_details.subdistrict %>" readonly>
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a href="">อำเภอ</a>
+                    <a href="">อำเภอ/เขต</a>
                     <div class="border-input">
                         <input type="text" value="<%= company_details.district %>" readonly>
                     </div>
@@ -150,7 +150,7 @@
                 <div class="uploads-content">
                     <a href="">รหัสไปรษณีย์</a>
                     <div class="border-input">
-                        <input type="text" value="<%= company_details.provinceID %>" readonly>
+                        <input type="text" maxlength="5" oninput="ProvinceCode(this)" value="<%= company_details.provinceID %>" readonly>
                     </div>
                 </div>
             </div>
@@ -174,7 +174,7 @@
             </div>
 
             <div class="topic2">
-                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</h2>
+                <h2 class="sub-txt">กําหนดการส่งเอกสารของทางสถานประกอบการ</h2>
                 <h2 class="sub-txt">สิทธิการรักษาพยาบาล/บัตรทอง</h2>
             </div>
 

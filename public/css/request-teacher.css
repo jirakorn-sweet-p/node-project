@@ -771,6 +771,11 @@ main {
     font-size: medium;
 }
 
+.styled-table th.long,
+.styled-table td.long {
+    width: 20em;
+}
+
 .styled-table .on-center {
     text-align: center;
 }
@@ -849,6 +854,7 @@ td .danger a {
     box-shadow: var(--box-shadow2);
     z-index: 1;
 }
+
 
 .dropbtn {
     background-color: var(--color-white);
@@ -1551,8 +1557,8 @@ span.cp {
 
 .main .header-main {
     height: 3.5rem;
-    margin-left: 10rem;
-    margin-bottom: 4rem;
+    margin-left: 8rem;
+    /* margin-bottom: 4rem; */
     display: flex;
     justify-content: start;
     align-items: start;
@@ -1625,13 +1631,13 @@ span.cp {
     font-weight: 500;
 }
 
-.header-main .search {
+/* .header-main .search {
     margin-top: 4rem;
-}
+} */
 
 .search {
     margin-top: 0.1rem;
-    margin-left: 2rem;
+    /* margin-left: 2rem; */
     width: 18rem;
     display: flex;
     align-items: center;
@@ -1685,4 +1691,12 @@ span.cp {
 
 .topic h2 {
     display: flex;
+}
+
+main .header-main.part2 {
+    /* margin: 0.5rem 0 0 5rem; */
+    min-height: 2.5rem;
+    width: auto;
+    margin-top: 1rem;
+    height: auto;
 }

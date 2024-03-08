@@ -47,7 +47,7 @@ var alert = "close";
 var std = "";
 
 // Profile IMAGE
-var profile = "profile-1.jpg";
+var profile = " logo.png";
 
 // SET STORAGE
 const multer = require("multer");
@@ -246,6 +246,13 @@ const AddUserByDocs = async (req, res, next) => {
             fileSize: fileSizeFormatter(req.file.size,2),
         });
         // DO
+        var sort = req.query.sort || 1;
+        var role = '';
+        if(sort == 1){
+            role = 'student'
+        }else if(sort == 2){
+            role = 'teacher'
+        }
         
         const excelFilePath = 'public/uploads/add_user_by_use_excel.xlsx';
         const workbook = XLSX.readFile(excelFilePath);
@@ -253,15 +260,11 @@ const AddUserByDocs = async (req, res, next) => {
         // Choose the sheet you want to read
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        var role = '';
+        
         const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        var sort = req.query.sort || 1;
+        
 
-        if(sort == 1){
-            role = 'student'
-        }else if(sort == 2){
-            role = 'teacher'
-        }
+        
 
         var has_err = [];
         // Use for...of loop to handle async/await properly
@@ -270,14 +273,22 @@ const AddUserByDocs = async (req, res, next) => {
 
             if (index !== 0) {
                 if (await student_info.findOne({ 'student_code': element[0] })) {
-                    has_err[index] = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
+                    if(role == 'student'){
+                        has_err[index] = 'รหัสนักศึกษาถูกใช้ไปแล้ว';
+                    }
                 } else if (await users.findOne({ 'username': element[2] })) {
                     has_err[index] = 'อีเมลถูกใช้ไปแล้ว';
                 } else {
                     const std_add = new student_info({ student_code: req.body.std_id, name: element[1] , student_code: element[0],email:element[2] });
+                    var password = element[0];
+                    if(role == 'teacher'){
+                        std_add.student_code = '';
+                    }else if(role == 'student'){
+                        password = element[0].replace('-', '');
+                    }
                     const std_account = {
                         username: element[2],
-                        password: element[0].replace('-', ''),
+                        password: password,
                         role: role,
                         student_info: std_add,
                         student_code: element[0]
@@ -881,7 +892,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
         var userId = new ObjectId(dat.student_info);
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -991,12 +1002,11 @@ router.get('/request',redirectNotAuth, async (req,res) => {
         var permis = false;
         if(data.length == 0){
             permis = true;
-        }else if(data[data.length - 1].status == '2' ){
+        }else if(all_status[data.length - 1].includes('status-fail')){
             permis = true;
         }else{
             permis = false;
         }
-
         res.render('index', {locals,data,status:all_status,permis});
     }catch(error){
         console.log(error);
@@ -1018,7 +1028,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = dat.student_code;
     if(user){
         image = user.image
@@ -1048,6 +1058,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
         styles: "/css/request-form.css",
         js: "/js/base.js",
         user: dat.role,
+        search:"/js/searching_req_form.js",
         content:"../layouts/request-form.ejs",
         bar1: "active",
         profile:image,
@@ -1066,7 +1077,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1170,7 +1181,7 @@ router.get('/request-status/:id',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1275,7 +1286,7 @@ router.get('/document',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1329,7 +1340,7 @@ router.get('/news',redirectNotAuth, async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1386,7 +1397,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1429,7 +1440,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         let perPage2 = 15;
         // const all_companies = await companies.find({'status':'1'});
         const all_companies = await companies.aggregate([
-            { $match: { status: { $in: ['0', '1' ,'2'] } } },
+            { $match: { status: { $in: ['1'] } } },
             { $skip: perPage2 * page2 - perPage2 },
             { $limit: perPage2 },
         ]).exec();
@@ -1438,14 +1449,30 @@ router.get('/company',redirectNotAuth,async (req,res) => {
         const nextPage2 = parseInt(page2)+1;
         const hasNextPage2 = nextPage2 <= allPage2;
         
-        const data2 =  await request_ser.aggregate([
-            { $sort: { name: 1 } },
+        var sorting1 = 1;
+        var sorting2 = 1;
+        if(sort == 1){
+            sorting = 1;
+            sorting2 = 1;
+        }else if(sort == 2){
+            sorting = -1;
+            sorting2 = 1;
+        }else if(sort == 3){
+            sorting = 1;
+            sorting2 = 1;
+        }else if(sort == 4){
+            sorting = 1;
+            sorting2 = -1;
+        }
+        const data2 = await request_ser.aggregate([
+            { $sort: { name: sorting } },
             { $match: { status: '1' } },
             { $match: { approval_document_status: '1' } },
             { $match: { accepted_company_status: '1' } },
             { $match: { sended_company_status: '1' } },
             { $skip: perPage * page - perPage },
             { $limit: perPage },
+            { $addFields: { v: 0 } },
             {
                 $lookup: {
                     from: 'studentinfos',
@@ -1498,9 +1525,9 @@ router.get('/company',redirectNotAuth,async (req,res) => {
                 $addFields: {
                     'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
                 }
-            }
+            },
+            { $sort: { 'company_info.company.province': sorting2 } }, // Replace 'sorting' with your sorting direction variable
         ]).exec();
-        
 
         var all_position = [];
         var this_position = [];
@@ -1598,7 +1625,7 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1631,7 +1658,7 @@ router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1754,7 +1781,7 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
         
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     
     var name = user.name;
     if(!user){
@@ -1814,113 +1841,123 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
           ]
           )).length,
     }
-    var error = req.session.error;
-    var current_req = req.session.req_id;
 
-    req.session.error = null;
-    req.session.req_id = null;
+    try{
+        var error = req.session.error;
+        var current_req = req.session.req_id;
 
-    if(current_req != undefined && current_req != null){
-        bg1 = "";
-        mod1 = "";
-    }else{
-        bg1 = "close";
-        mod1 = "close";
-    }
-    if(error){
-        modal_bg2 = "";
-        alert = "";
-        bg1 = ""
-        mod1 = "";
-    }else{
-        modal_bg2 = "close";
-        alert = "close";
-    }
+        req.session.error = null;
+        req.session.req_id = null;
 
-    if(req.session.all_pass){
-        modal_bg2 = "";
-        alert = "";
-        bg1 = "close";
-        mod1 = "close";
-        req.session.all_pass = null;
-    }
+        if(current_req != undefined && current_req != null){
+            bg1 = "";
+            mod1 = "";
+        }else{
+            bg1 = "close";
+            mod1 = "close";
+        }
+        if(error){
+            modal_bg2 = "";
+            alert = "";
+            bg1 = ""
+            mod1 = "";
+        }else{
+            modal_bg2 = "close";
+            alert = "close";
+        }
 
-    const perPage = 20;
-    const page = req.query.page || 1;
-    var com_add =[];
-    const data = await request_ser.aggregate([
-        { $sort: { update_at: 1 } },
-        { $match: { status: '0' } },
-        { $skip: perPage * page - perPage },
-        { $limit: perPage },
-        {
-            $lookup: {
-                from: 'studentinfos',
-                localField: 'student_info',
-                foreignField: '_id',
-                as: 'student_info'
+        if(req.session.all_pass){
+            modal_bg2 = "";
+            alert = "";
+            bg1 = "close";
+            mod1 = "close";
+            req.session.all_pass = null;
+        }
+
+        const perPage = 20;
+        const page = req.query.page || 1;
+        const skipValue = perPage * (page - 1);
+        var com_add =[];
+
+        const data = await request_ser.aggregate([
+            { $sort: { update_at: 1 } }, // Sort in descending order
+            { $match: { status: '0' } },
+            { $skip: skipValue },
+            { $limit: perPage },
+            {$addFields:{v:0}},
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
             }
-        },
-        {
-            $lookup: {
-                from: 'requestinfos',
-                localField: 'request_info',
-                foreignField: '_id',
-                as: 'request_info'
-            }
-        },
-        {
-            $lookup: {
-                from: 'companyinfos',
-                localField: 'company_info',
-                foreignField: '_id',
-                as: 'company_info'
-            }
-        },
-        {
-            $lookup: {
-                from: 'certificates',
-                localField: 'certificate_info',
-                foreignField: '_id',
-                as: 'certificate_info'
-            }
-        },
-        {
-            $addFields: {
-                student_info: { $arrayElemAt: ['$student_info', 0] },
-                request_info: { $arrayElemAt: ['$request_info', 0] },
-                company_info: { $arrayElemAt: ['$company_info', 0] },
-                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
-            }
-        },
-        {
-            $lookup: {
-                from: 'companies',
-                localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
-                foreignField: '_id',
-                as: 'company_info.company'
-            }
-        },
-        {
-            $addFields: {
-                'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+        ]).exec();    
+        const count = await request_ser.countDocuments({ status: '0' });
+        let all_pages = Math.ceil(count/perPage);
+        const nextPage = parseInt(page)+1;
+        const hasNextPage = nextPage <= all_pages;
+        for (const element of data) {
+            const found = element.company_info.company.status == '1';
+            if (found) {
+                com_add.push('match');
+            } else {
+                com_add.push('not-match');
             }
         }
-    ]).exec();
-    const count = await request_ser.countDocuments({ status: '0' });
-    let all_pages = Math.ceil(count/perPage);
-    const nextPage = parseInt(page)+1;
-    const hasNextPage = nextPage <= all_pages;
-    for (const element of data) {
-        const found = element.company_info.company.status == '1';
-        if (found) {
-            com_add.push('match');
-        } else {
-            com_add.push('not-match');
-        }
+        res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
+            com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
+    }catch(err){
+        console.log(err);
+        res.render('index', { locals,requests:[],modal_bg1:"close",modal_bg2:"close",alert:"close",error:"",all_pages:1,current:1 });
     }
-    res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
-        com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
+
 
 });
 
@@ -2577,7 +2614,7 @@ router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
         req.session.firstlogin = true;
@@ -2666,6 +2703,7 @@ router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
             { $sort: { update_at: 1 } },
             { $skip: perPage * page - perPage },
             { $limit: perPage },
+            {$addFields:{v:0}},
             {
                 $lookup: {
                     from: 'studentinfos',
@@ -2751,7 +2789,7 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -2838,6 +2876,7 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
             { $sort: { update_at: 1 } },
             { $skip: perPage * page - perPage },
             { $limit: perPage },
+            {$addFields:{v:0}},
             {
                 $lookup: {
                     from: 'studentinfos',
@@ -2916,7 +2955,7 @@ router.get('/upload-docs',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
         req.session.firstlogin = true;
@@ -3030,7 +3069,7 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -3146,7 +3185,7 @@ router.get('/news/:id',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -3296,7 +3335,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user){
 
@@ -3382,6 +3421,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         var alert_docs = 'close';
         var err = "";
         var c_err = 0;
+
         if(req.session.allcom_pass){
             err = req.session.allcom_pass;
 
@@ -3399,6 +3439,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         if(err != ""){
             alert_docs = "";
             c_err +=1;
+            console.log(c_err);
         }
         var alert_add = 'close';
         if(req.session.allcom_add_pass){
@@ -3418,6 +3459,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         if(err != ""){
             alert_add = "";
             c_err +=1;
+            console.log(c_err);
         }
 
         var alert_del = 'close';
@@ -3437,10 +3479,11 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         if(err != ""){
             alert_del = "";
             c_err +=1;
+            console.log(c_err);
         }
         var alert = "close";
         if(c_err != 0){alert= "";}
-
+        console.log(c_err);
         let page = req.query.page || 1;
         let perPage = 15;
 
@@ -3474,6 +3517,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
             { $match: { sended_company_status: '1' } },
             { $skip: perPage * page - perPage },
             { $limit: perPage },
+            {$addFields:{v:0}},
             {
                 $lookup: {
                     from: 'studentinfos',
@@ -3568,7 +3612,7 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -3711,6 +3755,7 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
         { $match: { sended_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -3805,7 +3850,6 @@ router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
     try{
         data.status = req.body.status1;
         data.comment = req.body.comment1;
-
         data.tel = req.body.tel;
         data.type_business = req.body.type_business;
         data.address = req.body.address;
@@ -3814,7 +3858,7 @@ router.post('/all-companys/update',redirectNotAuth,async (req,res) => {
         data.district = req.body.district;
         data.province = req.body.province;
         data.provinceID = req.body.provinceID;
-
+        console.log(data);
         await data.save();
         req.session.com_up_pass = 'อัปเดตสำเร็จ';
     }catch(err){
@@ -3855,7 +3899,7 @@ router.post('/all-companys/add/company',redirectNotAuth, async (req, res) => {
     try{
         const company = new companys({
             name: req.body.name,
-            tel: req.body.company_tel,
+            tel: req.body.tel,
             address: req.body.address,
             type_business: req.body.type_business,
             province: req.body.province,
@@ -3897,7 +3941,7 @@ router.get('/upload-calendar',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -4010,7 +4054,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -4097,7 +4141,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
     var nextPage=[];
     var hasNextPage=[];
 
-    const perPage = 5;
+    const perPage = 20;
     const page = req.query.page || 1;
     var com_add =[];
     const data = await request_ser.aggregate([
@@ -4106,6 +4150,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         { $match: { approval_document_status: '0' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4160,7 +4205,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
             }
         }
     ]).exec();
-     count.push(data.length);
+     count.push(await request_ser.countDocuments({ status: '1',approval_document_status:'0' }));
      all_pages.push(Math.ceil(count[0]/perPage));
      nextPage.push(parseInt(page)+1);
      hasNextPage.push(nextPage[0] <= all_pages[0]);
@@ -4170,6 +4215,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         { $match: { approval_document_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4224,7 +4270,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data2.length);
+    count.push(await request_ser.countDocuments({ status: '1',approval_document_status:'1' }));
     all_pages.push(Math.ceil(count[1]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[1] <= all_pages[1]);
@@ -4234,6 +4280,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         { $match: { approval_document_status: { $in: ['0', '1' ,'2'] } } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4288,7 +4335,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data3.length);
+    count.push(await request_ser.countDocuments({ status: '1',approval_document_status:{ $in: ['1', '2', '0'] } }));
     all_pages.push(Math.ceil(count[2]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[2] <= all_pages[2]);
@@ -4298,6 +4345,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         { $match: { approval_document_status: '2' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4352,7 +4400,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data4.length);
+    count.push(await request_ser.countDocuments({ status: '1',approval_document_status:'2' }));
     all_pages.push(Math.ceil(count[3]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[3] <= all_pages[3]);
@@ -4407,7 +4455,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user){
 
@@ -4504,6 +4552,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: '0' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4558,7 +4607,8 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(await request_ser.find({'accepted_company_status': '1','sended_company_status': '0'}).countDocuments({}));
+    // count.push(await request_ser.find({'accepted_company_status': '1','sended_company_status': '0'}).countDocuments({}));
+    count.push(await request_ser.countDocuments({ accepted_company_status: '1',sended_company_status:'0' }));
      all_pages.push(Math.ceil(count[0]/perPage));
      nextPage.push(parseInt(page)+1);
      hasNextPage.push(nextPage[0] <= all_pages[0]);
@@ -4570,6 +4620,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4624,7 +4675,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data2.length);
+    count.push(await request_ser.countDocuments({ accepted_company_status: '1',sended_company_status:'1' }));
      all_pages.push(Math.ceil(count[1]/perPage));
      nextPage.push(parseInt(page)+1);
      hasNextPage.push(nextPage[1] <= all_pages[1]);
@@ -4636,6 +4687,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: { $in: ['0', '1' ,'2'] } } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4690,7 +4742,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data3.length);
+    count.push(await request_ser.countDocuments({ accepted_company_status: '1',sended_company_status:{ $in: ['1', '2', '0'] } }));
      all_pages.push(Math.ceil(count[2]/perPage));
      nextPage.push(parseInt(page)+1);
      hasNextPage.push(nextPage[2] <= all_pages[2]);
@@ -4702,6 +4754,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: '2' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4756,7 +4809,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data4.length);
+    count.push(await request_ser.countDocuments({ accepted_company_status: '1',sended_company_status:'2' }));
      all_pages.push(Math.ceil(count[3]/perPage));
      nextPage.push(parseInt(page)+1);
      hasNextPage.push(nextPage[3] <= all_pages[3]);
@@ -4809,7 +4862,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -4905,6 +4958,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         { $match: { accepted_company_status: '0' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -4958,8 +5012,8 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
                 'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
             }
         }
-    ]).exec();
-    count.push(data.length);
+    ]).exec();;
+    count.push(await request_ser.countDocuments({ approval_document_status:'1',accepted_company_status: '0' }));
     all_pages.push(Math.ceil(count[0]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[0] <= all_pages[0]);
@@ -4970,6 +5024,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         { $match: { accepted_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5024,7 +5079,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data2.length);
+    count.push(await request_ser.countDocuments({ approval_document_status:'1',accepted_company_status: '1' }));
     all_pages.push(Math.ceil(count[1]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[1] <= all_pages[1]);
@@ -5035,6 +5090,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         { $match: { accepted_company_status: { $in: ['0', '1' ,'2'] } } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5089,7 +5145,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data3.length);
+    count.push(await request_ser.countDocuments({ approval_document_status:'1',accepted_company_status: { $in: ['1', '2', '0'] } }));
     all_pages.push(Math.ceil(count[2]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[2] <= all_pages[2]);
@@ -5100,6 +5156,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         { $match: { accepted_company_status: '2' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5154,7 +5211,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
-    count.push(data4.length);
+    count.push(await request_ser.countDocuments({ approval_document_status:'1',accepted_company_status: '2' }));
     all_pages.push(Math.ceil(count[3]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[3] <= all_pages[3]);
@@ -5206,7 +5263,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -5303,6 +5360,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5380,7 +5438,35 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
           $count: 'totalDocuments'
         }
       ]).exec();
-    count.push(data.length);
+
+    const data1_0 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $match: {
+                'certificate_info.status': '0'
+            }
+        }
+    ]).exec();
+    count.push(data1_0.length);
+
     all_pages.push(Math.ceil(count[0]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[0] <= all_pages[0]);
@@ -5392,6 +5478,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5451,6 +5538,38 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
             }
         }
     ]).exec();
+
+    const data2_0 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $match: {
+                'certificate_info.status': '1'
+            }
+        }
+    ]).exec();
+    count.push(data2_0.length);
+
+    all_pages.push(Math.ceil(count[1]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[1] <= all_pages[1]);
     const data3 =  await request_ser.aggregate([
         { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
@@ -5459,6 +5578,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         { $match: { sended_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5513,6 +5633,38 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
             }
         },
     ]).exec();
+
+    const data3_0 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $match: {
+                'certificate_info.status': { $in: ['1', '2', '0'] }
+            }
+        }
+    ]).exec();
+    count.push(data3_0.length);
+
+    all_pages.push(Math.ceil(count[2]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[2] <= all_pages[2]);
     const data4 = await request_ser.aggregate([
         { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
@@ -5520,6 +5672,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         { $match: { accepted_company_status: '2' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -5574,6 +5727,38 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
             }
         },
     ]).exec();
+    
+    const data4_0 = await request_ser.aggregate([
+        { $sort: { update_at: 1 } },
+        { $match: { status: '1' } },
+        { $match: { approval_document_status: '1' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
+
+        {
+            $lookup: {
+                from: 'certificates',
+                localField: 'certificate_info',
+                foreignField: '_id',
+                as: 'certificate_info'
+            }
+        },
+        {
+            $addFields: {
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+            }
+        },
+        {
+            $match: {
+                'certificate_info.status': '1'
+            }
+        }
+    ]).exec();
+    count.push(data4_0.length);
+
+    all_pages.push(Math.ceil(count[3]/perPage));
+    nextPage.push(parseInt(page)+1);
+    hasNextPage.push(nextPage[3] <= all_pages[3]);
     for (const element of data) {
         const found = element.company_info.company.status == '1';
         if (found) {
@@ -6037,7 +6222,7 @@ router.get('/uploads/:file',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(!user){
 
@@ -6111,7 +6296,7 @@ router.get('/account',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user){
         // image = user.image
@@ -6187,6 +6372,7 @@ router.get('/account',redirectNotAuth,async (req,res) => {
         { $match: { role: 'student' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -6211,6 +6397,7 @@ router.get('/account',redirectNotAuth,async (req,res) => {
         { $match: { role: 'teacher' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'studentinfos',
@@ -6276,7 +6463,7 @@ router.get('/account/:id',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = 'profile-1.jpg';
+    var image = ' logo.png';
     var name = user.name;
     if(user){
         // image = user.image

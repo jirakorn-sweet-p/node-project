@@ -54,7 +54,7 @@
             <% if ( requests.length != 0) { %>
              <div class="checkbox-wrapper-10">
                 <input class="tgl tgl-flip" id="cb5" type="checkbox" checked />
-                <label class="tgl-btn" id="cbx" data-tg-off="ยกเลิก" data-tg-on="เลือกออกหนังสือ" for="cb5"></label>
+                <label class="tgl-btn" id="cbx" data-tg-off="ยกเลิก" data-tg-on="เลือก" for="cb5"></label>
             </div>
 
             <div class="add-btn pop-position close" id="pop-position">
@@ -68,6 +68,7 @@
         </div>
         <div class="modal close" id="approval-docs-modal">
             <% if (requests.length>0) { %>
+                <h1>สร้างหนังสือขอความอนุเคราะห์</h1>
                 <form action="/docs-approval-pop" method="post" name="approvalDocs" enctype="/submit-table" onsubmit="redirectToDocsWaiting()">
                     <% var cm=[] %>
                         <% requests.forEach((element,index)=> { %>
@@ -235,10 +236,10 @@
                     <th>วันที่ยื่นเรื่อง</th>
                     <th>รหัสนักศึกษา</th>
                     <th>ชื่อนักศึกษา</th>
-                    <th>หน่วยงาน/บริษัท</th>
+                    <th>สถานประกอบการ</th>
                     <th>วิธีส่งเอกสาร</th>
                     <th class="midle">การออกหนังสือ</th>
-                    <th>เพิ่มเติม</th>
+                    <th class="midle">เพิ่มเติม</th>
                 </tr>
                 <% if (requests.length == 0) { %>
                     <tr class="no-data">
@@ -396,8 +397,8 @@
                                                 <p></p>
                                             </div>
                                             <div class="datas">
-                                                <a>หมายเลขโทรศัพท์</a>
-                                                <input type="text" placeholder="หมายเลขโทรศัพท์"
+                                                <a>เบอร์โทรศัพท์</a>
+                                                <input type="text" placeholder="เบอร์โทรศัพท์"
                                                     name="tel" oninput="formatTEL(this)" maxlength="11"
                                                     value="<%= element.student_info.phone %>">
                                                 <p id="telError"></p>
@@ -463,7 +464,7 @@
                                                     <div class="request-doc" id="request-Doc<%= index %>">
                                                 <% } %>
                                     <div class="topic">
-                                        <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+                                        <h2>รายละเอียดสถานประกอบการ</h2>
                                         <h2><%= element.company_info.company.name %></h2>
                                         <% if (element.company_info.status == '0') { %>
                                             <span class="material-icons-sharp warnning">pending</span>
@@ -506,7 +507,7 @@
                                             </div>
                                         </div>
                                         <div class="uploads-content">
-                                            <a >บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                                            <a >สถานประกอบการเกี่ยวข้องกับด้านใด</a>
                                             <div class="border-input">
                                                 <input type="text" 
                                                     value="<%= element.company_info.type_business %>">
@@ -525,7 +526,7 @@
 
                                     </div>
                                     <div class="topic">
-                                        <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+                                        <h2 class="sub-txt">ที่อยู่สถานประกอบการ</h2>
                                     </div>
                                     <div class="info-address">
                                         <div class="uploads-content">
@@ -536,21 +537,21 @@
                                             </div>
                                         </div>
                                         <div class="uploads-content">
-                                            <a >บริษัท/หน่วยงาน</a>
+                                            <a >สถานประกอบการ</a>
                                             <div class="border-input">
                                                 <input type="text"
                                                     value="<%= element.company_info.company.name %>">
                                             </div>
                                         </div>
                                         <div class="uploads-content">
-                                            <a >ตำบล</a>
+                                            <a >ตำบล/แขวง</a>
                                             <div class="border-input">
                                                 <input type="text"
                                                     value="<%= element.company_info.company.subdistrict %>">
                                             </div>
                                         </div>
                                         <div class="uploads-content">
-                                            <a >อำเภอ</a>
+                                            <a >อำเภอ/เขต</a>
                                             <div class="border-input">
                                                 <input type="text"
                                                     value="<%= element.company_info.company.district %>">
@@ -566,7 +567,7 @@
                                         <div class="uploads-content">
                                             <a >รหัสไปรษณีย์</a>
                                             <div class="border-input">
-                                                <input type="text"
+                                                <input type="text" maxlength="5" oninput="ProvinceCode(this)"
                                                     value="<%= element.company_info.company.provinceID %>">
                                             </div>
                                         </div>
@@ -574,7 +575,7 @@
 
                                     <div class="info-phone">
                                         <div class="uploads-content">
-                                            <a >กําหนดการส่งเอกสารของทางบริษัท/หน่วยงาน</a>
+                                            <a >กําหนดการส่งเอกสารของทางสถานประกอบการ</a>
                                             <div class="border-input">
                                                 <input type="date"
                                                     value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
@@ -968,7 +969,7 @@
                                     <% } %>
 
                         </td>
-                        <td>
+                        <td class="midle">
                             <div class="dropdown">
                                 <button class="dropbtn">...</button>
                                 <div class="dropdown-content">

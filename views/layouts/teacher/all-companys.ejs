@@ -11,7 +11,7 @@
     <div class="modal-box">
         <div class="request-doc" id="request-doc">
             <div class="topic">
-                <h2>เพิ่มบริษัท/หน่วยงาน</h2>
+                <h2>เพิ่มสถานประกอบการ</h2>
             </div>
             <div class="info-intern">
                 <div class="uploads-content">
@@ -23,18 +23,18 @@
                 <div class="uploads-content">
                     <a >เบอร์โทรศัพท์</a>
                     <div class="border-input">
-                        <input type="text" name="tel">
+                        <input type="text" name="tel" oninput="formatTEL(this)" maxlength="11">
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a >บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                    <a >สถานประกอบการเกี่ยวข้องกับด้านใด</a>
                     <div class="border-input">
                         <input type="text" name="type_business">
                     </div>
                 </div>
             </div>
             <div class="topic">
-                <h2 class="sub-txt">ที่อยู่บริษัท/หน่วยงาน</h2>
+                <h2 class="sub-txt">ที่อยู่สถานประกอบการ</h2>
             </div>
             <div class="info-address">
                 <div class="uploads-content">
@@ -44,13 +44,13 @@
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a >ตำบล</a>
+                    <a >ตำบล/แขวง</a>
                     <div class="border-input">
                         <input type="text" name="subdistrict">
                     </div>
                 </div>
                 <div class="uploads-content">
-                    <a >อำเภอ</a>
+                    <a >อำเภอ/เขต</a>
                     <div class="border-input">
                         <input type="text" name="district">
                     </div>
@@ -64,17 +64,17 @@
                 <div class="uploads-content">
                     <a >รหัสไปรษณีย์</a>
                     <div class="border-input">
-                        <input type="text" name="provinceID">
+                        <input type="text" maxlength="5" oninput="ProvinceCode(this)" name="provinceID">
                     </div>
                 </div>
             </div>
 
             <div class="approved">
-                <div class="comment">
+                <div class="comment close">
                     ความคิดเห็น
                     <textarea name="comment" id="" cols="30"></textarea>
                 </div>
-                <div class="status">
+                <div class="status close">
                     <div class="border-status">
                         <select name="status" required>
                             <option selected value="1">ผ่าน</option>
@@ -101,7 +101,7 @@
                 <div class="topic header-main">
                     <h2>รายชื่อตำแหน่ง</h2>
                     <div class="search">
-                        <input type="text" placeholder="ค้นหา">
+                        <input type="text" placeholder="ค้นหา" id="searching2" oninput="filterTable2()">
                     </div>
                     <div class="add-btn add-position" id="add-position">
                         <a>เพิ่มตำแหน่ง</a>
@@ -112,13 +112,25 @@
 
                 </div>
                 <div class="table">
-                    <table class="styled-table">
+                    <table class="styled-table" id="styled-table2">
                         <thead>
                             <tr>
                                 <th>ลำดับ</th>
                                 <th>ชื่อ</th>
                                 <th>จำนวน</th>
                                 <th></th>
+                            </tr>
+                            <% if (data.length == 0) { %>
+                                <tr class="no-data">
+                                   <th colspan="8">
+                                       ไม่มีข้อมูล
+                                   </th>
+                               </tr>
+                               <% } %>
+                            <tr class="no-data close" id="search-not-found2">
+                                <th colspan="8">
+                                    ไม่มีข้อมูล
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -191,7 +203,7 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>สถานประกอบการ-หน่วยงานที่ฝึกงาน</h2>
+            <h2>สถานประกอบการฝึกงาน</h2>
                 <!-- <div class="sort">
                     <select>
                         <option selected value="0">จัดเรียงตาม</option>
@@ -224,8 +236,8 @@
                 <thead>
                     <tr>
                         <!-- <th>ชื่อ</th> -->
-                        <th>บริษัท/หน่วยงาน</th>
-                        <th>เบอร์โทร บริษัท/หน่วยงาน</th>
+                        <th>สถานประกอบการ</th>
+                        <th>เบอร์โทรศัพท์ สถานประกอบการ</th>
                         <!-- <th>ประเภทธุรกิจ</th> -->
                         <th class="location">ที่อยู่</th>
                         <th>ตำแหน่งที่เคยรับ</th>

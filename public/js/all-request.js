@@ -517,13 +517,6 @@ function formatTEL(inputField) {
   if (inputField.value.length < 4) {
     inputValue = inputValue.substring(0, 3);
   }
-  if(inputField.value.length ==0){
-    telError.textContent = "This field is required!"
-  }else if (inputField.value.length !=11) {
-    telError.textContent = "phone number not corrected!"
-  }else if(inputField.value.length ==11){
-    telError.textContent = ""
-  }
   inputField.value = inputValue;
 }
 

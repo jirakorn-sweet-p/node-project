@@ -20,14 +20,14 @@
     <div class="modal close" id="modal">
         <div class="modal-box">
             <div class="datas">
-                <h1>สร้างข่าวสาร</h1>
+                <h1>สร้างข่าวสารและกำหนดการ</h1>
             </div>
             <div class="datas">
                 <h2>ชื่อเรื่องข่าวสาร</h2>
                 <input type="text" placeholder="ชื่อเรื่องข่าวสาร" name="title" required>
             </div>
             <div class="datas long">
-                <h2>คำอธิบาย</h2>
+                <h2 class="upper">คำอธิบาย</h2>
                 <div class="editor">
                     <div id="editor">
                     </div>
@@ -37,7 +37,7 @@
             <div class="datas last">
                 <h2>เอกสาร<p>(pdf, png, jpeg)</p></h2>
                 <div class="border-uploads">
-                    <input type="file" name="file">
+                    <input type="file" accept=".pdf, .jpg, .jpeg" name="file">
                 </div>
             </div>
             <input type="text" name="username" class="close" value="<%= locals.username %>">

@@ -397,9 +397,20 @@ function handleSortChange(selectElement) {
       case '2':
           window.location.href = '/company?sort=2';
           break;
+      case '3':
+        window.location.href = '/company?sort=3';
+        break;
+      case '4':
+        window.location.href = '/company?sort=4';
+        break;
       default:
           window.location.href = '/company';
           break;
           // Handle the default case or do nothing
   }
+}
+
+function ProvinceCode(inputField) {
+  var inputValue = inputField.value.replace(/\D/g, ''); 
+  inputField.value = inputValue;
 }

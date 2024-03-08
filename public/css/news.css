@@ -994,3 +994,8 @@ h2 p{
 span.cp {
     color: var(--color-cp);
 }
+
+.upper{
+    position: relative;
+    top: -45%;
+}

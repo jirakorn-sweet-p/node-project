@@ -23,7 +23,7 @@
         
         <div class="datas">
             <h2>ไฟล์ตัวอย่าง<p>(xlsx)  </p></h2>
-            <a href="/uploads/official/add_user.xlsx" class="links border-space" target="_blank">
+            <a href="/uploads/official/add_user<%= sort %>.xlsx" class="links border-space" target="_blank">
                 เอกสารตัวอย่าง.xlsx
             </a>
         </div>
@@ -60,7 +60,7 @@
                 <select id="sort2" name="role">
                     <option disabled value="">ผู้ใช้</option>
                     <option selected value="1">นักศึกษา</option>
-                    <option value="2">เจ้าหน้าที่</option>
+                    <option value="2">อาจารย์/บุคลากร</option>
                 </select>
             </div>
             
@@ -88,7 +88,7 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>การจัดการรหัสผู้ใช้งาน</h2>
+            <h2>จัดการผู้ใช้</h2>
             <div class="sort">
                 <select id="sort" onchange="handleSortChange(this)">
                     <% if (sort == '1') { %>
@@ -97,9 +97,9 @@
                         <option value="1">นักศึกษา</option>
                     <% } %>
                     <% if (sort == '2') { %>
-                        <option selected value="2">เจ้าหน้าที่</option>
+                        <option selected value="2">อาจารย์/บุคลากร</option>
                     <% } else { %>
-                        <option value="2">เจ้าหน้าที่</option>
+                        <option value="2">อาจารย์/บุคลากร</option>
                     <% } %>
 
                 </select>
@@ -127,8 +127,12 @@
             <table class="styled-table" id="styled-table">
                 <thead>
                     <tr>
-                        <th class="on-left">รหัสนักศึกษา</th>
-                        <th class="on-left">รหัสผู้ใช้</th>
+                        <% if (sort == '1') { %>
+                            <th class="on-left">รหัสนักศึกษา</th>
+                         <% } else if (sort == '2') { %>
+                            
+                        <% } %>
+                        <th class="on-left">บัญชีผู้ใช้</th>
                         <th class="on-left">ชื่อ</th>
                         <th class="last"></th>
                         
@@ -169,10 +173,10 @@
                                     <select id="sort" name="role">
                                         <% if (user.role == 'student') { %>
                                          <option selected value="1">นักศึกษา</option>
-                                         <option value="2">เจ้าหน้าที่</option>
+                                         <option value="2">อาจารย์/บุคลากร</option>
                                         <% } else { %>
                                             <option value="1">นักศึกษา</option>
-                                            <option selected value="2">เจ้าหน้าที่</option>
+                                            <option selected value="2">อาจารย์/บุคลากร</option>
                                         <% } %>
                                     </select>
                                 </div>
@@ -203,8 +207,11 @@
                         <form id="deleteForm<%= index %>" action="/account/delete/<%= user._id %>?sort=<%= sort %>" method="POST" style="display: none;">
                         </form>
                       <tr>
-
-                         <td class="on-left"><%= user.student_info.student_code%></td>
+                        <% if (user.role == 'student') { %>
+                            <td class="on-left"><%= user.student_info.student_code%></td>
+                         <% } else if (user.role == 'teacher') { %>
+                            
+                        <% } %>
                            <td class="on-left"><%= user.username %></td>
                            <!-- <td>บัญชี / ผู้ตรวจบัญชี</td> -->
                            <td class="on-left"><%= user.student_info.name %></td>
@@ -216,7 +223,7 @@
                            <td class="last">
                             <a name="<%= index %>" class="pop">
                                 <div class="more-details">
-                                <p>เพิ่มเติม</p>
+                                <p>แก้ไข</p>
                             </div>
                             </a>
                             

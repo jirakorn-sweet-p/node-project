@@ -98,6 +98,11 @@
                                                         <span class="material-icons-sharp">
                                                             cancel
                                                         </span>
+                                                        <% } else if(element.approval_document_status=='2' ) { %>
+                                                            <div class="request-status fail">
+                                                        <span class="material-icons-sharp">
+                                                            cancel
+                                                        </span>
                                                         <% } else if(element.certificate_info.status=='status-fail' ) { %>
                                                             <div class="request-status fail">
                                                                 <span class="material-icons-sharp">
@@ -124,6 +129,10 @@
                                                                                             if(status[index][0]=='status-fail')
                                                                                             { %>
                                                                                             คำร้องไม่ผ่าน
+                                                                                            <% } else
+                                                                                            if(element.approval_document_status=='2')
+                                                                                            { %>
+                                                                                                คำร้องไม่ผ่าน
                                                                                             <% } else
                                                                                                 if(element.certificate_info.status=='2'
                                                                                                 ) { %>

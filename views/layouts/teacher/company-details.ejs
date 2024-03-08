@@ -16,7 +16,7 @@
 <main>
     <div class="main">
         <div class="title-header">
-            <h2>รายละเอียดบริษัท/หน่วยงาน</h2>
+            <h2>รายละเอียดสถานประกอบการ</h2>
         </div>
         <form action="/all-companys/update" method="post" name="request" enctype="/submit-table">
             <div class="request-doc">
@@ -24,17 +24,17 @@
                     <div class="uploads-content">
                         <a href="">ชื่อสถานที่ฝึกงาน</a>
                         <div class="border-input">
-                            <input type="text" name="company_name" value="<%= company.name %>" >
+                            <input type="text" name="name" value="<%= company.name %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">เบอร์โทรศัพท์</a>
                         <div class="border-input">
-                            <input type="text" name="tel" value="<%= company.tel %>" >
+                            <input type="text" name="tel" value="<%= company.tel %>" oninput="formatTEL(this)" maxlength="11" >
                         </div>
                     </div>
                     <div class="uploads-content">
-                        <a href="">บริษัท/หน่วยงานเกี่ยวข้องกับด้านใด</a>
+                        <a href="">สถานประกอบการเกี่ยวข้องกับด้านใด</a>
                         <div class="border-input">
                             <input type="text" name="type_business" value="<%= company.type_business %>" >
                         </div>
@@ -48,19 +48,19 @@
                         </div>
                     </div>
                     <div class="uploads-content">
-                        <a href="">บริษัท/หน่วยงาน</a>
+                        <a href="">สถานประกอบการ</a>
                         <div class="border-input">
-                            <input type="text" name="name" value="<%= company.name %>" >
+                            <input type="text" name="name2" value="<%= company.name %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
-                        <a href="">ตำบล</a>
+                        <a href="">ตำบล/แขวง</a>
                         <div class="border-input">
                             <input type="text" name="subdistrict" value="<%= company.subdistrict %>" >
                         </div>
                     </div>
                     <div class="uploads-content">
-                        <a href="">อำเภอ</a>
+                        <a href="">อำเภอ/เขต</a>
                         <div class="border-input">
                             <input type="text" name="district" value="<%= company.district %>" >
                         </div>
@@ -74,7 +74,7 @@
                     <div class="uploads-content">
                         <a href="">รหัสไปรษณีย์</a>
                         <div class="border-input">
-                            <input type="text" name="provinceID" value="<%= company.provinceID %>" >
+                            <input type="text" maxlength="5" oninput="ProvinceCode(this)" name="provinceID" value="<%= company.provinceID %>" >
                         </div>
                     </div>
                 </div>

@@ -1581,3 +1581,11 @@ h2 p{
     caret-color: var(--color-dark);
     padding: 0.5rem;
 }
+
+.pop:hover .more-details{
+    background: var(--color-cp);
+}
+
+.pop:hover .more-details p{
+    color: var(--color-white);
+}

@@ -1,19 +1,29 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>สถานประกอบการ-หน่วยงานที่เคยรับนักศึกษาฝึกงาน</h2>
+            <h2>สถานประกอบการที่เคยรับฝึกงาน</h2>
             <div class="sort">
                 <select id="sort" onchange="handleSortChange(this)">
                     <option disabled value="0">จัดเรียงตาม</option>
                     <% if (sort == '1') { %>
-                        <option selected value="1">ชื่อ</option>
+                        <option selected value="1">ชื่อสถานที่ฝึกงาน ก-ฮ</option>
                     <% } else { %>
-                        <option value="1">ชื่อ</option>
+                        <option value="1">ชื่อสถานที่ฝึกงาน ก-ฮ</option>
                     <% } %>
                     <% if (sort == '2') { %>
-                        <option selected value="2">จังหวัด</option>
+                        <option selected value="2">ชื่อสถานที่ฝึกงาน ฮ-ก</option>
                     <% } else { %>
-                        <option value="2">จังหวัด</option>
+                        <option value="2">ชื่อสถานที่ฝึกงาน ฮ-ก</option>
+                    <% } %>
+                    <% if (sort == '3') { %>
+                        <option selected value="3">จังหวัด ก-ฮ</option>
+                    <% } else { %>
+                        <option value="3">จังหวัด ก-ฮ</option>
+                    <% } %>
+                    <% if (sort == '4') { %>
+                        <option selected value="4">จังหวัด ฮ-ก</option>
+                    <% } else { %>
+                        <option value="4">จังหวัด ฮ-ก</option>
                     <% } %>
                 </select>
             </div>
@@ -26,8 +36,8 @@
             <table class="styled-table" id="styled-table">
                 <thead>
                     <tr>
-                        <th>บริษัท/หน่วยงาน</th>
-                        <th>เบอร์โทร บริษัท/หน่วยงาน</th>
+                        <th>สถานประกอบการ</th>
+                        <th>เบอร์โทรศัพท์ สถานประกอบการ</th>
                         <!-- <th>ประเภทธุรกิจ</th> -->
                         <th class="on-left">จังหวัด</th>
                         <th>ตำแหน่งที่เคยรับ</th>
@@ -38,7 +48,11 @@
                 <tbody>
                     <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)) %>
                     <% if (sort == 2) { %>
+                        <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)).reverse() %>
+                    <%} else if (sort == 3) { %>
                         <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)) %>
+                    <%} else if (sort == 4) { %>
+                        <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)).reverse() %>
                     <% } %>
                     <% ojb.forEach((element,index) => { %>
                         <tr>
