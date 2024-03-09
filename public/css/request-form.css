@@ -469,6 +469,7 @@ input {
     height: 2.8rem;
     border-radius: 50%;
     overflow: hidden;
+    border: solid 2px #fff;
 }
 
 .info p,
@@ -1177,6 +1178,7 @@ strong{
 .modal .modal-box h2{
     margin-left: 2rem;
     width: 25%;
+    margin-bottom: 1rem;
 }
 
 .modal .modal-box{
@@ -1389,10 +1391,10 @@ td.position{
 }
 
 .request-doc .table{
-    width: 90%;
+    width: 94%;
     margin-left: 5%;
     height: auto;
-    max-height: 80%;
+    max-height: 90%;
     overflow-y: auto;
 }
 
@@ -1445,6 +1447,7 @@ td.position{
     width: 18rem;
     display: flex;
     align-items: center;
+    margin-bottom: 1rem;
 }
 
 .search input{
@@ -1455,6 +1458,7 @@ td.position{
 
 .modal .topic:first-child {
     margin-top: 3rem;
+
 }
 
 .request-doc .topic {
@@ -1465,6 +1469,10 @@ td.position{
     width: 100%;
     height: auto;
     margin-bottom: 1rem;
+    position: sticky;
+    top: 1%;
+    background: var(--color-white);
+    box-shadow: var(--box-shadow);
 }
 
 .search{

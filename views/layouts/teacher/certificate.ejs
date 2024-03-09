@@ -10,23 +10,28 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>เอกสารสำเร็จการฝึกงาน</h2>
+            <h2>ได้รับหนังสือสำเร็จการฝึกงาน</h2>
             <div class="sort">
                 <select id="sort" onchange="handleSortChange4(this)">
                     <% if (sort == '1') { %>
-                        <option selected value="1">ยังไม่ได้รับ</option>
+                        <option selected value="1">รอส่งเอกสาร</option>
                     <% } else { %>
-                        <option value="1">ยังไม่ได้รับ</option>
+                        <option value="1">รอส่งเอกสาร</option>
                     <% } %>
                     <% if (sort == '2') { %>
-                        <option selected value="2">ได้รับแล้ว</option>
+                        <option selected value="2">ผ่านการฝึกงาน</option>
                     <% } else { %>
-                        <option value="2">ได้รับแล้ว</option>
+                        <option value="2">ผ่านการฝึกงาน</option>
                     <% } %>
                     <% if (sort == '3') { %>
                         <option selected value="3">ทั้งหมด</option>
                     <% } else { %>
                         <option value="3">ทั้งหมด</option>
+                    <% } %>
+                    <% if (sort == '4') { %>
+                        <option selected value="4">ไม่ผ่านการฝึกงาน</option>
+                    <% } else { %>
+                        <option value="4">ไม่ผ่านการฝึกงาน</option>
                     <% } %>
                 </select>
             </div>
@@ -44,7 +49,7 @@
             </div>
 
             <div class="add-btn pop-position close" id="pop-position">
-                <a>เลือก</a>
+                <a>ได้รับหนังสือ</a>
                 <span class="material-icons-sharp">
                     upload_file
                 </span>
@@ -53,7 +58,7 @@
         <div class="modal close" id="approval-docs-modal">
             <% if (requests.length>0) { %>
 
-                <h1>สร้างหนังสือสำเร็จการฝึกงาน</h1>
+                <h1>สร้างเอกสารสำเร็จการฝึกงาน</h1>
                 <form action="/docs-approval-pop4" method="post" name="approvalDocs" enctype="/submit-table">
                 
                     <% var cm=[] %>
@@ -66,19 +71,23 @@
                                                 <table class="styled-table">
                                                     <thead>
                                                         <tr>
-                                                            <th></th>
-                                                            <th>
+                                                            <th colspan="4" style="text-align: center;">
                                                                 <%= element %>
                                                             </th>
-                                                            <th> </th>
+                                                        </tr>
+                                                        <tr class="active-row">
+                                                            <th>เลือก</th>
+                                                            <th>ชื่อนักศึกษา</th>
+                                                            <th>วันที่ยื่น</th>
+                                                            <th>รหัสนักศึกษา</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="active-row">
+                                                        <!-- <tr class="active-row">
                                                             <td>เลือก</td>
                                                             <td>ชื่อนักศึกษา</td>
                                                             <td>รหัสนักศึกษา</td>
-                                                        </tr>
+                                                        </tr> -->
                                                         <% requests.forEach((element2,index)=> { %>
                                                             <% if (element2.company_info.company.name===element) { %>
                                                                 <tr>
@@ -104,6 +113,7 @@
                                                                     <td>
                                                                         <%= element2.student_info.name %>
                                                                     </td>
+                                                                    <td><%= element2.update_at.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %></td>
                                                                     <td>
                                                                         <%= element2.student_info.student_code %>
                                                                     </td>
@@ -188,7 +198,7 @@
                                             <td>
                                                 <%= element2.student_info.name %>
                                             </td>
-                                            <td><%= element2.update_at.toLocaleDateString() %></td>
+                                            <td><%= element2.update_at.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %></td>
                                             <td>
                                                 <%= element2.student_info.student_code %>
                                             </td>
@@ -232,6 +242,11 @@
                        </th>
                    </tr>
                    <% } %>
+                   <tr class="no-data close" id="search-not-found">
+                    <th colspan="8">
+                        ไม่มีข้อมูล
+                    </th>
+                </tr>
                 
             </thead>
             <tbody>
@@ -978,30 +993,30 @@
                                                 <select name="status6" required>
                                                     <% for (let index=0; index <=4; index++) { %>
                                                         <% if (element.certificate_info.status==index && index==0) { %>
-                                                            <option selected value="<%= index %>">รอดำเนินการ</option>
+                                                            <option selected value="<%= index %>">รอส่งเอกสาร</option>
                                                             <% } else if (element.certificate_info.status==index &&
                                                                 index==1) { %>
-                                                                <option selected value="<%= index %>">ได้รับแล้ว
+                                                                <option selected value="<%= index %>">ผ่านการฝึกงาน
                                                                 </option>
                                                                 <% } else if (element.certificate_info.status==index &&
                                                                     index==2) { %>
-                                                                    <option selected value="<%= index %>">ไม่ผ่าน
+                                                                    <option selected value="<%= index %>">ไม่ผ่านการฝึกงาน
                                                                     </option>
                                                                     <% } %>
                                                                             <% if (element.certificate_info.status
                                                                                 !=index && index==0) { %>
-                                                                                <option value="<%= index %>">รอดำเนินการ
+                                                                                <option value="<%= index %>">รอส่งเอกสาร
                                                                                 </option>
                                                                                 <% } else if
                                                                                     (element.certificate_info.status
                                                                                     !=index && index==1) { %>
                                                                                     <option value="<%= index %>">
-                                                                                        ได้รับแล้ว</option>
+                                                                                        ผ่านการฝึกงาน</option>
                                                                                     <% } else if
                                                                                         (element.certificate_info.status
                                                                                         !=index && index==2) { %>
                                                                                         <option value="<%= index %>">
-                                                                                            ไม่ผ่าน</option>
+                                                                                            ไม่ผ่านการฝึกงาน</option>
                                                                                         <% } %>
                                                                                                 <% } %>
                                                 </select>
@@ -1068,13 +1083,13 @@
                                 <% } else if(element.certificate_info.status=='1') { %>
                                     <div class="status-approve success">
                                         <a>
-                                            ส่งเอกสารแล้ว
+                                            ผ่านการฝึกงาน
                                         </a>
                                     </div>
                                     <% } else if(element.certificate_info.status=='2') { %>
                                     <div class="status-approve danger">
                                         <a>
-                                            ปฏิเสธการส่ง
+                                            ไม่ผ่านการฝึกงาน
                                         </a>
                                     </div>
                                     <% } %>
@@ -1086,7 +1101,7 @@
                                 <div class="dropdown-content">
                                     <a href="#" class="request-details" id="request-details"
                                         name="<%= index %>">รายระเอียดคำร้องขอฝึกงาน</a>
-                                        <a href="/uploads/<%= element.request_info.doc_request_intern %>" target="_blank" id="doc-request"><%= all_pages %>เอกสารยื่นคำร้องขอฝึกงาน</a>
+                                        <a href="/uploads/<%= element.request_info.doc_request_intern %>" target="_blank" id="doc-request">เอกสารยื่นคำร้องขอฝึกงาน</a>
                                     <!-- <a href="#">เอกสารรับรองการสำเร็จการฝึกงาน</a>
                                 <a href="#">บันทึกการฝึกงานและการประเมิน</a> -->
                                 </div>

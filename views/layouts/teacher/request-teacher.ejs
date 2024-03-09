@@ -587,12 +587,12 @@
                                                                                 (element.request_info.status==index &&
                                                                                 index==1) { %>
                                                                                 <option selected value="<%= index %>">
-                                                                                    ผ่าน</option>
+                                                                                    อนุมัติ</option>
                                                                                 <% } else if
                                                                                     (element.request_info.status==index
                                                                                     && index==2){ %>
                                                                                     <option selected
-                                                                                        value="<%= index %>">ไม่ผ่าน
+                                                                                        value="<%= index %>">ไม่อนุมัติ
                                                                                     </option>
                                                                                     <% } %>
 
@@ -608,14 +608,14 @@
                                                                                                 %>
                                                                                                 <option
                                                                                                     value="<%= index %>">
-                                                                                                    ผ่าน</option>
+                                                                                                    อนุมัติ</option>
                                                                                                 <% } else if
                                                                                                     (element.request_info.status
                                                                                                     !=index &&
                                                                                                     index==2){ %>
                                                                                                     <option
                                                                                                         value="<%= index %>">
-                                                                                                        ไม่ผ่าน</option>
+                                                                                                        ไม่อนุมัติ</option>
                                                                                                     <% } %>
                                                                                                         <% } %>
                                                                 </select>

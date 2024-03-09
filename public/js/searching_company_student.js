@@ -3,7 +3,8 @@ function filterTable() {
     const filter = input.value.toUpperCase();
     const table = document.getElementById('styled-table');
     const rows = table.getElementsByTagName('tr');
-
+    const snf = document.getElementById('search-not-found');
+    
     var count = 0;
     for (let i = 0; i < rows.length; i++) {
       const name = rows[i].getElementsByTagName('td')[0]; // Column with student name
@@ -27,5 +28,10 @@ function filterTable() {
           rows[i].style.display = 'none';
         }
       }
+    }
+    if(count == 0){
+      snf.classList.remove('close');
+    }else{
+      snf.classList.add('close');
     }
   }

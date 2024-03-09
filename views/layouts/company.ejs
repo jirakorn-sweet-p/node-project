@@ -32,6 +32,14 @@
                 <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
             </div>
         </div>
+        <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)) %>
+                    <% if (sort == 2) { %>
+                        <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)).reverse() %>
+                    <%} else if (sort == 3) { %>
+                        <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)) %>
+                    <%} else if (sort == 4) { %>
+                        <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)).reverse() %>
+                    <% } %>
         <div class="table">
             <table class="styled-table" id="styled-table">
                 <thead>
@@ -43,17 +51,21 @@
                         <th>ตำแหน่งที่เคยรับ</th>
                         <th>จำนวนคนที่ฝึก</th>
                     </tr>
-                    
+                    <% if (ojb.length == 0) { %>
+                        <tr class="no-data">
+                           <th colspan="8">
+                               ไม่มีข้อมูล
+                           </th>
+                       </tr>
+                       <% } %>
+                    <tr class="no-data close" id="search-not-found">
+                        <th colspan="8">
+                            ไม่มีข้อมูล
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)) %>
-                    <% if (sort == 2) { %>
-                        <% var ojb = all_companies.sort((a, b) => a.name.localeCompare(b.name)).reverse() %>
-                    <%} else if (sort == 3) { %>
-                        <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)) %>
-                    <%} else if (sort == 4) { %>
-                        <% ojb = all_companies.sort((a, b) => a.province.localeCompare(b.province)).reverse() %>
-                    <% } %>
+
                     <% ojb.forEach((element,index) => { %>
                         <tr>
                            <td><%= element.name %></td>
@@ -81,11 +93,11 @@
 
             <% for( let index=1; index <=all_pages2; index++ ) { %>
                 <% if (index==current2) { %>
-                    <a href="?page2=<%= index %>" class="current-page">
+                    <a href="?page2=<%= index %>&sort=<%= sort %>" class="current-page">
                         <%= index %>
                     </a>
                     <% } else { %>
-                        <a href="?page2=<%= index %>">
+                        <a href="?page2=<%= index %>&sort=<%= sort %>">
                             <%= index %>
                         </a>
                         <% } %>

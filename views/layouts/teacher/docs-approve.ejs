@@ -14,9 +14,9 @@
             <div class="sort">
                 <select id="sort" onchange="handleSortChange2(this)">
                     <% if (sort == '1') { %>
-                        <option selected value="1">รอหนังสือตอบรับ</option>
+                        <option selected value="1">รอออกหนังสือส่งตัว</option>
                     <% } else { %>
-                        <option value="1">รอหนังสือส่งตัว</option>
+                        <option value="1">รอออกหนังสือส่งตัว</option>
                     <% } %>
                     <% if (sort == '2') { %>
                         <option selected value="2">ออกหนังสือแล้ว</option>
@@ -50,7 +50,7 @@
             </div>
 
             <div class="add-btn pop-position close" id="pop-position">
-                <a>เลือก</a>
+                <a>ออกหนังสือ</a>
                 <span class="material-icons-sharp">
                     upload_file
                 </span>
@@ -71,19 +71,23 @@
                                                 <table class="styled-table">
                                                     <thead>
                                                         <tr>
-                                                            <th></th>
-                                                            <th>
+                                                            <th colspan="4" style="text-align: center;">
                                                                 <%= element %>
                                                             </th>
-                                                            <th> </th>
+                                                        </tr>
+                                                        <tr class="active-row">
+                                                            <th>เลือก</th>
+                                                            <th>ชื่อนักศึกษา</th>
+                                                            <th>วันที่ยื่น</th>
+                                                            <th>รหัสนักศึกษา</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="active-row">
+                                                        <!-- <tr class="active-row">
                                                             <td>เลือก</td>
                                                             <td>ชื่อนักศึกษา</td>
                                                             <td>รหัสนักศึกษา</td>
-                                                        </tr>
+                                                        </tr> -->
                                                         <% requests.forEach((element2,index)=> { %>
                                                             <% if (element2.company_info.company.name===element) { %>
                                                                 <tr>
@@ -109,6 +113,7 @@
                                                                     <td>
                                                                         <%= element2.student_info.name %>
                                                                     </td>
+                                                                    <td><%= element2.update_at.toLocaleDateString() %></td>
                                                                     <td>
                                                                         <%= element2.student_info.student_code %>
                                                                     </td>

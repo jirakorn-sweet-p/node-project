@@ -24,19 +24,19 @@
                     <div class="uploads-content">
                         <a href="">ชื่อสถานที่ฝึกงาน</a>
                         <div class="border-input">
-                            <input type="text" name="name" value="<%= company.name %>" >
+                            <input type="text" name="name" value="<%= company.name %>" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">เบอร์โทรศัพท์</a>
                         <div class="border-input">
-                            <input type="text" name="tel" value="<%= company.tel %>" oninput="formatTEL(this)" maxlength="11" >
+                            <input type="text" name="tel" value="<%= company.tel %>" oninput="formatTEL(this)" maxlength="11" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">สถานประกอบการเกี่ยวข้องกับด้านใด</a>
                         <div class="border-input">
-                            <input type="text" name="type_business" value="<%= company.type_business %>" >
+                            <input type="text" name="type_business" value="<%= company.type_business %>" required>
                         </div>
                     </div>
                 </div>
@@ -44,37 +44,37 @@
                     <div class="uploads-content">
                         <a href="">ที่อยู่</a>
                         <div class="border-input">
-                            <input type="text" name="address" value="<%= company.address %>" >
+                            <input type="text" name="address" value="<%= company.address %>" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">สถานประกอบการ</a>
                         <div class="border-input">
-                            <input type="text" name="name2" value="<%= company.name %>" >
+                            <input type="text" name="name2" value="<%= company.name %>" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">ตำบล/แขวง</a>
                         <div class="border-input">
-                            <input type="text" name="subdistrict" value="<%= company.subdistrict %>" >
+                            <input type="text" name="subdistrict" value="<%= company.subdistrict %>" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">อำเภอ/เขต</a>
                         <div class="border-input">
-                            <input type="text" name="district" value="<%= company.district %>" >
+                            <input type="text" name="district" value="<%= company.district %>" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">จังหวัด</a>
                         <div class="border-input">
-                            <input type="text" name="province" value="<%= company.province %>" >
+                            <input type="text" name="province" value="<%= company.province %>" required>
                         </div>
                     </div>
                     <div class="uploads-content">
                         <a href="">รหัสไปรษณีย์</a>
                         <div class="border-input">
-                            <input type="text" maxlength="5" oninput="ProvinceCode(this)" name="provinceID" value="<%= company.provinceID %>" >
+                            <input type="text" maxlength="5" oninput="ProvinceCode(this)" name="provinceID" value="<%= company.provinceID %>" required>
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
 
                                         <% if (element.certificate_info.status=='0' ) { %>
                                             <div class="status-approve cp">
-                                                <a>กำลังฝึกงาน
+                                                <a>รอส่งเอกสารสำเร็จการฝึกงาน
                                                     <% } else if (element.certificate_info.status=='1' ) { %>
                                                         <div class="status-approve success">
                                                             <a>ผ่านการฝึกงาน

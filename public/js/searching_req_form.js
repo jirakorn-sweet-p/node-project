@@ -10,7 +10,7 @@ function filterTable() {
       const name = rows[i].getElementsByTagName('td')[1]; // Column with student name
       const studentId = rows[i].getElementsByTagName('td')[2]; // Column with student ID
   
-      if (name || studentId || organization) {
+      if (name || studentId) {
         const nameText = name ? name.textContent || name.innerText : '';
         const studentIdText = studentId ? studentId.textContent || studentId.innerText : '';
 

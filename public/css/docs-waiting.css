@@ -449,6 +449,7 @@ input {
     height: 2.8rem;
     border-radius: 50%;
     overflow: hidden;
+    border: solid 2px #fff;
 }
 
 .info p,
@@ -1993,10 +1994,10 @@ main .header-main.part2 {
     min-height: 15%;
     height: 15%;
 }
-.modal#approval-docs-modal form table th,
+/* .modal#approval-docs-modal form table th,
 .modal#approval-docs-modal form table td{
     width: 47.5%;
-}
+} */
 
 .modal#approval-docs-modal form table th:first-child,
 .modal#approval-docs-modal form table td:first-child{
@@ -2019,13 +2020,13 @@ span.danger {
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
-
+.modal#approval-docs-modal .uploads-content .border-input2,
 .modal#approval-docs-modal2 .uploads-content .border-input2{
     margin-left: 3.5rem;
     margin-top: 1rem;
     height: 3rem;
 }
-
+.modal#approval-docs-modal .uploads-content .border-input2 input,
 .modal#approval-docs-modal2 .uploads-content .border-input2 input{
     min-width: 30%;
 }
@@ -2080,4 +2081,12 @@ span.danger {
 
 span.cp {
     color: var(--color-cp);
+}
+
+.header-main .non-bg{
+    margin: 0.1rem 0 0 2rem;
+    padding: 8px;
+    width: 8rem;
+    background-color: none;
+    box-shadow: none;
 }

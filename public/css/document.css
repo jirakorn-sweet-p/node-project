@@ -460,6 +460,7 @@ input {
     height: 2.8rem;
     border-radius: 50%;
     overflow: hidden;
+    border: solid 2px #fff;
 }
 
 .info p,

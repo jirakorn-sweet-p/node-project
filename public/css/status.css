@@ -457,6 +457,7 @@ input {
     height: 2.8rem;
     border-radius: 50%;
     overflow: hidden;
+    border: solid 2px #fff;
 }
 
 .info p,
@@ -890,7 +891,7 @@ details>div {
 }
 
 .details-status p {
-    padding: 10px 10px 0px 10px;
+    padding: 20px 10px 0px 10px;
 }
 
 .details-status p:last-child {
@@ -908,7 +909,7 @@ details>div {
 
 .details.dop[open] {
     transition: all 0.5s ease;
-    margin-bottom: 18rem; /* Adjust this value based on your design */
+    margin-bottom: 14rem; /* Adjust this value based on your design */
 }
 
 .next-element {

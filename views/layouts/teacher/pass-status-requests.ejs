@@ -8,7 +8,7 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>ตรวจสอบสถานการณ์ฝึกงาน</h2>
+            <h2>ตรวจสอบสถานะการฝึกงาน</h2>
         </div>
         <div class="header-main part2"><div class="search">
             <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
@@ -22,7 +22,7 @@
                     <th>ชื่อนักศึกษา</th>
                     <th>ตำแหน่ง</th>
                     <th>สถานประกอบการ</th>
-                    <th class="midle">การอนุมัติ</th>
+                    <th class="midle">สถานะการฝึกงาน</th>
                     <th>เพิ่มเติม</th>
                 </tr>
                 <% if (requests.length == 0) { %>
@@ -661,7 +661,7 @@
 
                                                                 <% if (element.certificate_info.status == '0') { %>
                                                                     <div class="status-approve cp">
-                                                                    <a>กำลังฝึกงาน
+                                                                    <a>รอส่งเอกสารสำเร็จการฝึกงาน
                                                                     <% } else if (element.certificate_info.status == '1') { %>
                                                                     <div class="status-approve success">
                                                                     <a>ผ่านการฝึกงาน

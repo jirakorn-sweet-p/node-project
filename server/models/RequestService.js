@@ -42,6 +42,10 @@ const RequestServiceSchema = new Schema({
         type: String,
         default:"0"
     },
+    update_accepted_at:{
+        type: Date,
+        default: Date.now
+    },
     update_at:{
         type: Date,
         default: Date.now

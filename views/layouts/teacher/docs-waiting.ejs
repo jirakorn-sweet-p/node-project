@@ -80,19 +80,23 @@
                                                 <table class="styled-table">
                                                     <thead>
                                                         <tr>
-                                                            <th></th>
-                                                            <th>
+                                                            <th colspan="4" style="text-align: center;">
                                                                 <%= element %>
                                                             </th>
-                                                            <th> </th>
+                                                        </tr>
+                                                        <tr class="active-row">
+                                                            <th>เลือก</th>
+                                                            <th>ชื่อนักศึกษา</th>
+                                                            <th>วันที่ยื่น</th>
+                                                            <th>รหัสนักศึกษา</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="active-row">
+                                                        <!-- <tr class="active-row">
                                                             <td>เลือก</td>
                                                             <td>ชื่อนักศึกษา</td>
                                                             <td>รหัสนักศึกษา</td>
-                                                        </tr>
+                                                        </tr> -->
                                                         <% requests.forEach((element2,index)=> { %>
                                                             <% if (element2.company_info.company.name===element) { %>
                                                                 <tr>
@@ -118,9 +122,11 @@
                                                                     <td>
                                                                         <%= element2.student_info.name %>
                                                                     </td>
+                                                                    <td><%= element2.update_at.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %></td>
                                                                     <td>
                                                                         <%= element2.student_info.student_code %>
                                                                     </td>
+                                                        
                                                                 </tr>
                                                                 <% } %>
                                                                     <% }) %>

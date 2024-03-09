@@ -30,12 +30,9 @@
 
             </summary>
             <div class="details-status">
-                <p class="bold">ชื่อผู้ดำเนินการ</p>
-                <p class="editor">
-                    <%= data.editor %>
-                </p>
-                <p>ดำเนินการเมื่อ  <%= new Date(status.student_info.update_status_at).toLocaleString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
-                </p>
+                
+                <p>ดำเนินการเมื่อ  <%= new Date(status.student_info.update_status_at).toLocaleString({ year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
+                
                 <p class="bold">comment</p>
                 <div class="comment">
                     <p>
@@ -82,11 +79,8 @@
                                                                 <% } %>
                                 </summary>
                                 <div class="details-status">
-                                    <p class="bold">ชื่อผู้ดำเนินการ</p>
-                                    <p class="editor">
-                                        <%= data.editor %>
-                                    </p>
-                                    <p>ดำเนินการเมื่อ  <%= new Date(status.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
+                                    
+                                    <p>ดำเนินการเมื่อ  <%= new Date(status.update_at).toLocaleString({ year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
                                     <p class="bold">comment</p>
                                     <div class="comment">
                                         <p>
@@ -133,11 +127,8 @@
                                                                     <% } %>
                                     </summary>
                                     <div class="details-status">
-                                        <p class="bold">ชื่อผู้ดำเนินการ</p>
-                                        <p class="editor">
-                                            <%= data.editor %>
-                                        </p>
-                                        <p>ดำเนินการเมื่อ  <%= new Date(status.update_at).toLocaleString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
+                                        
+                                        <p>ดำเนินการเมื่อ  <%= new Date(status.update_accepted_at).toLocaleString( { year: 'numeric', month: 'long', day: 'numeric' }); %> </p>
                                         <p class="bold">comment</p>
                                         <div class="comment">
                                             <p>

@@ -60,19 +60,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="paginator">
-                    <% for (let index = 1; index <= all_pages; index++) { %>
-                        <% if (index == current) { %>
-                            <a href="/all-companys?page=<%= index %>" class="current-page">
-                                <%= index %>
-                            </a>
-                        <% } else { %>
-                            <a href="/all-companys?page=<%= index %>">
-                                <%= index %>
-                            </a>
-                        <% } %>
-                    <% } %>
-                </div>
+
         </div>
     </div>
 </div>
@@ -184,9 +172,9 @@
                     <a>ชื่อสถานที่ฝึกงาน <span></span></a>
                     <div class="border-input2 finder">
                         <input class="close" type="text" name="found" id="found">
-                        <input class="find close" placeholder="กรอกชื่อสถานที่ฝึกงาน" id="find" type="text" name="location" required>
-                        <a class="search" id="search">ค้นหา<span class="material-icons-sharp">search</span></a>
-                        <a class="search" id="new-company">เพิ่ม<span class="material-icons-sharp">add</span></a>
+                        <input class="find " placeholder="กรอกชื่อสถานที่ฝึกงาน" id="find" type="text" name="location" required>
+                        <a class="search " id="search">ค้นหา<span class="material-icons-sharp">search</span></a>
+                        <a class="search close" id="new-company">เพิ่ม<span class="material-icons-sharp">add</span></a>
                     </div>
                 </div>
                 <div class="uploads-content">

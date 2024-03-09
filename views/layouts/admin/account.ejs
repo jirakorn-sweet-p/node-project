@@ -20,7 +20,14 @@
 <form method="POST" action="/account/add_by_excel?sort=<%= sort %>" enctype="multipart/form-data">
 <div class="modal close" id="modal3">
     <div class="modal-box">
-        
+        <div class="datas">
+            <% if (sort == 1) { %>
+             <h1>สร้างผู้ใช้นักศึกษาจากไฟล์</h1>
+             <% } else if (sort == 2) { %>
+                <h1>สร้างผู้ใช้อาจารย์/บุคลากรจากไฟล์</h1>
+            <% } %>
+            
+        </div>
         <div class="datas">
             <h2>ไฟล์ตัวอย่าง<p>(xlsx)  </p></h2>
             <a href="/uploads/official/add_user<%= sort %>.xlsx" class="links border-space" target="_blank">
@@ -33,7 +40,7 @@
         </div>
         
         <div class="submit">
-            <button type="submit">สร้าง</button>
+            <button type="submit" onclick="alert('hi')">สร้าง</button>
         </div>
 
     </div>
@@ -45,7 +52,7 @@
     <div class="modal close" id="modal">
         <div class="modal-box">
             <div class="datas">
-                <h1>สร้างรหัสผู้ใช้</h1>
+                <h1>สร้างบัญชีผู้ใช้</h1>
             </div>
             <div class="datas">
                 <h2>อีเมล</h2>
@@ -66,8 +73,8 @@
             
             </div>
             <div class="datas">
-                <h2>ชื่อนาม-สกุล</h2>
-                <input type="text" placeholder="ชื่อนาม-สกุล" name="name" required>
+                <h2>ชื่อ-นามสกุล</h2>
+                <input type="text" placeholder="ชื่อ-นามสกุล" name="name" required>
             </div>
 
              <div class="datas close" id="stdid2">
@@ -88,7 +95,7 @@
 <main>
     <div class="main">
         <div class="header-main">
-            <h2>จัดการผู้ใช้</h2>
+            <h2>จัดการบัญชีผู้ใช้</h2>
             <div class="sort">
                 <select id="sort" onchange="handleSortChange(this)">
                     <% if (sort == '1') { %>
@@ -158,7 +165,7 @@
                             <div class="modal close" id="modal2<%= index %>">                
                             <div class="modal-box">
                                 <div class="datas">
-                                    <h1>สร้างรหัสผู้ใช้</h1>
+                                    <h1>สร้างบัญชีผู้ใช้</h1>
                                 </div>
                                 <div class="datas">
                                     <h2>อีเมล</h2>
@@ -183,8 +190,8 @@
                                 
                                 </div>
                                 <div class="datas">
-                                    <h2>ชื่อนาม-สกุล</h2>
-                                        <input type="text" placeholder="ชื่อนาม-สกุล" value="<%= user.student_info.name %>" name="name" required>
+                                    <h2>ชื่อ-นามสกุล</h2>
+                                        <input type="text" placeholder="ชื่อ-นามสกุล" value="<%= user.student_info.name %>" name="name" required>
                                 </div>
                                     <div class="datas" >
                                         <% if (user.role == 'student') { %>

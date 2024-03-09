@@ -70,7 +70,7 @@ var storage = multer.diskStorage({
 var storage2 = multer.diskStorage({
     
     destination: function (req, file, cb) {
-        cb(null, 'public/uploads/docs')
+        cb(null, 'public/uploads')
     },
     filename: function (req, file, cb) {
         cb(null, 'general_docs' + '-' + new Date().toISOString().replace(/:/g, '-').split('T')[0]  + '.' + file.originalname.split('.').pop());
@@ -623,6 +623,7 @@ router.get('/login',redirectIfAuth, (req, res) => {
         content:"../layouts/login.ejs",
         bar1: "active"
     }
+
     res.render('index', {locals,login:true});
 });
 
@@ -892,7 +893,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
         var userId = new ObjectId(dat.student_info);
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1028,7 +1029,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = dat.student_code;
     if(user){
         image = user.image
@@ -1036,18 +1037,10 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     }else{
         req.session.firstlogin = true;
     }
-    let page = req.query.page || 1;
-    let perPage = 10;
+
 
     const data = await companies.aggregate([ { $sort: {name: 1 }},{ $match: { status: '1' } },])
-        .skip(perPage*page-perPage)
-        .limit(perPage)
         .exec();
-    
-    const count = await companies.countDocuments({});
-    let allPage = Math.ceil(count/perPage);
-    const nextPage = parseInt(page)+1;
-    const hasNextPage = nextPage <= allPage;
 
     const posit = await position.aggregate([ { $sort: {name: 1 }}]).exec();
     const data2 = await student_info.findOne({'_id':dat.student_info});
@@ -1065,10 +1058,9 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
         name:name,
         first:req.session.firstlogin
     }
-    res.render('index', { locals,data,count,
-        current: page,std_code:name,posit,
-        all_pages:allPage,info:data2,
-        nextPage: hasNextPage ? nextPage : null});
+    res.render('index', { locals,data,
+        std_code:name,posit,
+        info:data2});
 });
 
 router.get('/request-status',redirectNotAuth,async (req,res) => {
@@ -1077,7 +1069,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1181,7 +1173,7 @@ router.get('/request-status/:id',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1286,7 +1278,7 @@ router.get('/document',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1340,7 +1332,7 @@ router.get('/news',redirectNotAuth, async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1397,7 +1389,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1438,32 +1430,31 @@ router.get('/company',redirectNotAuth,async (req,res) => {
 
         let page2 = req.query.page2 || 1;
         let perPage2 = 15;
-        // const all_companies = await companies.find({'status':'1'});
-        const all_companies = await companies.aggregate([
-            { $match: { status: { $in: ['1'] } } },
-            { $skip: perPage2 * page2 - perPage2 },
-            { $limit: perPage2 },
-        ]).exec();
-        const count2 = await companies.countDocuments({});
-        let allPage2= Math.ceil(count2/perPage2);
-        const nextPage2 = parseInt(page2)+1;
-        const hasNextPage2 = nextPage2 <= allPage2;
-        
-        var sorting1 = 1;
+        var sorting = 1;
         var sorting2 = 1;
         if(sort == 1){
             sorting = 1;
-            sorting2 = 1;
         }else if(sort == 2){
             sorting = -1;
-            sorting2 = 1;
         }else if(sort == 3){
-            sorting = 1;
             sorting2 = 1;
         }else if(sort == 4){
-            sorting = 1;
             sorting2 = -1;
         }
+        // const all_companies = await companies.find({'status':'1'});
+        const all_companies = await companies.aggregate([
+            { $match: { status: { $in: ['1'] } } },
+            { $sort: { name: sorting } },
+            { $skip: perPage2 * page2 - perPage2 },
+            { $limit: perPage2 },
+        ]).exec();
+        const count2 = await companies.countDocuments({ status: '1' });//23
+        console.log(count2);
+        let allPage2= Math.ceil(count2/perPage2);//23/15 =1.5
+        console.log(allPage2);
+        const nextPage2 = parseInt(page2);
+        const hasNextPage2 = nextPage2 <= allPage2;
+        
         const data2 = await request_ser.aggregate([
             { $sort: { name: sorting } },
             { $match: { status: '1' } },
@@ -1528,7 +1519,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
             },
             { $sort: { 'company_info.company.province': sorting2 } }, // Replace 'sorting' with your sorting direction variable
         ]).exec();
-
+        
         var all_position = [];
         var this_position = [];
         for (let i = 0; i < all_companies.length; i++) {
@@ -1625,7 +1616,7 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
     if(dat.role == "student"){
         user = await student_info.findOne({ '_id': dat.student_info });
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1658,7 +1649,7 @@ router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user.image){
         image = user.image
@@ -1781,7 +1772,7 @@ router.get('/request-teacher',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
         
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     
     var name = user.name;
     if(!user){
@@ -1968,6 +1959,7 @@ router.post('/request-teacher/company-add',redirectNotAuth, async (req,res) => {
         const this_request = (await request_ser.find({'_id':req.session.req_id})).at(0);
         const com_info = (await company_info.find({'_id':this_request.company_info._id})).at(0);
         const this_com = (await companies.find({'_id':com_info.company})).at(0);
+        
         this_com.status = process.env.STATUS_PASS;
         req.session.error = "เพิ่มบริษัทสำเร็จ";
         await this_com.save();
@@ -2614,7 +2606,7 @@ router.get('/requests-all-teacher',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
         req.session.firstlogin = true;
@@ -2789,7 +2781,7 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -2955,7 +2947,7 @@ router.get('/upload-docs',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
         req.session.firstlogin = true;
@@ -3069,7 +3061,7 @@ router.get('/upload-news',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -3185,7 +3177,7 @@ router.get('/news/:id',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -3335,7 +3327,7 @@ router.get('/all-companys',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user){
 
@@ -3612,7 +3604,7 @@ router.get('/all-companys/:id',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -3941,7 +3933,7 @@ router.get('/upload-calendar',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -4054,7 +4046,7 @@ router.get('/docs-waiting',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -4455,7 +4447,7 @@ router.get('/docs-approve',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user){
 
@@ -4862,7 +4854,7 @@ router.get('/docs-accepted',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -5263,7 +5255,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -5661,7 +5653,7 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         }
     ]).exec();
     count.push(data3_0.length);
-
+    console.log(data3.length);
     all_pages.push(Math.ceil(count[2]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[2] <= all_pages[2]);
@@ -5669,7 +5661,8 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         { $sort: { update_at: 1 } },
         { $match: { status: '1' } },
         { $match: { approval_document_status: '1' } },
-        { $match: { accepted_company_status: '2' } },
+        { $match: { accepted_company_status: '1' } },
+        { $match: { sended_company_status: '1' } },
         { $skip: perPage * page - perPage },
         { $limit: perPage },
         {$addFields:{v:0}},
@@ -5726,6 +5719,11 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
                 'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
             }
         },
+        {
+            $match: {
+                'certificate_info.status': '2'
+            }
+        }
     ]).exec();
     
     const data4_0 = await request_ser.aggregate([
@@ -5734,7 +5732,9 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         { $match: { approval_document_status: '1' } },
         { $match: { accepted_company_status: '1' } },
         { $match: { sended_company_status: '1' } },
-
+        { $skip: perPage * page - perPage },
+        { $limit: perPage },
+        {$addFields:{v:0}},
         {
             $lookup: {
                 from: 'certificates',
@@ -5745,17 +5745,16 @@ router.get('/docs-certificate',redirectNotAuth, async (req,res) => {
         },
         {
             $addFields: {
-                certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                certificate_info: { $arrayElemAt: ['$certificate_info', 0] }
             }
         },
         {
             $match: {
-                'certificate_info.status': '1'
+                'certificate_info.status': '2'
             }
         }
     ]).exec();
     count.push(data4_0.length);
-
     all_pages.push(Math.ceil(count[3]/perPage));
     nextPage.push(parseInt(page)+1);
     hasNextPage.push(nextPage[3] <= all_pages[3]);
@@ -6222,7 +6221,7 @@ router.get('/uploads/:file',redirectNotAuth, async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(!user){
 
@@ -6296,7 +6295,7 @@ router.get('/account',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user){
         // image = user.image
@@ -6463,7 +6462,7 @@ router.get('/account/:id',redirectNotAuth,async (req,res) => {
         user = await student_info.findOne({ '_id': dat.student_info });
 
     }
-    var image = ' logo.png';
+    var image = 'logo3.png';
     var name = user.name;
     if(user){
         // image = user.image

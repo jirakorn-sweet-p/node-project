@@ -17,19 +17,19 @@
                 <div class="uploads-content">
                     <a >ชื่อสถานที่ฝึกงาน</a>
                     <div class="border-input">
-                        <input type="text" name="name">
+                        <input type="text" name="name" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a >เบอร์โทรศัพท์</a>
                     <div class="border-input">
-                        <input type="text" name="tel" oninput="formatTEL(this)" maxlength="11">
+                        <input type="text" name="tel" oninput="formatTEL(this)" maxlength="11" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a >สถานประกอบการเกี่ยวข้องกับด้านใด</a>
                     <div class="border-input">
-                        <input type="text" name="type_business">
+                        <input type="text" name="type_business" required>
                     </div>
                 </div>
             </div>
@@ -40,31 +40,31 @@
                 <div class="uploads-content">
                     <a >ที่อยู่</a>
                     <div class="border-input">
-                        <input type="text" name="address">
+                        <input type="text" name="address" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a >ตำบล/แขวง</a>
                     <div class="border-input">
-                        <input type="text" name="subdistrict">
+                        <input type="text" name="subdistrict" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a >อำเภอ/เขต</a>
                     <div class="border-input">
-                        <input type="text" name="district">
+                        <input type="text" name="district" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a >จังหวัด</a>
                     <div class="border-input">
-                        <input type="text" name="province">
+                        <input type="text" name="province" required>
                     </div>
                 </div>
                 <div class="uploads-content">
                     <a >รหัสไปรษณีย์</a>
                     <div class="border-input">
-                        <input type="text" maxlength="5" oninput="ProvinceCode(this)" name="provinceID">
+                        <input type="text" maxlength="5" oninput="ProvinceCode(this)" name="provinceID" required>
                     </div>
                 </div>
             </div>
@@ -240,6 +240,7 @@
                         <th>เบอร์โทรศัพท์ สถานประกอบการ</th>
                         <!-- <th>ประเภทธุรกิจ</th> -->
                         <th class="location">ที่อยู่</th>
+                        <th>สถานะ</th>
                         <th>ตำแหน่งที่เคยรับ</th>
                         <th></th>
                     </tr>
@@ -263,6 +264,19 @@
                         <td><%= element.tel %></td>
                         <!-- <td>บัญชี / ผู้ตรวจบัญชี</td> -->
                         <td class="location"><%= element.address %></td>
+                        <td>
+                            <% if (element.status == '1') { %>
+                                <div class="status-approve success">
+                                    <a>
+                                    อนุมัติ
+                            <% } else if (element.status == '2') { %>
+                                <div class="status-approve danger">
+                                    <a>
+                                    ไม่อนุมัติ
+                            <% } %>
+                            </a>
+                        </div>
+                    </td>
                         <td class="position">
                             
                             <% if (all_position[index]) { %>
