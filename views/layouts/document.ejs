@@ -19,9 +19,7 @@
                             ดาวน์โหลด
                         </a>
                     </div>
-                    <div class="date-upload"><%= docs.createdAt.getDate() %> -
-                        <%= docs.createdAt.getMonth()+1 %> -
-                            <%= docs.createdAt.getFullYear() %></div>
+                    <div class="date-upload"><%= docs.createdAt.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }); %>
                 </div>
                 <% }) %>
 

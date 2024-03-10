@@ -1544,7 +1544,7 @@ textarea.auto {
     /* background-color: red; */
     padding-left: 3.5rem;
 }
-
+.submit a ,
 .submit button {
     border-radius: 8px;
     margin-bottom: 1rem;
@@ -1554,7 +1554,7 @@ textarea.auto {
     background: #084cdf;
     color: #fff;
 }
-
+.submit a:hover ,
 .submit button:hover {
     background: #0d45a5;
 }

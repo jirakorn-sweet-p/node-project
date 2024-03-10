@@ -1338,4 +1338,5 @@ td .cp a,
 td .success a,
 td .danger a {
     color: var(--color-white);
+    font-size: small;
 }

@@ -6,16 +6,19 @@ function filterTable() {
     const snf = document.getElementById('search-not-found');
     var count = 0;
     for (let i = 0; i < rows.length; i++) {
+      const date = rows[i].getElementsByTagName('td')[0]; // Column with student name
       const name = rows[i].getElementsByTagName('td')[2]; // Column with student name
       const studentId = rows[i].getElementsByTagName('td')[1]; // Column with student ID
       const organization = rows[i].getElementsByTagName('td')[4]; // Column with organization name
       const position = rows[i].getElementsByTagName('td')[3]; // Column with organization name
-      if (name || studentId || organization) {
+      if (name || studentId || organization || date) {
+        const dateText = date ? date.textContent || date.innerText : '';
         const nameText = name ? name.textContent || name.innerText : '';
         const studentIdText = studentId ? studentId.textContent || studentId.innerText : '';
         const organizationText = organization ? organization.textContent || organization.innerText : '';
         const positionText = position ? position.textContent || position.innerText : '';
         const matchFound =
+          dateText.toUpperCase().indexOf(filter) > -1 ||
           nameText.toUpperCase().indexOf(filter) > -1 ||
           studentIdText.toUpperCase().indexOf(filter) > -1 ||
           organizationText.toUpperCase().indexOf(filter) > -1 ||

@@ -36,6 +36,16 @@ const approval_docs_modal2 = document.getElementById('approval-docs-modal2');
 
 // const new_company = document.getElementById('new-company');
 
+const docs_approval_pop1 = document.getElementById('docs-approval-pop1');
+const refesh_pop1 = document.getElementById('refesh_pop');
+
+const docs_approval_pop2 = document.getElementById('docs-approval-pop2');
+const refesh_pop2 = document.getElementById('refesh_pop2');
+
+
+const deleteLink2 = document.querySelectorAll('#deleteLink2');
+const Link2 = Array.from(deleteLink2);  
+
 const deleteLink = document.querySelectorAll('#new-company');
 const Link = Array.from(deleteLink);  
 //check box 
@@ -67,6 +77,36 @@ const data_generate = document.getElementsByClassName('data-generate');
 const data_gen = Array.from(data_generate);
 const table_generate = document.getElementsByClassName('table-gen');
 const table_gen = Array.from(table_generate);
+
+if (refesh_pop1) {
+  refesh_pop1.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      // Perform the form submission
+      docs_approval_pop1.submit();
+
+      // Wait for the download to complete (adjust the timeout value accordingly)
+      setTimeout(function () {
+          // Navigate to the new page after the download is complete
+          window.location.href = "/docs-waiting";
+      }, 2000); // 2000 milliseconds (adjust as needed)
+  });
+}
+
+if (refesh_pop2) {
+  refesh_pop2.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      // Perform the form submission
+      docs_approval_pop2.submit();
+
+      // Wait for the download to complete (adjust the timeout value accordingly)
+      setTimeout(function () {
+          // Navigate to the new page after the download is complete
+          window.location.href = "/docs-waiting";
+      }, 2000); // 2000 milliseconds (adjust as needed)
+  });
+}
 
 if (generateStartDate) {
   generateStartDate.addEventListener('change', () => {
@@ -227,13 +267,22 @@ if (cbx5) { // Check if the element is found
 
 if(deleteLink){
   Link.forEach((e,index) => {
-      // modal_alert.classList.remove('close');
-      // modal_bg_alert.classList.remove('close')
       e.addEventListener('click', function (event) {
       var modalEditName = 'deleteForm'+ e.getAttribute('name').toString();
-      console.log(modalEditName);
       const modalEdit = document.getElementById(modalEditName);
-      console.log(modalEdit);
+      event.preventDefault();
+      modalEdit.submit();
+});
+  });
+
+}
+
+if(deleteLink2){
+  Link2.forEach((e,index) => {
+      e.addEventListener('click', function (event) {
+        console.log(e);
+      var modalEditName = 'deleteForm2';
+      const modalEdit = document.getElementById(modalEditName);
       event.preventDefault();
       modalEdit.submit();
 });
@@ -658,6 +707,13 @@ function handleSortChange4(selectElement) {
           break;
           // Handle the default case or do nothing
   }
+}
+
+function handleSortChange5(selectElement) {
+  var selectedValue = '/pass-status-requests?sort='+selectElement.value.toString();
+  console.log(selectedValue);
+  window.location.href = selectedValue;
+
 }
 
 function redirectToDocsWaiting() {

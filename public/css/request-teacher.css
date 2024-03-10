@@ -1427,7 +1427,7 @@ textarea.auto {
     /* background-color: red; */
     padding-left: 3.5rem;
 }
-
+.submit a ,
 .submit button {
     border-radius: 8px;
     padding: 0.6rem 2.5rem;
@@ -1436,7 +1436,7 @@ textarea.auto {
     background: #084cdf;
     color: #fff;
 }
-
+.submit a:hover ,
 .submit button:hover {
     background: #0d45a5;
 }
@@ -1608,7 +1608,7 @@ span.cp {
     text-align: center;
 }
 .header-main .sort {
-    margin-top: 4rem;
+    margin-top: 0.1rem;
     margin-left: 3rem;
     width: 11rem;
     display: flex;
@@ -1700,4 +1700,13 @@ main .header-main.part2 {
     width: auto;
     margin-top: 1rem;
     height: auto;
+}
+
+.add-btn.success:hover a{
+    color: var(--color-white);
+}
+
+.add-btn.success:hover{
+    background-color: var(--color-cp);
+    color: var(--color-white);
 }

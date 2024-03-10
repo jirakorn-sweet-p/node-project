@@ -59,7 +59,7 @@
         <div class="modal close" id="approval-docs-modal">
             <% if (requests.length>0) { %>
                 <h1>สร้างหนังสือส่งตัว</h1>
-                <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
+                <form action="/docs-approval-pop2" id="docs-approval-pop1" method="post" name="approvalDocs" enctype="/submit-table">
                 
                     <% var cm=[] %>
                         <% requests.forEach((element,index)=> { %>
@@ -125,19 +125,14 @@
                                                 </table>
                                                 <% }) %>
                                                 
-                                                    <div class="submit">
-                                                        <a href="/docs-approve">
-                                                            <button id="generate" class="generate" type="submit">ตกลง</button>
-                                                        </a>
-                                                        
-                                                    </div>
+                                                <div class="submit">
+                                                    <a id="refesh_pop" class="generate" type="submit">ตกลง</a>
+                                            </div>
                 </form>
                 <% }else{ %>
                     <div class="submit">
-                        <a href="/docs-approve">
-                            <button id="generate" class="generate" type="submit">ตกลง</button>
-                        </a>
-                    </div>
+                        <a id="refesh_pop" class="generate" type="submit">ตกลง</a>
+                </div>
                     <% } %>
 
         </div>
@@ -152,7 +147,7 @@
                         <input type="date" name="generate_end" id="generateEndDate" value="<%= new Date().toISOString().split('T')[0] %>">
                     </div>
                 </div>
-                <form action="/docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
+                <form action="/docs-approval-pop2"  id="docs-approval-pop2" method="post" name="approvalDocs" enctype="/submit-table">
                     <% var cm=[] %>
                     <% requests.forEach((element,index)=> { %>  
                         <% if (!cm.includes(element.company_info.company.name)) { %>
@@ -212,17 +207,13 @@
                         </table>
                     <% }) %>
                     <div class="submit">
-                        <a href="/docs-approve">
-                            <button id="generate" class="generate" type="submit">ตกลง</button>
-                        </a>
-                    </div>
+                        <a id="refesh_pop2" class="generate" type="submit">ตกลง</a>
+                </div>
                 </form>
                 
                 <% }else{ %>
                     <div class="submit">
-                        <a href="/docs-approve">
-                            <button id="generate" class="generate" class="generate" type="submit">ตกลง</button>
-                        </a>
+                        <a id="refesh_pop2" class="generate" type="submit">ตกลง</a>
                     </div>
                     <% } %>
 
@@ -513,11 +504,11 @@
                                         <div class="uploads-content">
                                             <a >ช่วงเวลาที่ฝึกงาน</a>
                                             <div class="border-input2">
-                                                <input type="date" name="start_intern"
-                                                    value="<%= element.company_info.start_intern.toISOString().split('T')[0] %>">
+                                                <input type="text" name="start_intern"
+                                                    value="<%= element.company_info.start_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>">
                                                 <h3>ถึง</h3>
-                                                <input type="date" name="end_intern"
-                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                                <input type="text" name="end_intern"
+                                                    value="<%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>">
                                             </div>
                                         </div>
 
@@ -574,8 +565,8 @@
                                         <div class="uploads-content">
                                             <a >กําหนดการส่งเอกสารของทางสถานประกอบการ</a>
                                             <div class="border-input">
-                                                <input type="date"
-                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                                <input type="text"
+                                                    value="<%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>">
                                             </div>
                                         </div>
                                         <div class="uploads-content">

@@ -480,11 +480,11 @@
                                                                         <div class="uploads-content">
                                                                             <a>ช่วงเวลาที่ฝึกงาน</a>
                                                                             <div class="border-input2">
-                                                                                <input type="date" name="start_intern"
-                                                                                    value="<%= element.company_info.start_intern.toISOString().split('T')[0] %>">
+                                                                                <input type="text" name="start_intern"
+                                                                                    value="<%= element.company_info.start_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                                                                                 <h3>ถึง</h3>
-                                                                                <input type="date" name="end_intern"
-                                                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                                                                <input type="text" name="end_intern"
+                                                                                    value="<%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                                                                             </div>
                                                                         </div>
 
@@ -541,8 +541,8 @@
                                                                         <div class="uploads-content">
                                                                             <a>กําหนดการส่งเอกสารของทางสถานประกอบการ</a>
                                                                             <div class="border-input">
-                                                                                <input type="date"
-                                                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                                                                <input type="text"
+                                                                                    value="<%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                                                                             </div>
                                                                         </div>
                                                                         <div class="uploads-content">

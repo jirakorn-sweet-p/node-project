@@ -10,9 +10,40 @@
         <div class="header-main">
             <h2>ตรวจสอบสถานะการฝึกงาน</h2>
         </div>
-        <div class="header-main part2"><div class="search">
+        <div class="header-main part2">
+            <div class="search">
             <input type="text" placeholder="ค้นหา" id="searching" oninput="filterTable()">
-        </div></div>
+        </div>
+        <div class="sort">
+            <select id="sort" onchange="handleSortChange5(this)">
+                <option disabled value="">ปีที่ยื่นคำร้อง</option>
+            <% year.forEach(element => { %>
+             <% if (sort == element) { %>
+                <option selected value="<%= element %>">ปี <%= element %></option>
+            <% } else { %>
+                <option value="<%= element %>">ปี <%= element %></option>
+            <% } %>
+            <% }) %>
+            <% if (sort == '2020') { %>
+                <option selected value="2020">ทั้งหมด</option>
+            <% } else { %>
+                <option value="2020">ทั้งหมด</option>
+            <% } %>
+
+        </select>
+        </div>
+        
+        <div class="add-btn success">
+            <a id="deleteLink2">ออกหนังสือ</a>
+            <span class="material-icons-sharp">
+                upload_file
+            </span>
+        </div>
+        
+        <form id="deleteForm2" action="/get-pass" method="POST" style="display: none;">
+
+        </form>
+    </div>
         <div class="table">
             <table class="styled-table" id="styled-table">
             <thead>
@@ -300,11 +331,11 @@
                                                         <div class="uploads-content">
                                                             <a >ช่วงเวลาที่ฝึกงาน</a>
                                                             <div class="border-input2">
-                                                                <input type="date" name="start_intern"
-                                                                    value="<%= element.company_info.start_intern.toISOString().split('T')[0] %>">
+                                                                <input type="text" name="start_intern"
+                                                                    value="<%= element.company_info.start_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                                                                 <h3>ถึง</h3>
-                                                                <input type="date" name="end_intern"
-                                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                                                <input type="text" name="end_intern"
+                                                                    value="<%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                                                             </div>
                                                         </div>
 
@@ -361,8 +392,8 @@
                                                         <div class="uploads-content">
                                                             <a >กําหนดการส่งเอกสารของทางสถานประกอบการ</a>
                                                             <div class="border-input">
-                                                                <input type="date"
-                                                                    value="<%= element.company_info.end_intern.toISOString().split('T')[0] %>">
+                                                                <input type="text"
+                                                                    value="<%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="uploads-content">

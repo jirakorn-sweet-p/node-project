@@ -325,6 +325,15 @@ const AddUserByDocs = async (req, res, next) => {
         // Send the modified file as the response
         const fileStream = fs.createReadStream(excelFilePath);
         fileStream.pipe(res);
+        fileStream.on('end', () => {
+            fs.unlink(excelFilePath, (err) => {
+              if (err) {
+                console.error('Error deleting the file:', err);
+              } else {
+                console.log('File deleted successfully.');
+              }
+            });
+          });
     } catch (error) {
         console.error(`Unexpected error: ${error}`);
         // req.session.err_news = 'สร้างไม่สำเร็จ'
@@ -558,11 +567,137 @@ const UploadDocuments = async (req,res,next) => {
             file: filesArray
         });
         await Documents.save();
-
-        res.redirect('/request');
+        
+        res.redirect('/request-form');
         // res.status(201).send('File Upload Successfully');
     }catch(error){
         console.log('error');
+        res.status(400).send(error);
+    }
+}
+
+const GetPass = async (req,res,next) => {
+    try{
+
+        const sort = req.session.sort_year;
+        req.session.sort_year = null;
+
+        var add = 0;
+        if(sort == '2020'){
+            add = (new Date).getFullYear() - 2020;
+        }
+        // Create a new workbook
+        const workbook = XLSX.utils.book_new();
+
+        const startOfYear = new Date(sort+'-01-01T00:00:00.000Z');
+        const endOfYear = new Date((Number(sort)+add).toString()+'-12-31T00:00:00.000Z');
+        console.log(startOfYear);
+        console.log(endOfYear);
+        const data = await request_ser.aggregate([
+            { $sort: { update_at: 1 } },
+            {$addFields:{v:0}},
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
+            },
+            {
+                $match: {
+                  update_at: {
+                    $gte: startOfYear,
+                    $lt: endOfYear,
+                  },
+                },
+              },
+        ]).exec();
+        // Add a worksheet
+        var myList_pass = [];
+        var myList_fail = [];
+        var count = 1;
+        var count2 = 1;
+        // var year = [];
+        // const this_year = new Date;
+        // year.push(this_year.getFullYear());
+        console.log(data.length);
+        data.forEach((element,index) => {
+            if(element.certificate_info.status == '1'){
+                const obj = { อันดับ: count,รหัสนักศึกษา: element.student_info.student_code, ชื่อ: element.student_info.name , สถานประกอบการ: element.company_info.company.name, ตำแหน่ง: element.company_info.position}
+                myList_pass.push(obj);
+                count++;
+            }else if(element.certificate_info.status == '2'){
+                const obj = { อันดับ: count2,รหัสนักศึกษา: element.student_info.student_code, ชื่อ: element.student_info.name , สถานประกอบการ: element.company_info.company.name, ตำแหน่ง: element.company_info.position}
+                myList_fail.push(obj);
+                count2++;
+            }
+
+            // if (this_year.getFullYear() != new Date(element.update_at).getFullYear()) {
+            //     year.push(new Date(element.update_at).getFullYear());
+            // }
+        });
+        console.log(data.length);
+        const worksheet = XLSX.utils.json_to_sheet(myList_pass);
+        const worksheet2 = XLSX.utils.json_to_sheet(myList_fail);
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'ผ่านการฝึกงาน');
+        XLSX.utils.book_append_sheet(workbook, worksheet2, 'ไม่ผ่านการฝึกงาน');
+        // Save the workbook to a file
+        const filePath = 'public/uploads/example.xlsx';
+
+        XLSX.writeFile(workbook, filePath);
+
+        console.log('Excel file created successfully at:', filePath);
+                
+        res.redirect('/pass-status-requests')
+    }catch(error){
+        console.log(error);
         res.status(400).send(error);
     }
 }
@@ -842,6 +977,7 @@ router.post('/add-new',upload3.single('file'),AddNews);
 router.post('/account/add_by_excel',upload4.single('file'),AddUserByDocs);
 router.post('/edit-doc', upload.single('file'),EditDoc);
 router.post('/edit-cal', upload.single('file'),EditCal);
+router.post('/get-pass',GetPass);
 
 router.get('/delete-doc/:id',async (req,res) => {
     try{
@@ -895,26 +1031,17 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     }
     var image = 'logo3.png';
     var name = user.name;
+
     if(user.image){
-        image = user.image
-        name = user.name
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
+        name = user.name;
         req.session.firstlogin = false;
     }else{
         req.session.firstlogin = true;
     }
     
-    const locals = {
-        title : "request",
-        description:"Internship request",
-        styles: "/css/style.css",
-        js: "/js/req.js",
-        user: dat.role,
-        content:"../layouts/request.ejs",
-        bar1: "active",
-        profile:image,
-        name:name,
-        first:req.session.firstlogin,
-    }
     try{
         const data = await request_ser.aggregate([
         { $match: { student_info: user._id } },
@@ -973,7 +1100,21 @@ router.get('/request',redirectNotAuth, async (req,res) => {
             }
         }
         ]).exec();
-
+        if(data.length == 0){
+            req.session.firstlogin = true;
+        }
+        const locals = {
+            title : "request",
+            description:"Internship request",
+            styles: "/css/style.css",
+            js: "/js/req.js",
+            user: dat.role,
+            content:"../layouts/request.ejs",
+            bar1: "active",
+            profile:image,
+            name:name,
+            first:req.session.firstlogin,
+        }
         var status = [];
         var temp = [];
         var all_status = [];
@@ -1031,8 +1172,10 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     }
     var image = 'logo3.png';
     var name = dat.student_code;
-    if(user){
-        image = user.image
+    if(user.image){
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1072,12 +1215,13 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
-    }
-    const locals = {
+    }const locals = {
         title : "request-status",
         description:"Internship request",
         styles: "/css/status.css",
@@ -1176,12 +1320,13 @@ router.get('/request-status/:id',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
-    }
-    const locals = {
+    }const locals = {
         title : "request-status",
         description:"Internship request",
         styles: "/css/status.css",
@@ -1281,12 +1426,13 @@ router.get('/document',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
-    }
-    const locals = {
+    }const locals = {
         title : "document",
         description:"Internship request",
         styles: "/css/document.css",
@@ -1335,12 +1481,13 @@ router.get('/news',redirectNotAuth, async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
-    }
-    const locals = {
+    }const locals = {
         title : "news",
         description:"Internship request",
         styles: "/css/news.css",
@@ -1392,12 +1539,13 @@ router.get('/company',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
-    }
-    const locals = {
+    }const locals = {
         title : "company",
         description:"Internship request",
         styles: "/css/company.css",
@@ -1619,12 +1767,13 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
     }
-    
     const locals = {
         title : "calendar",
         description:"Internship request",
@@ -1652,7 +1801,9 @@ router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        image = user.image
+        if(!user.image.includes('undefined')){
+            image = user.image
+        }
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1666,7 +1817,8 @@ router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
         profile:image,
         name:user.name,
         content:"../layouts/more-news.ejs",
-        bar11: "active",
+        first:req.session.firstlogin,
+        bar4: "active",
         c:(await request_ser.find({'status':'0'})).length,
         c2:(await request_ser.find({$and: [
             { 'approval_document_status': '0' },
@@ -2861,9 +3013,25 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
             modal_bg2 = "close";
             alert = "close";
         }
+
+        var year = [];
+        const years = new Date;
+        var this_year = years.getFullYear().toString();
+        var sort = req.query.sort || this_year;
+        req.session.sort_year = sort;
+        var add = 0;
+        if(sort != '2020'){
+            year.push(this_year);
+        }else{
+            this_year = '2020';
+            add = (new Date).getFullYear() - 2020;
+        }
         const perPage = 20;
         const page = req.query.page || 1;
         var com_add =[];
+        console.log(sort);
+        const startOfYear = new Date(sort+'-01-01T00:00:00.000Z');
+        const endOfYear = new Date((Number(sort)+add).toString()+'-12-31T00:00:00.000Z');
         const data = await request_ser.aggregate([
             { $sort: { update_at: 1 } },
             { $skip: perPage * page - perPage },
@@ -2921,8 +3089,78 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
                 $addFields: {
                     'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
                 }
-            }
+            },
+            {
+                $match: {
+                  update_at: {
+                    $gte: startOfYear,
+                    $lt: endOfYear,
+                  },
+                },
+              },
         ]).exec();
+        const data2 = await request_ser.aggregate([
+            { $sort: { update_at: 1 } },
+            {$addFields:{v:0}},
+            {
+                $lookup: {
+                    from: 'studentinfos',
+                    localField: 'student_info',
+                    foreignField: '_id',
+                    as: 'student_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requestinfos',
+                    localField: 'request_info',
+                    foreignField: '_id',
+                    as: 'request_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companyinfos',
+                    localField: 'company_info',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'certificates',
+                    localField: 'certificate_info',
+                    foreignField: '_id',
+                    as: 'certificate_info'
+                }
+            },
+            {
+                $addFields: {
+                    student_info: { $arrayElemAt: ['$student_info', 0] },
+                    request_info: { $arrayElemAt: ['$request_info', 0] },
+                    company_info: { $arrayElemAt: ['$company_info', 0] },
+                    certificate_info: { $arrayElemAt: ['$certificate_info', 0] },
+                }
+            },
+            {
+                $lookup: {
+                    from: 'companies',
+                    localField: 'company_info.company', // Assuming 'company' is the field in 'CompanyInfo' model
+                    foreignField: '_id',
+                    as: 'company_info.company'
+                }
+            },
+            {
+                $addFields: {
+                    'company_info.company': { $arrayElemAt: ['$company_info.company', 0] },
+                }
+            },
+        ]).exec();
+        data2.forEach((element,index) => {
+            if(!year.includes(new Date(element.update_at).getFullYear().toString())){
+                    year.push(new Date(element.update_at).getFullYear().toString());
+            }
+        });
         const count = await request_ser.countDocuments({});
         let all_pages = Math.ceil(count/perPage);
         const nextPage = parseInt(page)+1;
@@ -2935,9 +3173,12 @@ router.get('/pass-status-requests',redirectNotAuth, async (req,res) => {
                 com_add.push('not-match');
             }
         }
+        
+        
         res.render('index', { locals,requests:data,count_request:data.length,hasNextPage,nextPage,all_pages,count,current:page,
-            com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req });
+            com_add,modal_bg1:bg1,modal1:mod1,modal_bg2,alert,error,current_req,sort,year });
 });
+
 
 router.get('/upload-docs',redirectNotAuth,async (req,res) => {
     const dat = await users.findOne({ '_id': req.session.userId });

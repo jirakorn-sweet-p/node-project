@@ -104,11 +104,11 @@
                 <div class="uploads-content">
                     <a href="">ช่วงเวลาที่ฝึกงาน <span></span></a>
                     <div class="border-input2">
-                        <input type="date" name="start_intern"
-                            value="<%= company.start_intern.toISOString().split('T')[0] %>" readonly>
+                        <input type="text" name="start_intern"
+                            value="<%= company.start_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                         <h2>ถึง</h2>
-                        <input type="date" name="end_intern"
-                            value="<%= company.end_intern.toISOString().split('T')[0] %>" readonly>
+                        <input type="text" name="end_intern"
+                            value="<%= company.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                     </div>
                 </div>
 
@@ -181,7 +181,7 @@
             <div class="send-date">
                 <div class="uploads-content">
                     <div class="border-input">
-                        <input type="date" value="<%= company.end_intern.toISOString().split('T')[0] %>" readonly>
+                        <input type="text" value="<%= company.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>" readonly>
                     </div>
                 </div>
 
