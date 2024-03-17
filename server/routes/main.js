@@ -1692,7 +1692,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
             { $match: { status: '1' } },
             { $match: { approval_document_status: '1' } },
             { $match: { accepted_company_status: '1' } },
-            { $match: { sended_company_status: '1' } },
+            { $match: { sended_company_status: '1' } }, 
             {
                 $lookup: {
                     from: 'studentinfos',
@@ -1748,9 +1748,15 @@ router.get('/company',redirectNotAuth,async (req,res) => {
             },
         ]).exec();
         const found_data = [];
+        console.log(intern);
         intern.forEach((element,index) => {
+            // var tteat = {
+            //     'id':element.company_info.company._id.toString(),
+            //     'count':
+            // }
             found_data.push(element.company_info.company._id.toString());
         });
+
     res.render('index', {locals,all_companies,all_position,all_pages2:allPage2,current2:page2,intern:found_data,sort});
 });
 
