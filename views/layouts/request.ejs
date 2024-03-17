@@ -52,15 +52,11 @@
                                     <div>
                                         <h3>วันที่ยื่นคำร้อง</h3>
                                         <h3>
-                                            <%= element.company_info.start_intern.getDate() %>-
-                                                <%= element.company_info.start_intern.getMonth()+1 %>-
-                                                    <%= element.company_info.start_intern.getFullYear() %>
+                                            <%= element.company_info.start_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>
                                         </h3>
                                         <h3>ดำเนินการล่าสุด</h3>
                                         <h3>
-                                            <%= element.company_info.end_intern.getDate() %>-
-                                                <%= element.company_info.end_intern.getMonth()+1 %>-
-                                                    <%= element.company_info.end_intern.getFullYear() %>
+                                            <%= element.company_info.end_intern.toLocaleString('th-TH', { year: 'numeric' , month: 'numeric' , day: 'numeric' }) %>
                                         </h3>
                                     </div>
                                     <div>
