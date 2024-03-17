@@ -1547,13 +1547,17 @@ textarea.auto {
 .submit a ,
 .submit button {
     border-radius: 8px;
-    margin-bottom: 1rem;
     padding: 0.6rem 2.5rem;
     font-size: medium;
     font-weight: 700;
     background: #084cdf;
     color: #fff;
 }
+.submit a{
+    margin-bottom: 1rem;
+}
+
+
 .submit a:hover ,
 .submit button:hover {
     background: #0d45a5;
@@ -2030,7 +2034,7 @@ span.danger {
 .modal#approval-docs-modal2 .uploads-content .border-input2 input{
     min-width: 30%;
 }
-
+.modal#approval-docs-modal2 h1,
 .modal#approval-docs-modal h1{
     margin-left: 3rem;
 }

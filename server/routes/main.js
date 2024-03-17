@@ -60,10 +60,11 @@ var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads')
     },
-    filename: function (req, file, cb) {
+    filename: async function (req, file, cb) {
         const fileNames = ['imgprofile', 'doc1', 'doc2', 'doc3', 'doc4'];
         const currentIndex = (req.files.length-1)% fileNames.length;
-        cb(null, fileNames[currentIndex] + '-' + req.body.std_id + '-' + new Date().toISOString().replace(/:/g, '-').split('T')[0]  + '.' + file.originalname.split('.').pop());
+        const userID = await users.findOne({ '_id': loggedIn });
+        cb(null, fileNames[currentIndex] + '-' + userID.student_code + '-' + new Date().toISOString().replace(/:/g, '-').split('T')[0]  + '.' + file.originalname.split('.').pop());
     }
 })
 
@@ -439,8 +440,9 @@ const EditCal = async (req,res,next) => {
 }
 
 const UploadDocuments = async (req,res,next) => {
-    const u = await users.findOne({ '_id': loggedIn });
-    var std_this = (await student_info.find({'student_code':u.student_code})).at(0);
+    const userID = await users.findOne({ '_id': loggedIn });
+
+    var std_this = (await student_info.find({'student_code':userID.student_code})).at(0);
     var std_info = new Object();
     var std_found = true;
     if(std_this){
@@ -531,9 +533,9 @@ const UploadDocuments = async (req,res,next) => {
     const saved_com_info= await com_info.save();
     const saved_cer_info= await cer_info.save();
 
-    const dat = await users.findOne({ '_id': req.session.userId });
-    dat.student_info = saved_std_info._id;
-    await dat.save();
+    // const dat = await users.findOne({ '_id': req.session.userId });
+    userID.student_info = saved_std_info._id;
+    await userID.updateOne({student_info : saved_std_info._id});
 
     const request_service = new request_ser({
         student_info: saved_std_info._id,
@@ -568,7 +570,7 @@ const UploadDocuments = async (req,res,next) => {
         });
         await Documents.save();
         
-        res.redirect('/request-form');
+        res.redirect('/request-status');
         // res.status(201).send('File Upload Successfully');
     }catch(error){
         console.log('error');
@@ -689,13 +691,21 @@ const GetPass = async (req,res,next) => {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'ผ่านการฝึกงาน');
         XLSX.utils.book_append_sheet(workbook, worksheet2, 'ไม่ผ่านการฝึกงาน');
         // Save the workbook to a file
-        const filePath = 'public/uploads/example.xlsx';
+        const filePath = 'public/uploads/report.xlsx';
 
         XLSX.writeFile(workbook, filePath);
-
         console.log('Excel file created successfully at:', filePath);
-                
-        res.redirect('/pass-status-requests')
+        res.download(filePath, 'report.xlsx', (err) => {
+            // Delete the file after it's been sent
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log('File deleted successfully');
+                }
+            });
+        });
+        // res.redirect('/pass-status-requests')
     }catch(error){
         console.log(error);
         res.status(400).send(error);
@@ -1033,9 +1043,7 @@ router.get('/request',redirectNotAuth, async (req,res) => {
     var name = user.name;
 
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name;
         req.session.firstlogin = false;
     }else{
@@ -1173,9 +1181,7 @@ router.get('/request/form',redirectNotAuth, async (req,res) => {
     var image = 'logo3.png';
     var name = dat.student_code;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1215,9 +1221,7 @@ router.get('/request-status',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1320,9 +1324,7 @@ router.get('/request-status/:id',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1426,9 +1428,7 @@ router.get('/document',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1481,9 +1481,7 @@ router.get('/news',redirectNotAuth, async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1539,9 +1537,7 @@ router.get('/company',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1767,9 +1763,7 @@ router.get('/calendar',redirectNotAuth,async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;
@@ -1801,9 +1795,7 @@ router.get('/news/details/:id',redirectNotAuth, async (req,res) => {
     var image = 'logo3.png';
     var name = user.name;
     if(user.image){
-        if(!user.image.includes('undefined')){
-            image = user.image
-        }
+        image = user.image
         name = user.name
     }else{
         req.session.firstlogin = true;

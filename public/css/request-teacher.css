@@ -1586,7 +1586,7 @@ span.cp {
     margin: 0.1rem 0 0 2rem;
     padding: 8px;
     display: flex;
-    width: 8rem;
+    width: 10rem;
     justify-content: space-around;
     align-items: center;
 }
