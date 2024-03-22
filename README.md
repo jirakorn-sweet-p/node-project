@@ -4,14 +4,14 @@
 
 ## :ledger: สารบัญ
 
-- [เกี่ยวกับ](#beginner-about)
-- [การใช้งาน](#zap-usage)
-  - [การติดตั้ง](#electric_plug-installation)
-  - [คำสั่ง](#package-commands)
-- [การพัฒนา](#wrench-development)
-  - [ข้อกำหนดเบื้องต้น](#notebook-pre-requisites)
+- [เกี่ยวกับ](#beginner-เกี่ยวกับ)
+- [การใช้งาน](#zap-การใช้งาน)
+  - [การติดตั้ง](#electric_plug-การติดตั้ง)
+  - [คำสั่ง](#package-คำสั่ง)
+- [การพัฒนา](#wrench-การพัฒนา)
+  - [ข้อกำหนดเบื้องต้น](#notebook-ข้อกำหนดเบื้องต้น)
   - [Developmen Environment](#nut_and_bolt-development-environment)
-  - [โครงสร้างไฟล์](#file_folder-file-structure)
+  - [โครงสร้างไฟล์](#file_folder-โครงสร้างไฟล์)
 
 ##  :beginner: เกี่ยวกับ
 พัฒนาโดยใช้ Node.js ในการพัฒนาระบบ และใช้ฐานข้อมูลในรูปแบบ MongoDB สำหรับเก็บข้อมูล
