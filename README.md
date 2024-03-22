@@ -49,7 +49,7 @@ $ npm run dev
 - Git
 
 ###  :nut_and_bolt: Development Environment
-หากผู้ใช้ติดตั้ง Git อยู่แล้วสามารถ Clone โปรเจ็กต์นี้ไปพัฒนาหรือแก้ไขต่อๆไปได้
+หากผู้ใช้ติดตั้ง Git อยู่แล้วสามารถ Clone โปรเจ็กต์นี้ไปพัฒนาหรือแก้ไขต่อไปได้
 - Clone GitHub Repository
 ```
 $ git clone https://github.com/jirakorn-sweet-p/node-project.git
