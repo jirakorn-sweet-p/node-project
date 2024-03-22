@@ -4,7 +4,7 @@
 
 ## :ledger: สารบัญ
 
-- [เกี่ยวกับ](#beginner-about)
+- [เกี่ยวกับ](#beginner)
 - [การใช้งาน](#zap-usage)
   - [การติดตั้ง](#electric_plug-installation)
   - [คำสั่ง](#package-commands)
